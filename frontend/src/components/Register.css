@@ -1,0 +1,183 @@
+/* Structure générale */
+.register-page {
+  display: flex;
+  height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Partie gauche avec texte promo */
+.register-left {
+  flex: 1;
+  background: linear-gradient(to right, #7c3aed, #9333ea);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.register-promo h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+
+.register-promo blockquote {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1rem;
+  border-radius: 8px;
+  font-style: italic;
+}
+
+/* Partie droite avec formulaire */
+.register-right {
+  flex: 1;
+  background: #f8f9fb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.register-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Barre d'étapes visuelle */
+.progress-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.step {
+  width: 30px;
+  height: 30px;
+  background-color: #ccc;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.step.active {
+  background-color: #7b4efc;
+}
+
+/* Toggle rôle patient / médecin */
+.role-toggle {
+  display: flex;
+  background-color: #e4e4e4;
+  border-radius: 12px;
+  padding: 5px;
+  justify-content: space-between;
+  gap: 4px;
+  margin-bottom: 1rem;
+}
+
+/* Style par défaut des boutons (non sélectionnés) */
+.role-toggle button {
+  flex: 1; /* Chaque bouton prend 50% de l’espace */
+  border: none; /* Pas de bordure */
+  border-radius: 8px; /* Coins arrondis individuels */
+  padding: 10px; /* Espacement interne du texte */
+  font-weight: 600; /* Texte plus épais */
+  background-color: white !important; /* Fond blanc par défaut, forcé pour écraser d'autres règles */
+  color: #333 !important; /* Couleur de texte gris foncé, forcée aussi */
+  cursor: pointer; /* Curseur en forme de main au survol */
+  transition: all 0.2s ease; /* Animation douce lors du changement d'état */
+}
+/* Style du bouton sélectionné (actif) */
+.role-toggle button.active {
+   /* ✅ Bordure violette uniquement si actif */
+  box-shadow: 0 0 0 2px #7b4efc inset; /* Bordure interne violette (effet de sélection) */
+/* Texte violet sur bouton actif */  color: #7b4efc;
+  font-weight: 700; 
+}
+
+/* Champs */
+.register-form input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.name-row {
+  display: flex;
+  gap: 10px;
+}
+
+.name-row input {
+  flex: 1;
+}
+
+/* Boutons */
+.register-form button {
+  padding: 10px 0;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+}
+
+/* Bouton principal violet */
+.register-form button[type='submit'],
+.register-form button:not(.secondary):not(.link-button) {
+  background-color: #7b4efc;
+  color: white;
+}
+
+.register-form button:hover:not(.secondary):not(.link-button) {
+  background-color: #6a3de0;
+}
+
+/* Bouton retour */
+.secondary {
+  background-color: #e4e4e4;
+  color: #333;
+}
+
+.secondary:hover {
+  background-color: #d2d2d2;
+}
+
+/* Groupement des boutons */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* Lien bas */
+.login-bottom {
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: #7b4efc;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.link-button:hover {
+  color: #5a3fcf;
+}
