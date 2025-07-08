@@ -1,19 +1,17 @@
-const API_BASE = 'http://localhost:5000/api/auth';
+import axios from 'axios';
 
-export const registerUser = async (userData) => {
-  const res = await fetch(`${API_BASE}/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(userData)
-  });
-  return await res.json();
+const API = axios.create({
+  baseURL: 'http://localhost:5000/api/auth',
+});
+
+
+export const login = async ({ email, mot_de_passe }) => {
+  console.log({ email, mot_de_passe });
+  const res = await API.post('/login', { email, mot_de_passe });
+  return res.data;
 };
 
-export const loginUser = async (credentials) => {
-  const res = await fetch(`${API_BASE}/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(credentials)
-  });
-  return await res.json();
+export const register = async (formData) => {
+  const res = await API.post('/register', formData);
+  return res.data;
 };

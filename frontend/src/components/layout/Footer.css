@@ -1,0 +1,32 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  background-color: #4a148c;
+  color: white;
+  padding: 1.5rem 2rem;
+  margin-top: 2rem;
+  font-size: 0.95rem;
+}
+
+.footer a {
+  color: #ffd54f;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.footer-left,
+.footer-center,
+.footer-right {
+  flex: 1;
+  min-width: 250px;
+  margin: 0.5rem 0;
+}
+
+.footer h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}

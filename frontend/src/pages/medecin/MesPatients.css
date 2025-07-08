@@ -1,0 +1,38 @@
+.mes-patients-page {
+  padding: 2rem;
+  max-width: 800px;
+  margin: auto;
+}
+
+.patient-list {
+  list-style: none;
+  padding: 0;
+}
+
+.patient-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.patient-card button {
+  margin-top: 0.5rem;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.patient-card button:hover {
+  background-color: #1565c0;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}

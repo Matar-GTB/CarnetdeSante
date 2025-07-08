@@ -1,0 +1,44 @@
+.vaccinations-page {
+  padding: 2rem;
+  max-width: 800px;
+  margin: auto;
+}
+
+.btn-retour {
+  background-color: #eee;
+  border: none;
+  padding: 8px 16px;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-retour:hover {
+  background-color: #ddd;
+}
+
+.vaccinations-page h2 {
+  color: #3f51b5;
+  margin-bottom: 0.5rem;
+}
+
+.vaccinations-page p {
+  margin-bottom: 1.5rem;
+  color: #444;
+}
+.btn-retour {
+  background-color: #eeeeee;
+  border: none;
+  padding: 10px 18px;
+  margin-bottom: 1.5rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: #333;
+}
+
+.btn-retour:hover {
+  background-color: #dcdcdc;
+}
