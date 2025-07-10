@@ -9,7 +9,7 @@ const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDepasse] = useState('');
   const [error, setError] = useState('');
-
+ const [showPassword, setShowPassword] = useState(false); // 👁️ état pour afficher/masquer
 
 const handleConnexion = async (e) => {
   e.preventDefault();
@@ -49,7 +49,7 @@ const handleConnexion = async (e) => {
 
       <label>Mot de passe</label>
       <input
-        type="password"
+        type={showPassword ? 'text' : 'password'} // 👁️ affichage conditionnel
         placeholder="••••••••"
         value={motDePasse}
         onChange={(e) => setMotDepasse(e.target.value)}
@@ -59,6 +59,12 @@ const handleConnexion = async (e) => {
       <div className="options">
         <label>
           <input type="checkbox" /> Se souvenir de moi
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            onChange={() => setShowPassword((prev) => !prev)}
+          /> Afficher le mot de passe
         </label>
         <a href="/reset-password" className="forgot-link">Mot de passe oublié ?</a>
       </div>

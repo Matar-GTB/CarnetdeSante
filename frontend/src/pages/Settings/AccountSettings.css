@@ -1,0 +1,67 @@
+.account-settings {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.account-settings h2 {
+  margin-bottom: 1.5rem;
+  color: #2d3436;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.account-settings label {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #2f3640;
+}
+
+.account-settings input[type="password"] {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1px solid #dcdde1;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-top: 0.3rem;
+  transition: border-color 0.3s ease;
+}
+
+.account-settings input[type="password"]:focus {
+  border-color: #6c5ce7;
+  outline: none;
+}
+
+.account-settings button {
+  width: 100%;
+  background-color: #6c5ce7;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1.2rem;
+}
+
+.account-settings button:hover {
+  background-color: #5a4dcf;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: #6c5ce7;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}

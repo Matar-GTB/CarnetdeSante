@@ -4,14 +4,17 @@ import {
   updateProfile,
   getAllDoctors,
   getDoctorDetails,
-  searchDoctors
+  searchDoctors,
+  updateProfileWithPhoto
 } from '../controllers/userController.js';
+import { uploadProfilePhoto } from '../middlewares/uploadMiddleware.js';
 
-import { authMiddleware } from '../middlewares/authMiddleware.js';
+
+import { authMiddleware} from '../middlewares/authMiddleware.js';
 import { checkRole } from '../middlewares/roleMiddleware.js';
 
 const router = express.Router();
-
+router.put('/profile-with-photo', authMiddleware, uploadProfilePhoto, updateProfileWithPhoto);
 // 🔐 Profil utilisateur connecté (nécessite authentification)
 router.get('/me', authMiddleware, getProfile);
 

@@ -1,0 +1,74 @@
+.user-menu-wrapper {
+  position: relative;
+}
+
+.user-menu-button {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.avatar-circle {
+  background-color: #6c5ce7;
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #2d3436;
+  white-space: nowrap;
+}
+
+.dropdown-icon {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  top: 42px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 180px;
+  padding: 0.5rem 0;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+  z-index: 100;
+  list-style: none;
+}
+
+.user-menu-dropdown li {
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+
+.user-menu-dropdown li:hover {
+  background-color: #f0f0f0;
+}
+
+.user-menu-dropdown a {
+  text-decoration: none;
+  color: #2d3436;
+  display: block;
+}
+.user-icon {
+  font-size: 1.1rem;
+  color: #6c5ce7;
+}

@@ -68,3 +68,13 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+/* Corriger la couleur invisible dans les formulaires */
+input, select, button {
+  color: #1d1d1d !important;
+}
+
+/* Fix pour root si tu veux un texte foncé en thème clair */
+:root {
+  color: #1d1d1d;
+  background-color: #f5f5fa;
+}

@@ -1,8 +1,9 @@
-/* frontend/src/components/auth/Register.css */
+/* --- Structure générale --- */
 .register-page {
   display: flex;
   min-height: 100vh;
   font-family: 'Segoe UI', sans-serif;
+  background-color: #f7f9fc;
 }
 
 .register-left {
@@ -44,28 +45,64 @@
 
 .register-right {
   flex: 1;
-  background: #f7f9fc;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem;
 }
 
+/* --- Formulaire --- */
 .register-form {
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
   background: white;
   padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .register-form h2 {
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.6rem;
   text-align: center;
+  color: #333;
 }
 
+/* --- Étapes visuelles --- */
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.step-indicator span {
+  width: 28px;
+  height: 28px;
+  background-color: #dcdde1;
+  border-radius: 50%;
+  font-weight: bold;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.step-indicator .active-step {
+  background-color: #6c5ce7;
+  color: #fff;
+  box-shadow: 0 0 4px rgba(108, 92, 231, 0.6);
+}
+
+/* --- Champs classiques --- */
 .register-form input,
 .register-form select {
   width: 100%;
@@ -73,8 +110,17 @@
   margin-bottom: 1rem;
   border-radius: 6px;
   border: 1px solid #ccc;
+  font-size: 0.95rem;
+  transition: border 0.2s ease;
 }
 
+.register-form input:focus,
+.register-form select:focus {
+  border-color: #6c5ce7;
+  outline: none;
+}
+
+/* --- Boutons --- */
 .register-form button {
   width: 100%;
   background: #6c5ce7;
@@ -91,21 +137,24 @@
   background: #5a4be0;
 }
 
+/* --- Boutons de rôle (Patient / Médecin) --- */
 .role-select {
   display: flex;
   justify-content: space-between;
+  gap: 0.5rem;
   margin-bottom: 1rem;
 }
 
 .role-select button {
-  flex: 1;
-  padding: 0.5rem;
-  margin: 0 0.25rem;
+  flex: 1 1 48%;
+  padding: 0.75rem;
+  text-align: center;
   border: 1px solid #ccc;
   border-radius: 6px;
   background: white;
   cursor: pointer;
   font-weight: bold;
+  transition: all 0.2s ease-in-out;
 }
 
 .role-select button.active {
@@ -114,51 +163,93 @@
   border-color: #6c5ce7;
 }
 
+/* --- Navigation formulaire --- */
 .form-nav {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
+  margin-top: 0.5rem;
 }
 
+/* --- Erreur --- */
 .error {
-  color: red;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
+  background: #ffe6e6;
+  border: 1px solid #ff6b6b;
+  color: #d63031;
+  padding: 0.5rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
   text-align: center;
 }
 
+/* --- Lien connexion --- */
 .login-link {
   margin-top: 1rem;
   text-align: center;
   font-size: 0.9rem;
 }
-.login-link a {
+
+.link-text {
+  background: none;
+  border: none;
   color: #6c5ce7;
-  text-decoration: none;
-}
-.login-link a:hover {
   text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 0;
 }
 
+.link-text:hover {
+  color: #4e3fcb;
+}
+
+/* --- Téléphone international 📱 --- */
+.react-tel-input {
+  width: 100% !important;
+  margin-bottom: 1rem;
+}
+
+.react-tel-input .form-control {
+  width: 100% !important;
+  border-radius: 6px;
+  padding: 0.75rem !important;
+  font-size: 0.95rem;
+  padding-left: 60px !important; /* Affiche bien +226 */
+  border: 1px solid #ccc;
+  transition: border 0.2s ease;
+}
+
+.react-tel-input .form-control:focus {
+  border-color: #6c5ce7;
+  outline: none;
+}
+
+.react-tel-input .flag-dropdown {
+  border: 1px solid #ccc !important;
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+}
+
+/* --- Responsive --- */
 @media screen and (max-width: 768px) {
   .register-page {
     flex-direction: column;
   }
+
   .register-left {
     display: none;
   }
+
   .register-right {
-    flex: none;
     width: 100%;
     padding: 1rem;
   }
-}
-.link-button {
-  background: none;
-  border: none;
-  color: #6c63ff;
-  text-decoration: underline;
-  cursor: pointer;
-  font-size: 1em;
-  padding: 0;
+
+  .form-nav {
+    flex-direction: column;
+  }
+
+  .form-nav button {
+    width: 100%;
+  }
 }

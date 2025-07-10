@@ -9,3 +9,14 @@ export const getTokenPayload = (token) => {
     return null;
   }
 };
+export const isTokenExpired = (token) => {
+  const payload = getTokenPayload(token);
+  if (!payload?.exp) return true;
+
+  const now = Math.floor(Date.now() / 1000);
+  return payload.exp < now;
+};
+export const getUserRole = (token) => {
+  const payload = getTokenPayload(token);
+  return payload?.role || null;
+};

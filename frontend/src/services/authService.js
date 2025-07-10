@@ -1,17 +1,28 @@
 import axios from 'axios';
 
-const API = axios.create({
+export const API = axios.create({
   baseURL: 'http://localhost:5000/api/auth',
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-
+// 🔐 Connexion
 export const login = async ({ email, mot_de_passe }) => {
-  console.log({ email, mot_de_passe });
-  const res = await API.post('/login', { email, mot_de_passe });
-  return res.data;
+  try {
+    const res = await API.post('/login', { email, mot_de_passe });
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: 'Erreur lors de la connexion' };
+  }
 };
 
+// 📝 Inscription
 export const register = async (formData) => {
-  const res = await API.post('/register', formData);
-  return res.data;
+  try {
+    const res = await API.post('/register', formData);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: 'Erreur lors de l’inscription' };
+  }
 };

@@ -23,14 +23,34 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: 'Identifiants invalides' });
     }
 
-    const token = generateToken({ userId: user.id, role: user.role });
+    const token = generateToken({
+  userId: user.id,
+  role: user.role,
+  prenom: user.prenom,
+  nom: user.nom
+});
+
     res.json({
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      nom_complet: user.nom_complet,
-      token
-    });
+  id: user.id,
+  email: user.email,
+  role: user.role,
+  nom: user.nom,
+  prenom: user.prenom,
+  adresse: user.adresse,
+  telephone: user.telephone,
+  sexe: user.sexe,
+  date_naissance: user.date_naissance,
+  specialite: user.specialite,
+  langues: user.langues,
+  moyens_paiement: user.moyens_paiement,
+  accepte_nouveaux_patient: user.accepte_nouveaux_patient,
+  accepte_non_traitants: user.accepte_non_traitants,
+  horaires_travail: user.horaires_travail,
+  accessibilite: user.accessibilite,
+  photo_profil: user.photo_profil,
+  token
+});
+
   } catch (err) {
     handleError(res, err, 'Erreur lors de la connexion');
   }
@@ -55,15 +75,34 @@ export const register = async (req, res) => {
       ...data
     });
 
-    const token = generateToken({ userId: user.id, role: user.role });
+    const token = generateToken({
+  userId: user.id,
+  role: user.role,
+  prenom: user.prenom,
+  nom: user.nom
+});
 
     res.status(201).json({
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      nom_complet: user.nom_complet,
-      token
-    });
+  id: user.id,
+  email: user.email,
+  role: user.role,
+  nom: user.nom,
+  prenom: user.prenom,
+  adresse: user.adresse,
+  telephone: user.telephone,
+  sexe: user.sexe,
+  date_naissance: user.date_naissance,
+  specialite: user.specialite,
+  langues: user.langues,
+  moyens_paiement: user.moyens_paiement,
+  accepte_nouveaux_patient: user.accepte_nouveaux_patient,
+  accepte_non_traitants: user.accepte_non_traitants,
+  horaires_travail: user.horaires_travail,
+  accessibilite: user.accessibilite,
+  photo_profil: user.photo_profil,
+  token
+});
+
   } catch (err) {
     handleError(res, err, 'Erreur lors de l’inscription');
   }
@@ -158,7 +197,7 @@ function generateToken(payload) {
  * 📧 Simule l'envoi d'un mail de réinitialisation
  */
 function sendPasswordResetEmail(email, token) {
-  console.log(`[Reset] Mail à ${email}: ${process.env.CLIENT_URL || 'http://localhost:3000'}`/reset-password/`${token}`);
+  console.log(`[Reset] Mail à ${email}: ${(process.env.CLIENT_URL || 'http://localhost:3000')}/reset-password/${token}`);
 }
 
 /**

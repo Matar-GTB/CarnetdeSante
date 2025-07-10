@@ -12,9 +12,12 @@ import PartageLienPublic from './pages/medical/PartageLienPublic';
 import { getTokenPayload } from './utils/tokenUtils'; // Fonction utilitaire pour décoder le token
 import VaccinationsPage from './pages/medical/VaccinationsPage';
 import MesPatients from './pages/medecin/MesPatients';
+import ProfilePage from './pages/Profile/ProfilePage';
+import AccountSettings from './pages/Settings/AccountSettings';
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState(null);
+ const token = localStorage.getItem('token');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -43,6 +46,8 @@ function App() {
         <Route path="/documents" element={<DocumentsPage />} />
         <Route path="/partage/:token" element={<PartageLienPublic />}/>
         <Route path="/partage" element={<PartagePage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/settings/account" element={<AccountSettings token={token} />} />
         <Route path="*" element={<NotFound />} />
         <Route path="/logout" element={<Logout />} />
       </Routes>

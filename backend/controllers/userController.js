@@ -144,3 +144,23 @@ function handleServerError(res, error, defaultMessage) {
 
   res.status(500).json({ success: false, message });
 }
+
+export const updateProfileWithPhoto = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.userId);
+    if (!user) return res.status(404).json({ message: "Utilisateur introuvable" });
+
+    const updateData = req.body;
+
+    if (req.file) {
+      updateData.photo_profil = `/uploads/profiles/${req.file.filename}`;
+    }
+
+    await user.update(updateData);
+    res.json({ success: true, message: "Profil mis à jour", data: user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Erreur lors de la mise à jour du profil avec photo" });
+  }
+};
+
