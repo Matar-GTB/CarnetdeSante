@@ -1,0 +1,38 @@
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirm-dialog {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.6rem;
+  max-width: 90%;
+  text-align: center;
+}
+
+.confirm-buttons {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.confirm-buttons button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+}
+.confirm-buttons button:first-child {
+  background: #b2bec3;
+}
+.confirm-buttons button:last-child {
+  background: #d63031;
+  color: white;
+}

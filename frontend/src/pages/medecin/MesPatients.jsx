@@ -1,54 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getMyPatients } from '../../services/traitantService';
 import './MesPatients.css';
-import axios from 'axios';
 
-const MesPatients = () => {
+export default function MesPatients() {
   const [patients, setPatients] = useState([]);
-  const [error, setError] = useState('');
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchPatients = async () => {
+    (async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/medecins/mes-patients', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setPatients(res.data || []);
+        const data = await getMyPatients();
+        setPatients(data);
       } catch (err) {
-        setError("Erreur lors du chargement des patients.");
+        console.error('MesPatients:', err);
+        setError('Impossible de charger vos patients.');
+      } finally {
+        setLoading(false);
       }
-    };
-
-    fetchPatients();
+    })();
   }, []);
 
-  const handleVoirVaccins = (id) => {
-    navigate(`/vaccinations/${id}`);
-  };
+  if (loading) return <div className="loader">Chargement…</div>;
+  if (error)   return <div className="error">{error}</div>;
 
   return (
     <div className="mes-patients-page">
-      <h2>👨‍⚕️ Mes Patients</h2>
-      {error && <p className="error">{error}</p>}
+      <h1>Mes patients</h1>
       {patients.length === 0 ? (
-        <p>Aucun patient trouvé.</p>
+        <p className="empty">Aucun patient n’a encore accepté votre demande.</p>
       ) : (
-        <ul className="patient-list">
-          {patients.map((patient) => (
-            <li key={patient.id} className="patient-card">
-              <strong>{patient.prenom} {patient.nom}</strong><br />
-              📧 {patient.email} <br />
-              📅 Né le : {patient.date_naissance}
-              <br />
-              <button onClick={() => handleVoirVaccins(patient.id)}>💉 Voir vaccinations</button>
-            </li>
+        <div className="patients-grid">
+          {patients.map(p => (
+            <div key={p.id} className="patient-card">
+              <div className="patient-info">
+                <h2>{p.prenom} {p.nom}</h2>
+                <p>📧 {p.email}</p>
+                <p>🎂 {new Date(p.date_naissance).toLocaleDateString()}</p>
+              </div>
+              <button
+                className="btn-vaccins"
+                onClick={() => navigate(`/vaccinations/${p.id}`)}
+              >
+                💉 Voir vaccinations
+              </button>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
-};
-
-export default MesPatients;
+}

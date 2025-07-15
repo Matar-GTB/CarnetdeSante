@@ -40,7 +40,7 @@ const ShareDocumentModal = ({ documentId, onClose }) => {
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
-        <h3>🔗 Partager ce document</h3>
+        <h3> Partager ce document</h3>
 
         <label>Durée de validité (heures)</label>
         <input
@@ -73,7 +73,7 @@ const ShareDocumentModal = ({ documentId, onClose }) => {
                 <button className="copy-btn" onClick={() => {
                     navigator.clipboard.writeText(shareLink);
                 }}>
-                    📋 Copier
+                     Copier
                 </button>
                 </div>
             </div>

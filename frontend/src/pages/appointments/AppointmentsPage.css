@@ -1,0 +1,59 @@
+.appointments-page {
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.appointments-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #2d3436;
+  font-size: 2.2rem;
+}
+
+.appointments-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.appointment-card {
+  width: 320px;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: white;
+}
+
+.card-traitant {
+  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+}
+
+.card-autre {
+  background: linear-gradient(135deg, #00b894, #55efc4);
+}
+
+.appointment-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Bouton Retour --- */
+.back-button {
+  background: none;
+  border: none;
+  color: #6c5ce7;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.3rem;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background-color: rgba(108, 92, 231, 0.1);
+}

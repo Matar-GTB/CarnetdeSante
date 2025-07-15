@@ -37,7 +37,7 @@ const PartageLienPublic = () => {
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h2>📄 Documents partagés par le patient</h2>
+      <h2> Documents partagés par le patient</h2>
       <p>Valide jusqu’au : <strong>{new Date(infos.expiration).toLocaleString()}</strong></p>
 
       {documents.length === 0 ? (
@@ -47,8 +47,8 @@ const PartageLienPublic = () => {
           {documents.map((doc) => (
             <li key={doc.id} style={{ margin: '1rem 0' }}>
               <strong>{doc.titre}</strong> — <em>{doc.type_document}</em><br />
-              📅 {doc.date_document} <br />
-              🔗 <a href={`http://localhost:5000/uploads/${doc.url_fichier}`} target="_blank" rel="noopener noreferrer">Voir le fichier</a>
+               {doc.date_document} <br />
+               <a href={`http://localhost:5000/uploads/${doc.url_fichier}`} target="_blank" rel="noopener noreferrer">Voir le fichier</a>
             </li>
           ))}
         </ul>

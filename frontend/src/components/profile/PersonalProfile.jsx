@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './PersonalProfile.css';
-import { getUserProfile, updateUserProfileWithPhoto, API_BASE_URL } from '../../services/profileService';
+import {
+  getUserProfile,
+  updateUserProfileWithPhoto,
+  API_BASE_URL
+} from '../../services/profileService';
 
 const PersonalProfile = ({ token }) => {
   const [form, setForm] = useState({
@@ -12,83 +16,112 @@ const PersonalProfile = ({ token }) => {
     date_naissance: '',
     adresse: ''
   });
-
+  const [initialData, setInitialData] = useState({});
+  const [initialPhoto, setInitialPhoto] = useState('');
+  const [photoPreview, setPhotoPreview] = useState('/default-avatar.png');
   const [photoFile, setPhotoFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState('');
-  const [initialData, setInitialData] = useState(form);
   const [editMode, setEditMode] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
-  const loadUserProfile = useCallback(async () => {
+  // Charger les données utilisateur
+  const fetchProfile = useCallback(async () => {
     try {
       const user = await getUserProfile(token);
-      const personalData = {
-        nom: user?.nom || '',
-        prenom: user?.prenom || '',
-        email: user?.email || '',
-        telephone: user?.telephone || '',
-        sexe: user?.sexe || '',
-        date_naissance: user?.date_naissance || '',
-        adresse: user?.adresse || ''
+      const data = {
+        nom: user.nom || '',
+        prenom: user.prenom || '',
+        email: user.email || '',
+        telephone: user.telephone || '',
+        sexe: user.sexe || '',
+        date_naissance: user.date_naissance || '',
+        adresse: user.adresse || ''
       };
-      setForm(personalData);
-      setInitialData(personalData);
-
-      const photoURL = user?.photo_profil
-        ? `${API_BASE_URL}${user.photo_profil}`
+      setForm(data);
+      setInitialData(data);
+      
+      const photoUrl = user.photo_profil 
+        ? `${API_BASE_URL}${user.photo_profil}` 
         : '/default-avatar.png';
-      setPreviewUrl(photoURL);
+      
+      setPhotoPreview(photoUrl);
+      setInitialPhoto(photoUrl);
     } catch (err) {
-      console.error('Erreur chargement profil personnel :', err.response?.data || err.message);
+      console.error('Erreur chargement profil :', err);
     }
   }, [token]);
 
   useEffect(() => {
-    loadUserProfile();
-  }, [loadUserProfile]);
+    fetchProfile();
+  }, [fetchProfile]);
 
-  const handleChange = e => {
+  // Vérifier les changements seulement en mode édition
+  useEffect(() => {
+    if (editMode) {
+      const formChanged = Object.keys(initialData).some(
+        key => form[key] !== initialData[key]
+      );
+      const photoChanged = photoFile !== null;
+      setHasChanges(formChanged || photoChanged);
+    }
+  }, [form, photoFile, editMode, initialData]);
+
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handlePhotoChange = e => {
+  const handlePhotoChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setPhotoFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
+    if (!file) return;
+    setPhotoFile(file);
+    setPhotoPreview(URL.createObjectURL(file));
+  };
+
+  const handleEdit = () => {
+    setEditMode(true);
   };
 
   const handleCancel = () => {
     setForm(initialData);
     setPhotoFile(null);
+    setPhotoPreview(initialPhoto);
     setEditMode(false);
+    setHasChanges(false);
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+   if (!hasChanges) {
+    alert("Aucune modification n'a été effectuée");
+      setEditMode(false);
+     return;
+    }
+
     try {
       const formData = new FormData();
       Object.entries(form).forEach(([key, value]) => {
         formData.append(key, value);
       });
-      if (photoFile) {
-        formData.append('photo', photoFile);
-      }
+      
+      if (photoFile) formData.append('photo', photoFile);
 
       await updateUserProfileWithPhoto(token, formData);
-      alert('✅ Informations personnelles mises à jour');
-      setInitialData(form); // Met à jour les données de référence
-      setEditMode(false);   // Quitte le mode édition
+      alert('✅ Informations mises à jour');
+      
+      // Recharger les données après mise à jour
+      await fetchProfile();
+      setEditMode(false);
+      setHasChanges(false);
     } catch (err) {
+      console.error('Erreur mise à jour :', err);
       alert('❌ Erreur lors de la mise à jour');
-      console.error(err.response?.data || err.message);
     }
   };
 
   return (
     <form className="personal-profile" onSubmit={handleSubmit}>
       <div className="personal-header">
-        <img src={previewUrl || '/default-avatar.png'} alt="Avatar" className="avatar-header" />
+        <img src={photoPreview} alt="Avatar" className="avatar-header" />
         <div className="header-details">
           <h2>{form.prenom} {form.nom}</h2>
           <p>Profil personnel</p>
@@ -96,56 +129,66 @@ const PersonalProfile = ({ token }) => {
       </div>
 
       <div className="photo-section">
-        <label>Photo de profil
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoChange}
-            disabled={!editMode}
+        <label>
+          Photo de profil
+          <input 
+            type="file" 
+            accept="image/*" 
+            disabled={!editMode} 
+            onChange={handlePhotoChange} 
           />
         </label>
-        {previewUrl && <img src={previewUrl} alt="Prévisualisation" className="avatar-preview" />}
+        {photoPreview && (
+          <img src={photoPreview} alt="Prévisualisation" className="avatar-preview" />
+        )}
       </div>
 
       <label>Nom
-        <input type="text" name="nom" value={form.nom} onChange={handleChange} disabled={!editMode} />
+        <input name="nom" value={form.nom} onChange={handleChange} disabled={!editMode} />
       </label>
 
       <label>Prénom
-        <input type="text" name="prenom" value={form.prenom} onChange={handleChange} disabled={!editMode} />
+        <input name="prenom" value={form.prenom} onChange={handleChange} disabled={!editMode} />
       </label>
 
       <label>Email
-        <input type="email" name="email" value={form.email} readOnly />
+        <input name="email" value={form.email} disabled />
       </label>
 
       <label>Téléphone
-        <input type="text" name="telephone" value={form.telephone} onChange={handleChange} disabled={!editMode} />
+        <input name="telephone" value={form.telephone} onChange={handleChange} disabled={!editMode} />
       </label>
 
       <label>Sexe
         <select name="sexe" value={form.sexe} onChange={handleChange} disabled={!editMode}>
           <option value="">-- Sélectionner --</option>
-          <option value="M">Masculin</option>
-          <option value="F">Féminin</option>
+          <option value="homme">Masculin</option>
+          <option value="femme">Féminin</option>
+          <option value="autre">Autre</option>
         </select>
       </label>
 
       <label>Date de naissance
-        <input type="date" name="date_naissance" value={form.date_naissance} onChange={handleChange} disabled={!editMode} />
+        <input 
+          type="date" 
+          name="date_naissance" 
+          value={form.date_naissance} 
+          onChange={handleChange} 
+          disabled={!editMode} 
+        />
       </label>
 
       <label>Adresse
-        <input type="text" name="adresse" value={form.adresse} onChange={handleChange} disabled={!editMode} />
+        <input name="adresse" value={form.adresse} onChange={handleChange} disabled={!editMode} />
       </label>
 
       {!editMode ? (
         <div className="button-group">
-          <button type="button" onClick={() => setEditMode(true)}>Modifier</button>
+          <button type="button" onClick={handleEdit}>Modifier</button>
         </div>
       ) : (
         <div className="button-group">
-          <button type="submit">Enregistrer</button>
+          <button type="submit" disabled={!hasChanges}>Enregistrer</button>
           <button type="button" onClick={handleCancel}>Annuler</button>
         </div>
       )}

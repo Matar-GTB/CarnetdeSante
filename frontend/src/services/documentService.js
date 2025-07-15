@@ -1,3 +1,4 @@
+// src/services/documentService.js
 import axios from 'axios';
 
 const API_BASE = 'http://localhost:5000/api/medical';
@@ -11,45 +12,59 @@ const getAuthHeaders = () => {
   };
 };
 
-// 📄 Récupérer tous les documents de l'utilisateur connecté
+function getFilename(disposition) {
+  if (!disposition) return 'document';
+  const match = disposition.match(/filename="?(.+)"?/);
+  return match ? match[1] : 'document';
+}
+
+/**
+ * Liste tous les documents de l’utilisateur connecté
+ */
 export const getUserDocuments = async () => {
-  const token = localStorage.getItem('token');
-  if (!token) throw new Error("Token manquant dans localStorage");
-
-  try {
-    const response = await axios.get(`${API_BASE}/documents`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    });
-    return response.data;
-  } catch (err) {
-    console.error("Erreur axios Erreur getUserDocuments:", err.response?.data || err.message);
-    throw err;
-  }
+  const res = await axios.get(`${API_BASE}/documents`, getAuthHeaders());
+  return res.data;  // assume API renvoie { data: [...] } ou directement [...]
 };
 
-
-// 📤 Upload d’un nouveau document avec FormData
+/**
+ * Upload d’un document (FormData)
+ */
 export const uploadDocument = async (formData) => {
-  const config = {
-    headers: {
-      ...getAuthHeaders().headers,
-      'Content-Type': 'multipart/form-data'
+  const res = await axios.post(
+    `${API_BASE}/upload`,
+    formData,
+    {
+      ...getAuthHeaders(),
+      headers: {
+        ...getAuthHeaders().headers,
+        'Content-Type': 'multipart/form-data'
+      }
     }
-  };
-
-  const response = await axios.post(`${API_BASE}/upload`, formData, config);
-  return response.data;
+  );
+  return res.data;
 };
 
-// 📥 Télécharger un document par ID
-export const downloadDocument = async (documentId) => {
-  const config = {
-    ...getAuthHeaders(),
-    responseType: 'blob', // important pour télécharger un fichier
-  };
+/**
+ * Suppression d’un document
+ */
+export const deleteDocument = async (documentId) => {
+  await axios.delete(
+    `${API_BASE}/documents/${documentId}`,
+    getAuthHeaders()
+  );
+};
 
-  const response = await axios.get(`${API_BASE}/documents/${documentId}/download`, config);
-  return response.data; // Blob à gérer dans le frontend
+/**
+ * Téléchargement d’un document (blob + nom de fichier)
+ */
+export const downloadDocument = async (documentId) => {
+  const { data: blob, headers } = await axios.get(
+    `${API_BASE}/documents/${documentId}/download`,
+    {
+      ...getAuthHeaders(),
+      responseType: 'blob'
+    }
+  );
+  const filename = getFilename(headers['content-disposition']);
+  return { blob, filename };
 };

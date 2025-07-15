@@ -5,7 +5,7 @@ import Document from '../models/Document.js';
 import Vaccination from '../models/Vaccination.js';
 import DemandeTraitant from '../models/DemandeTraitant.js';
 import User from '../models/User.js';
-// 📁 Obtenir tous les documents médicaux d’un utilisateur
+//  Obtenir tous les documents médicaux d’un utilisateur
 
 
 export const getDocuments = async (req, res) => {
@@ -25,7 +25,7 @@ export const getDocuments = async (req, res) => {
   }
 };
 
-// 📤 Ajouter un nouveau document
+//  Ajouter un nouveau document
 export const uploadDocument = async (req, res) => {
   const userId = req.user.userId;
   const { titre, type_document, categorie } = req.body;
@@ -63,7 +63,7 @@ export const uploadDocument = async (req, res) => {
   }
 };
 
-// 💉 Obtenir les vaccinations d’un utilisateur
+//  Obtenir les vaccinations d’un utilisateur
 export const getVaccinations = async (req, res) => {
   const requesterId = req.user.userId;
   const role = req.user.role;

@@ -1,0 +1,115 @@
+/* src/pages/medecinTraitant/RequestTraitantPage.css */
+
+/* notifications */
+.notification {
+  padding: 0.8rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 500;
+}
+.notification.success { background: #00b89433; color: #00b894; }
+.notification.error   { background: #d6303133; color: #d63031; }
+
+.request-traitant-page {
+  padding: 2rem;
+  max-width: 800px;
+  margin: auto;
+  font-family: 'Segoe UI', sans-serif;
+}
+.request-traitant-page h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #2d3436;
+}
+
+.loader {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.empty {
+  text-align: center;
+  color: #636e72;
+  margin: 1rem 0;
+}
+
+.my-requests h2,
+.search-section {
+  margin-top: 2rem;
+}
+
+.my-requests ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.status {
+  padding: 0.5rem 1rem;
+  border-radius: 0.4rem;
+}
+.status.en_attente { background: #fdcb6e33; }
+.status.accepte     { background: #00b89433; }
+.status.refuse      { background: #d6303133; }
+
+.search-section input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 2rem;
+  outline: none;
+  margin: auto;
+  display: block;
+}
+
+.medecins-list {
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
+  margin-top: 1.5rem;
+}
+.med-card {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.med-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+.med-info h3 {
+  margin: 0 0 0.4rem;
+  color: #2d3436;
+}
+.med-info p {
+  margin: 0.2rem 0;
+  color: #636e72;
+  font-size: 0.9rem;
+}
+
+.btn-request {
+  margin-top: 1rem;
+  padding: 0.6rem;
+  background: #6c5ce7;
+  color: #fff;
+  border: none;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.btn-request:disabled {
+  background: #b2bec3;
+  cursor: default;
+}
+.btn-request:hover:not(:disabled) {
+  background: #4834d4;
+}

@@ -27,7 +27,7 @@ export default function Partage({ user }) {
     setPartages([lien, ...partages]);
     setSelection([]);
     setDuree('3');
-    alert('🔗 Lien généré avec succès');
+    alert(' Lien généré avec succès');
   };
 
   const supprimerLien = (id) => {
@@ -38,7 +38,7 @@ export default function Partage({ user }) {
     <div className="partage-page">
       <h1>🔐 Partage sécurisé</h1>
 
-      {/* 📑 Liste de documents */}
+      {/*  Liste de documents */}
       <div className="bloc-docs">
         <h2>Documents disponibles</h2>
         <ul className="doc-list">
@@ -70,12 +70,12 @@ export default function Partage({ user }) {
             </select>
           </label>
           <button onClick={genererLien} disabled={selection.length === 0}>
-            🔗 Générer le lien
+             Générer le lien
           </button>
         </div>
       </div>
 
-      {/* 📊 Historique */}
+      {/*  Historique */}
       <div className="bloc-lien">
         <h2>Liens générés</h2>
         <ul className="lien-list">

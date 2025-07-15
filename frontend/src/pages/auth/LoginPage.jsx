@@ -12,7 +12,7 @@ const LoginPage = () => {
         <p className="quote">
           “Une plateforme simple, intuitive et sécurisée. Idéale pour suivre tous mes rendez-vous et documents de santé.”
         </p>
-        <p className="author">— Clara B., utilisatrice depuis 1 an</p>
+        <p className="author">— Brice ., utilisatrice depuis 1 an</p>
       </div>
       <div className="login-right">
         <LoginForm />

@@ -1,38 +1,77 @@
 .mes-patients-page {
   padding: 2rem;
-  max-width: 800px;
-  margin: auto;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-.patient-list {
-  list-style: none;
-  padding: 0;
+.mes-patients-page h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #2d3436;
 }
 
-.patient-card {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.patient-card button {
-  margin-top: 0.5rem;
-  background-color: #1976d2;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.patient-card button:hover {
-  background-color: #1565c0;
+.loader {
+  text-align: center;
+  padding: 2rem;
 }
 
 .error {
-  color: red;
-  font-weight: bold;
+  color: #d63031;
+  text-align: center;
+  padding: 1rem;
+}
+
+.empty {
+  text-align: center;
+  color: #636e72;
+  font-style: italic;
+}
+
+.patients-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.patient-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.patient-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.patient-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  color: #2d3436;
+}
+
+.patient-info p {
+  margin: 0.3rem 0;
+  color: #636e72;
+  font-size: 0.95rem;
+}
+
+.btn-vaccins {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  background-color: #00b894;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-vaccins:hover {
+  background-color: #019170;
 }

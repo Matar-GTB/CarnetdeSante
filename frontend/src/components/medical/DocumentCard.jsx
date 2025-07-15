@@ -1,61 +1,73 @@
-// frontend/src/components/medical/DocumentCard.jsx
+// src/components/medical/DocumentCard.jsx
 import React, { useState } from 'react';
 import './DocumentCard.css';
-import { downloadDocument } from '../../services/documentService';
+import { downloadDocument, deleteDocument } from '../../services/documentService';
 import ShareDocumentModal from './ShareDocumentModal';
-import axios from 'axios';
+import ConfirmDialog from '../ui/ConfirmDialog';
 
 const DocumentCard = ({ document, onDelete }) => {
-  const [showModal, setShowModal] = useState(false);
+  const [showShare, setShowShare]     = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [error, setError]             = useState(null);
 
   const handleDownload = async () => {
+    setError(null);
     try {
-      const blob = await downloadDocument(document.id);
-      const url = window.URL.createObjectURL(new Blob([blob]));
-      const link = window.document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', document.nom_fichier || 'document.pdf');
-      window.document.body.appendChild(link);
-      link.click();
-      link.remove();
+      const { blob, filename } = await downloadDocument(document.id);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Erreur téléchargement :', err);
-      alert('Erreur lors du téléchargement du fichier.');
+      setError('Impossible de télécharger le fichier.');
     }
   };
 
   const handleDelete = async () => {
-    const confirmDelete = window.confirm(`Supprimer le document "${document.titre}" ?`);
-    if (!confirmDelete) return;
-
+    setError(null);
     try {
-      await axios.delete(`http://localhost:5000/api/medical/documents/${document.id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        }
-      });
-      alert("Document supprimé ✅");
-      if (onDelete) onDelete(document.id);
+      await deleteDocument(document.id);
+      onDelete(document.id);
     } catch (err) {
-      console.error("Erreur suppression :", err);
-      alert("Échec de la suppression ❌");
+      console.error('Erreur suppression :', err);
+      setError('Impossible de supprimer le document.');
+    } finally {
+      setShowConfirm(false);
     }
   };
 
   return (
     <div className="document-card">
+      {error       && <div className="doc-error">{error}</div>}
       <h4>{document.type_document}</h4>
       <p><strong>Titre :</strong> {document.titre}</p>
-      <p><strong>Nom fichier :</strong> {document.nom_fichier || document.url_fichier}</p>
+      <p><strong>Fichier :</strong> {document.nom_fichier || document.url_fichier}</p>
       <p><strong>Date :</strong> {document.date_document}</p>
+
       <div className="document-actions">
-        <button onClick={handleDownload}>📥 Télécharger</button>
-        <button onClick={handleDelete}>🗑️ Supprimer</button>
-        <button onClick={() => setShowModal(true)}>🔗 Partager</button>
+        <button onClick={handleDownload}>⬇️ Télécharger</button>
+        <button onClick={() => setShowConfirm(true)}>🗑️ Supprimer</button>
+        <button onClick={() => setShowShare(true)}>🔗 Partager</button>
       </div>
 
-      {showModal && (
-        <ShareDocumentModal documentId={document.id} onClose={() => setShowModal(false)} />
+      {showConfirm && (
+        <ConfirmDialog
+          message={`Supprimer "${document.titre}" ?`}
+          onConfirm={handleDelete}
+          onCancel={() => setShowConfirm(false)}
+        />
+      )}
+
+      {showShare && (
+        <ShareDocumentModal
+          documentId={document.id}
+          onClose={() => setShowShare(false)}
+        />
       )}
     </div>
   );

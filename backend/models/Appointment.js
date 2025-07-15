@@ -1,3 +1,4 @@
+// backend/models/Appointment.js
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 import User from './User.js';
@@ -29,14 +30,16 @@ const Appointment = sequelize.define('Appointment', {
     allowNull: false
   },
   type_rendezvous: {
-    type: DataTypes.STRING(50)
+    type: DataTypes.STRING(50),
+    defaultValue: null
   },
   statut: {
-    type: DataTypes.ENUM('planifie', 'termine', 'annule', 'reprogramme'),
-    defaultValue: 'planifie'
+    type: DataTypes.ENUM('en_attente', 'planifie', 'termine', 'annule', 'reprogramme'),
+    defaultValue: 'en_attente'
   },
   notes: {
-    type: DataTypes.TEXT
+    type: DataTypes.TEXT,
+    defaultValue: null
   },
   date_creation: {
     type: DataTypes.DATE,
@@ -44,17 +47,12 @@ const Appointment = sequelize.define('Appointment', {
   }
 }, {
   tableName: 'rendezvous',
+  underscored: true,
   timestamps: false
 });
 
 // Associations
-Appointment.belongsTo(User, {
-  as: 'Patient',
-  foreignKey: 'patient_id'
-});
-Appointment.belongsTo(User, {
-  as: 'Medecin',
-  foreignKey: 'medecin_id'
-});
+Appointment.belongsTo(User, { as: 'Patient', foreignKey: 'patient_id' });
+Appointment.belongsTo(User, { as: 'Medecin', foreignKey: 'medecin_id' });
 
 export default Appointment;

@@ -45,15 +45,24 @@ const PatientProfile = ({ token }) => {
     setEditMode(false);
   };
 
+  const hasChanges = () => {
+    return Object.keys(initialData).some(key => form[key] !== initialData[key]);
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
+if (!hasChanges()) {
+    alert('Êtes-vous sûr de vouloir modifier ?');
+    return;
+  }
+
     try {
       await updateUserProfile(token, form);
-      alert("Données médicales mises à jour");
+      alert("✅ Données médicales mises à jour");
       setInitialData(form);
       setEditMode(false);
     } catch (err) {
-      alert("Erreur lors de la mise à jour");
+      alert("❌ Erreur lors de la mise à jour");
       console.error(err.response?.data || err.message);
     }
   };
@@ -105,7 +114,12 @@ const PatientProfile = ({ token }) => {
 
       {!editMode ? (
         <div className="button-group">
-          <button type="button" onClick={() => setEditMode(true)}>Modifier</button>
+          <button
+            type="button"
+            onClick={() => setEditMode(true)}
+          >
+            Modifier
+          </button>
         </div>
       ) : (
         <div className="button-group">

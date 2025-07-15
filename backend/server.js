@@ -11,8 +11,7 @@ import medicalRoutes from './routes/medicalRoutes.js';
 import appointmentRoutes from './routes/appointmentRoutes.js';
 import sharingRoutes from './routes/sharingRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
-import medecinRoutes from './routes/medecinRoutes.js';
-
+import traitantRoutes from './routes/traitantRoutes.js';
 
 
 dotenv.config();
@@ -21,10 +20,25 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middlewares
-app.use(cors());
+const allowedOrigins = [
+   'http://localhost:3000',
+   'http://127.0.0.1:3000'
+ ];
+ app.use(cors({
+   origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+       callback(null, true);
+     } else {
+       callback(new Error(`Origine CORS non autorisée : ${origin}`));
+     }
+   },
+   credentials: true,
+   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+   allowedHeaders: ['Content-Type','Authorization']
+ }));
 app.use(express.json());
 app.use('/uploads', express.static('uploads')); // Pour les fichiers uploadés
-app.use('/api/medecins', medecinRoutes);
+app.use('/api/traitants', traitantRoutes);
 
 // Routes
 app.use('/api/auth', authRoutes);

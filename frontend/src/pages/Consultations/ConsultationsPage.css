@@ -1,0 +1,185 @@
+/* conteneur */
+.consultations-page {
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+.consultations-page h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* onglets */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.tabs button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  background: #ecf0f1;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.tabs button.active {
+  background: #6c5ce7;
+  color: white;
+}
+.tabs button:hover:not(.active) {
+  background: #dfe6e9;
+}
+
+/* grid cartes */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
+  gap: 1.5rem;
+}
+
+/* carte */
+.card {
+  background: white;
+  border-radius: 0.8rem;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  padding: 1rem;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+.icon { font-size: 1.4rem; }
+.icon.pending { color: #fdcb6e; }
+.card.pending { border-top: 4px solid #fdcb6e; }
+.card.confirmed { border-top: 4px solid #00b894; }
+.notes {
+  font-style: italic;
+  color: #636e72;
+  margin: 0.5rem 0;
+}
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.card-actions button {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: background 0.2s;
+}
+.card-actions button:first-child {
+  background: #00b894;
+}
+.card-actions button:last-child {
+  background: #d63031;
+}
+
+/* timeline */
+.timeline {
+  border-left: 2px solid #dfe6e9;
+  padding-left: 1rem;
+}
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+.dot {
+  width: 1.6rem; height: 1.6rem;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+}
+.dot.confirmed { background: #00b894; }
+
+/* blocages */
+.blocked-section {
+  max-width: 500px;
+  margin: 0 auto;
+}
+.block-form {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+.block-form input, .block-form button {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 0.4rem;
+}
+.block-form button {
+  background: #fdcb6e;
+  border: none;
+  color: #2d3436;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.block-form button:hover {
+  background: #e6b44f;
+}
+.blocked-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.blocked-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem;
+  background: #ffeaa7;
+  border-radius: 0.6rem;
+  margin-bottom: 0.8rem;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+.blocked-list .icon.block {
+  color: #fdcb6e;
+}
+.blocked-list button {
+  margin-left: auto;
+  background: #d63031;
+  border: none;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.blocked-list button:hover {
+  background: #b22424;
+}
+
+/* loader & error */
+.loader {
+  text-align: center;
+  padding: 2rem;
+}
+.error {
+  color: #d63031;
+  text-align: center;
+  padding: 1rem;
+}
+
+
+/* point pour historique */
+.dot.history {
+  background: #a29bfe;
+}
+
+/* message vide */
+.timeline p, .grid p, .blocked-section p {
+  text-align: center;
+  color: #636e72;
+  margin-top: 1rem;
+}

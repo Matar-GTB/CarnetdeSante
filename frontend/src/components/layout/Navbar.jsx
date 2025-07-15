@@ -20,7 +20,7 @@ const Navbar = ({ role }) => {
             <li><Link to="/dashboard">Accueil</Link></li>
             <li><Link to="/documents">Documents</Link></li>
             <li><Link to="/vaccinations">Vaccins</Link></li>
-            <li><Link to="/appointments">Rendez-vous</Link></li>
+            <li><Link to="/rendezvous">Rendez-vous</Link></li>
             <li><Link to="/partage">Partage</Link></li>
           </>
         )}

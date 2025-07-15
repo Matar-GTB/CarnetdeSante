@@ -1,26 +1,33 @@
 import React, { useState } from 'react';
 import './VaccinationForm.css';
-import { addVaccination } from '../../services/vaccinationService';
 
-const VaccinationForm = () => {
+const VaccinationForm = ({ onAddSuccess }) => {
   const [nomVaccin, setNomVaccin] = useState('');
-  const [dateVaccination, setDateVaccination] = useState('');
+  const [dateAdministration, setDateAdministration] = useState('');
   const [dateRappel, setDateRappel] = useState('');
+  const [notes, setNotes] = useState('');
   const [message, setMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!nomVaccin || !dateVaccination) {
+    if (!nomVaccin || !dateAdministration) {
       setMessage("⚠️ Le nom du vaccin et la date de vaccination sont obligatoires.");
       return;
     }
 
     try {
-      await addVaccination({ nom_vaccin: nomVaccin, date_vaccination: dateVaccination, date_rappel: dateRappel });
+      await onAddSuccess({
+        nom_vaccin:          nomVaccin,
+        date_administration: dateAdministration,
+        date_rappel:         dateRappel,
+        notes
+      });
       setMessage("✅ Vaccin ajouté avec succès !");
+      // réinitialisation des champs
       setNomVaccin('');
-      setDateVaccination('');
+      setDateAdministration('');
       setDateRappel('');
+      setNotes('');
     } catch (err) {
       console.error(err);
       setMessage("❌ Une erreur est survenue.");
@@ -36,25 +43,32 @@ const VaccinationForm = () => {
       <input
         type="text"
         value={nomVaccin}
-        onChange={(e) => setNomVaccin(e.target.value)}
+        onChange={e => setNomVaccin(e.target.value)}
         placeholder="Ex : Pfizer, AstraZeneca"
       />
 
       <label>Date de vaccination *</label>
       <input
         type="date"
-        value={dateVaccination}
-        onChange={(e) => setDateVaccination(e.target.value)}
+        value={dateAdministration}
+        onChange={e => setDateAdministration(e.target.value)}
       />
 
       <label>Date de rappel (optionnelle)</label>
       <input
         type="date"
         value={dateRappel}
-        onChange={(e) => setDateRappel(e.target.value)}
+        onChange={e => setDateRappel(e.target.value)}
       />
 
-      <button type="submit">💾 Enregistrer</button>
+      <label>Notes (optionnel)</label>
+      <textarea
+        value={notes}
+        onChange={e => setNotes(e.target.value)}
+        placeholder="Ajoutez vos observations…"
+      />
+
+      <button type="submit">Enregistrer</button>
     </form>
   );
 };

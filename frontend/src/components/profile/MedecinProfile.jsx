@@ -145,12 +145,22 @@ const MedecinProfile = ({ token }) => {
 
       {!editMode ? (
         <div className="button-group">
-          <button type="button" onClick={() => setEditMode(true)}>Modifier</button>
+          <button
+           type="button"
+           onClick={() => setEditMode(true)}
+         >
+          Modifier
+         </button>
         </div>
       ) : (
         <div className="button-group">
           <button type="submit">Enregistrer</button>
-          <button type="button" onClick={handleCancel}>Annuler</button>
+          <button
+          type="button"
+           onClick={handleCancel}
+         >
+           Annuler
+         </button>
         </div>
       )}
     </form>

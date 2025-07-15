@@ -1,0 +1,70 @@
+.autocomplete-wrapper {
+  position: relative;
+  max-width: 500px;
+  margin: 1rem auto;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.autocomplete-wrapper label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: bold;
+}
+
+.autocomplete-wrapper input[type="text"] {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 999px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.suggestions-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 0.3rem;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.suggestion-item {
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.suggestion-item:hover {
+  background: #f0f0f0;
+}
+
+.appointment-form {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.appointment-form input,
+.appointment-form button {
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+}
+
+.appointment-form button {
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.appointment-form button:hover {
+  background-color: #4834d4;
+}

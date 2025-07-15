@@ -49,7 +49,7 @@ const handleConnexion = async (e) => {
 
       <label>Mot de passe</label>
       <input
-        type={showPassword ? 'text' : 'password'} // 👁️ affichage conditionnel
+        type={showPassword ? 'text' : 'password'} //  affichage conditionnel
         placeholder="••••••••"
         value={motDePasse}
         onChange={(e) => setMotDepasse(e.target.value)}

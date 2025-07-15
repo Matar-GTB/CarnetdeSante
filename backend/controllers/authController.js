@@ -11,7 +11,7 @@ const RESET_TOKEN_EXPIRATION = 60 * 60 * 1000; // 1h
 const SALT_ROUNDS = 12;
 
 /**
- * 🔐 Connexion utilisateur
+ *  Connexion utilisateur
  */
 export const login = async (req, res) => {
   try {
@@ -57,7 +57,7 @@ export const login = async (req, res) => {
 };
 
 /**
- * 📝 Inscription utilisateur
+ * Inscription utilisateur
  */
 export const register = async (req, res) => {
   try {
@@ -156,7 +156,7 @@ export const validateResetToken = async (req, res) => {
 };
 
 /**
- * 🔁 Réinitialisation du mot de passe
+ *  Réinitialisation du mot de passe
  */
 export const resetPassword = async (req, res) => {
   try {
@@ -187,21 +187,21 @@ export const resetPassword = async (req, res) => {
 };
 
 /**
- * 🎟 Génère un token JWT
+ *  Génère un token JWT
  */
 function generateToken(payload) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 }
 
 /**
- * 📧 Simule l'envoi d'un mail de réinitialisation
+ *  Simule l'envoi d'un mail de réinitialisation
  */
 function sendPasswordResetEmail(email, token) {
   console.log(`[Reset] Mail à ${email}: ${(process.env.CLIENT_URL || 'http://localhost:3000')}/reset-password/${token}`);
 }
 
 /**
- * ❗ Gestion centralisée des erreurs
+ *  Gestion centralisée des erreurs
  */
 function handleError(res, err, context = 'Erreur') {
   console.error(err);
