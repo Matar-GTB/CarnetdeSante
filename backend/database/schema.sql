@@ -137,6 +137,18 @@ CREATE TABLE notifications (
     est_lu BOOLEAN DEFAULT FALSE,
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- Table des rappels programmés
+CREATE TABLE IF NOT EXISTS rappels (
+  id              SERIAL PRIMARY KEY,
+  utilisateur_id  INTEGER NOT NULL REFERENCES utilisateurs(id),
+  type_rappel     VARCHAR(50) NOT NULL,
+  details         JSONB     NOT NULL,
+  recurrence      VARCHAR(20) NOT NULL DEFAULT 'aucune',
+  canaux          JSONB     NOT NULL DEFAULT '{}'::jsonb,
+  createdAt       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updatedAt       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 
 -- Création des index pour améliorer les performances
 CREATE INDEX idx_rendezvous_patient ON rendezvous(patient_id);

@@ -1,0 +1,105 @@
+.notifications-page {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #f9fafb;
+  font-family: 'Segoe UI', sans-serif;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+h2 {
+  text-align: center;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+}
+
+.message {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  padding: 0.8rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.btn-retour {
+  background-color: #64748b;
+  color: white;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-retour:hover {
+  background-color: #475569;
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.notif-card {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-left: 4px solid transparent;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.notif-card.non-lue {
+  background-color: #f0f9ff;
+  border-left-color: #3b82f6;
+  font-weight: 500;
+}
+
+.notif-card.lue {
+  opacity: 0.6;
+}
+
+.notif-content {
+  flex: 1;
+}
+
+.notif-content strong {
+  font-size: 1.05rem;
+  color: #1e40af;
+}
+
+.btn-supprimer {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  align-self: center;
+  transition: background-color 0.3s ease;
+}
+
+.btn-supprimer:hover {
+  background-color: #dc2626;
+}
+.section-label {
+  font-weight: bold;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #334155;
+  border-bottom: 1px solid #cbd5e1;
+  padding-bottom: 4px;
+}

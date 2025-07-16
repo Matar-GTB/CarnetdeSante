@@ -1,20 +1,20 @@
 import Notification from '../models/Notification.js';
-
+import User from '../models/User.js';
+import { genererRappelsMedicaments } from '../utils/rappels/genererRappelsMedicaments.js';
 /**
  * 🔔 Obtenir les notifications de l'utilisateur connecté
  */
 export const getNotifications = async (req, res) => {
   try {
+    await genererRappelsMedicaments(req.user.userId); // Génère les rappels à chaque requête
+
     const notifications = await Notification.findAll({
       where: { utilisateur_id: req.user.userId },
       order: [['date_creation', 'DESC']],
       limit: 30
     });
 
-    res.json({
-      success: true,
-      data: notifications
-    });
+    res.json({ success: true, data: notifications });
   } catch (error) {
     handleServerError(res, error, "Erreur lors de la récupération des notifications");
   }
@@ -35,7 +35,8 @@ export const markNotificationAsRead = async (req, res) => {
       });
     }
 
-    notification.lue = true;
+    notification.est_lu = true;
+
     await notification.save();
 
     res.json({
@@ -103,3 +104,14 @@ export const updateNotificationSettings = async (req, res) => {
     handleServerError(res, error, "Erreur mise à jour préférences");
   }
 };
+
+export const getNotificationSettings = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.userId);
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+    res.json({ success: true, data: user.preferences_notifications || {} });
+  } catch (error) {
+    handleServerError(res, error, "Erreur récupération préférences");
+  }
+}

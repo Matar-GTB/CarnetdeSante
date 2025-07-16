@@ -83,6 +83,17 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     defaultValue: 'default-avatar.jpg'
   },
+  preferences_notifications: {
+  type: DataTypes.JSONB,
+  allowNull: true,
+  defaultValue: {
+    email: true,
+    sms: false,
+    push: true
+  }
+},
+
+
 
   // Champs patients
   allergies: DataTypes.TEXT,
@@ -120,10 +131,6 @@ const User = sequelize.define('User', {
   // Sécurité
   token_reinitialisation: DataTypes.STRING,
   expiration_token_reinitialisation: DataTypes.DATE,
-  preferences_notifications: {
-    type: DataTypes.JSON,
-    allowNull: true
-    },
   est_verifie: {
     type: DataTypes.BOOLEAN,
     defaultValue: false

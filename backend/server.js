@@ -12,7 +12,8 @@ import appointmentRoutes from './routes/appointmentRoutes.js';
 import sharingRoutes from './routes/sharingRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import traitantRoutes from './routes/traitantRoutes.js';
-
+import rappelRoutes from './routes/rappelRoutes.js';
+import medicationRoutes from './routes/medicationRoutes.js';
 
 dotenv.config();
 
@@ -47,6 +48,8 @@ app.use('/api/medical', medicalRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/sharing', sharingRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/rappels', rappelRoutes);
+app.use('/api/medications', medicationRoutes);
 
 // Route de test
 app.get('/', (req, res) => {

@@ -1,8 +1,9 @@
+// backend/models/PriseMedicament.js
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 import User from './User.js';
 
-const Notification = sequelize.define('Notification', {
+const PriseMedicament = sequelize.define('PriseMedicament', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -16,35 +17,46 @@ const Notification = sequelize.define('Notification', {
       key: 'id'
     }
   },
-  type_notification: {
-    type: DataTypes.ENUM('rendezvous', 'vaccin', 'partage', 'rappel', 'securite'),
+  nom_medicament: {
+    type: DataTypes.STRING,
     allowNull: false
   },
-  titre: {
-    type: DataTypes.STRING(100),
+  dose: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  frequence: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  heure_prise: {
+    type: DataTypes.TIME,
+    allowNull: true
+  },
+  date_debut: {
+    type: DataTypes.DATEONLY,
     allowNull: false
   },
-  message: {
-    type: DataTypes.TEXT,
-    allowNull: false
+  date_fin: {
+    type: DataTypes.DATEONLY,
+    allowNull: true
   },
-  est_lu: {
+  rappel: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false
+    defaultValue: true
   },
-  
   date_creation: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
   }
 }, {
-  tableName: 'notifications',
+  tableName: 'prises_medicaments',
   timestamps: false
 });
 
-Notification.belongsTo(User, {
+PriseMedicament.belongsTo(User, {
   foreignKey: 'utilisateur_id',
   as: 'Utilisateur'
 });
 
-export default Notification;
+export default PriseMedicament;

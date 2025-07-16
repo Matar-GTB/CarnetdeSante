@@ -4,6 +4,7 @@ import './UserMenu.css';
 
 const UserMenu = ({ user }) => {
   const [open, setOpen] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const navigate = useNavigate();
   const menuRef = useRef();
 
@@ -18,6 +19,7 @@ const UserMenu = ({ user }) => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setOpen(false);
+        setShowSettings(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -32,10 +34,21 @@ const UserMenu = ({ user }) => {
         <span className="user-name">{user?.prenom} {user?.nom}</span>
         <span className="dropdown-icon">▾</span>
       </button>
+
       {open && (
         <ul className="user-menu-dropdown">
           <li><Link to="/profile">👤 Mon profil</Link></li>
-          <li><Link to="/settings/account">⚙️ Paramètres</Link></li>
+
+          <li className="parametres-toggle" onClick={() => setShowSettings(prev => !prev)}>
+            ⚙️ Paramètres ▸
+            {showSettings && (
+              <ul className="parametres-submenu">
+                <li><Link to="/settings/account">🔐 Compte</Link></li>
+                <li><Link to="/settings/notifications">🔔 Notifications</Link></li>
+              </ul>
+            )}
+          </li>
+
           <li onClick={handleLogout}>🚪 Déconnexion</li>
         </ul>
       )}

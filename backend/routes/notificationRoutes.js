@@ -4,8 +4,10 @@ import {
   getNotifications,
   markNotificationAsRead,
   deleteNotification,
-  updateNotificationSettings
+  updateNotificationSettings,
+  getNotificationSettings 
 } from '../controllers/notificationController.js';
+
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
@@ -21,5 +23,6 @@ router.delete('/:id', authMiddleware, deleteNotification);
 
 // Mettre à jour les préférences de notification
 router.put('/settings', authMiddleware, updateNotificationSettings);
+router.get('/settings', authMiddleware, getNotificationSettings);
 
 export default router;

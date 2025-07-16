@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import './VaccinationForm.css';
+import { creerRappelApi } from '../../services/rappelService';
 
 const VaccinationForm = ({ onAddSuccess }) => {
   const [nomVaccin, setNomVaccin] = useState('');
   const [dateAdministration, setDateAdministration] = useState('');
   const [dateRappel, setDateRappel] = useState('');
   const [notes, setNotes] = useState('');
+  const [creerRappel, setCreerRappel] = useState(false);  // Nouvel état pour rappel
   const [message, setMessage] = useState('');
 
   const handleSubmit = async (e) => {
@@ -15,19 +17,35 @@ const VaccinationForm = ({ onAddSuccess }) => {
       return;
     }
 
+    const vaccinData = {
+      nom_vaccin: nomVaccin,
+      date_administration: dateAdministration,
+      date_rappel: dateRappel,
+      notes
+    };
+
     try {
-      await onAddSuccess({
-        nom_vaccin:          nomVaccin,
-        date_administration: dateAdministration,
-        date_rappel:         dateRappel,
-        notes
-      });
+      await onAddSuccess(vaccinData);
+
+      if (creerRappel && dateRappel) {
+        await creerRappelApi({
+          type_rappel: 'vaccination',
+          details: {
+            vaccine: nomVaccin,
+            date: dateRappel
+          },
+          recurrence: 'aucune',
+          canaux: { email: true, sms: true, push: true }
+        });
+      }
+
       setMessage("✅ Vaccin ajouté avec succès !");
-      // réinitialisation des champs
       setNomVaccin('');
       setDateAdministration('');
       setDateRappel('');
       setNotes('');
+      setCreerRappel(false);
+
     } catch (err) {
       console.error(err);
       setMessage("❌ Une erreur est survenue.");
@@ -67,6 +85,15 @@ const VaccinationForm = ({ onAddSuccess }) => {
         onChange={e => setNotes(e.target.value)}
         placeholder="Ajoutez vos observations…"
       />
+
+      <label>
+        <input
+          type="checkbox"
+          checked={creerRappel}
+          onChange={() => setCreerRappel(prev => !prev)}
+        />
+        Programmer un rappel
+      </label>
 
       <button type="submit">Enregistrer</button>
     </form>

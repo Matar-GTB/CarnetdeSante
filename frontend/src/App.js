@@ -18,6 +18,13 @@ import AccountSettings             from './pages/Settings/AccountSettings';
 import AppointmentsPage            from './pages/appointments/AppointmentsPage';
 import ConsultationsPage           from './pages/Consultations/ConsultationsPage';
 import RequestTraitantPage         from './pages/medecinTraitant/RequestTraitantPage';
+import CreateRappelPage from './pages/rappels/CreateRappelPage.jsx';
+import RappelsPage from './pages/rappels/RappelsPage';
+import NotificationsPage from './pages/notifications/NotificationsPage';
+import NotificationSettings from './pages/Settings/NotificationSettings';
+import MedicationForm from './pages/medications/MedicationForm';
+
+
 
 export default function App() {
   const { token, role } = useContext(AuthContext);
@@ -44,11 +51,23 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-
+      <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+<Route path="/settings/notifications" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
       {/* Rendez-vous */}
       <Route path="/rendezvous" element={<ProtectedRoute><AppointmentsPage /></ProtectedRoute>} />
       <Route path="/consultations" element={<ProtectedRoute><ConsultationsPage /></ProtectedRoute>} />
       <Route path="/traitant/request" element={<ProtectedRoute><RequestTraitantPage /></ProtectedRoute>} />
+      {/* Rappel */}
+        <Route path="/rappels/nouveau" element={<ProtectedRoute><CreateRappelPage/></ProtectedRoute>} />
+        <Route path="/rappels" element={<ProtectedRoute><RappelsPage /></ProtectedRoute>} />
+<Route
+  path="/medications"
+  element={
+    <ProtectedRoute>
+      <MedicationForm />
+    </ProtectedRoute>
+  }
+/>
 
       {/* Médecin */}
       <Route path="/patients" element={<ProtectedRoute><MesPatients /></ProtectedRoute>} />

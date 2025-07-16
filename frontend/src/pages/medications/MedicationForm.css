@@ -1,0 +1,43 @@
+.medication-form {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+.medication-form h2 {
+  margin-bottom: 1rem;
+  color: #341f97;
+}
+
+.medication-form label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.medication-form input,
+.medication-form select {
+  width: 100%;
+  padding: 0.6rem;
+  margin-top: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+}
+
+.medication-form .actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.medication-form button {
+  padding: 0.5rem 1.2rem;
+  background: #341f97;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}

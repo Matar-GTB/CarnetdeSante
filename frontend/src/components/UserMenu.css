@@ -40,12 +40,12 @@
 
 .user-menu-dropdown {
   position: absolute;
-  top: 42px;
+  top: 45px;
   right: 0;
   background: white;
   border: 1px solid #ddd;
   border-radius: 10px;
-  width: 180px;
+  width: 200px;
   padding: 0.5rem 0;
   box-shadow: 0 8px 16px rgba(0,0,0,0.08);
   z-index: 100;
@@ -57,6 +57,7 @@
   cursor: pointer;
   transition: background 0.2s;
   font-weight: 500;
+  position: relative;
 }
 
 .user-menu-dropdown li:hover {
@@ -68,6 +69,30 @@
   color: #2d3436;
   display: block;
 }
+
+.parametres-submenu {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 0.3rem 0;
+  margin-left: 4px;
+  min-width: 160px;
+  z-index: 101;
+}
+
+.parametres-submenu li {
+  padding: 0.5rem 1rem;
+}
+
+.parametres-submenu li:hover {
+  background-color: #e2e8f0;
+}
+
 .user-icon {
   font-size: 1.1rem;
   color: #6c5ce7;
