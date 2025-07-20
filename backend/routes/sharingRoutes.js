@@ -1,13 +1,6 @@
 // backend/routes/sharingRoutes.js
 import express from 'express';
-import {
-  grantAccessToDoctor,
-  revokeDoctorAccess,
-  listAuthorizedDoctors,
-  createShareLink,
-  getSharedDocuments,
-  revokeShareLink,
-  getAccessLogs
+import {grantAccessToDoctor,revokeDoctorAccess,listAuthorizedDoctors,createShareLink,getSharedDocuments,revokeShareLink,getAccessLogs
 } from '../controllers/sharingController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 

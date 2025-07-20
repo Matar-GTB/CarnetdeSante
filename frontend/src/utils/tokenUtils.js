@@ -1,8 +1,26 @@
-// frontend/src/utils/tokenUtils.js
-
 import { jwtDecode } from 'jwt-decode';
 
+
+/**
+ * 🔐 Récupère et décode le token depuis le localStorage
+ */
+export const getTokenPayloadFromStorage = () => {
+  const token = localStorage.getItem('token');
+  if (!token || typeof token !== 'string') return null;
+
+  try {
+    return jwtDecode(token);
+  } catch (err) {
+    console.error("Erreur de décodage du token", err);
+    return null;
+  }
+};
+
+/**
+ * 🎯 Décode un token donné
+ */
 export const getTokenPayload = (token) => {
+  if (!token || typeof token !== 'string') return null;
   try {
     return jwtDecode(token);
   } catch (err) {

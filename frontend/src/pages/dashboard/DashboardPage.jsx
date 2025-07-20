@@ -1,24 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import DashboardPatient from './DashboardPatient';
 import DashboardMedecin from './DashboardMedecin';
 import './Dashboard.css';
-import { getTokenPayload } from '../../utils/tokenUtils';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import UserMenu from '../../components/UserMenu';
+import { useContext } from 'react';
+import { AuthContext } from '../../contexts/AuthContext';
 
 const DashboardPage = () => {
-  const [role, setRole] = useState('');
-  const [user, setUser] = useState(null);
+  const { user, role } = useContext(AuthContext);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const payload = getTokenPayload(token);
-    if (payload?.role) {
-      setRole(payload.role);
-      setUser(payload); // contient aussi prenom et nom maintenant
-    }
-  }, []);
 
   return (
     <>

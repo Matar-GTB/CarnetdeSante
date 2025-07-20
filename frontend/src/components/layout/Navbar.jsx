@@ -1,12 +1,16 @@
 // src/components/layout/Navbar.jsx
 import React, { useState, useEffect } from 'react';
+import { useContext } from 'react';
+import { AuthContext } from '../../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import { getNotificationsApi } from '../../services/notificationService';
-const Navbar = ({ role }) => {
+const Navbar = () => {
   const navigate = useNavigate();
   const handleLogout = () => navigate('/Logout');
   const [nonLues, setNonLues] = useState(0);
+  const { role,} = useContext(AuthContext);
+
 
 useEffect(() => {
     const fetchNonLues = async () => {
@@ -37,7 +41,7 @@ useEffect(() => {
             <Link to="/medications"> Prise de médicaments</Link>
             {/* Rappels programmés */}
             <li><Link to="/rappels">Rappels</Link></li>
-            <li><Link to="/rappels/nouveau">+ Nouveau rappel</Link></li>
+           
           </>
         )}
 

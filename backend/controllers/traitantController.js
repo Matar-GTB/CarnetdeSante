@@ -66,7 +66,7 @@ export const getDemandeTraitantByPatient = async (req, res) => {
       include: [{
         model: User,
         as: 'Medecin',
-        attributes: ['id', 'prenom', 'nom', 'specialite', 'etablissements']
+        attributes: ['id', 'prenom', 'nom', 'photo_profil', 'specialite', 'etablissements', 'langues']
       }],
       order: [['statut', 'ASC'], ['date_creation', 'DESC']]
     });
@@ -108,3 +108,36 @@ export const getPatientsByMedecin = async (req, res) => {
     return res.status(500).json({ success: false, message: "Erreur serveur" });
   }
 };
+/**
+ * GET /api/traitants/mes-traitants
+ * Le patient récupère ses médecins traitants (acceptés uniquement)
+ */
+export const getMesTraitants = async (req, res) => {
+  try {
+    if (req.user.role !== 'patient') {
+      return res.status(403).json({ success: false, message: "Accès refusé" });
+    }
+    const patient_id = req.user.userId;
+    // On va chercher toutes les demandes acceptées côté patient
+    const demandes = await DemandeTraitant.findAll({
+      where: {
+        patient_id,
+        statut: 'accepte'
+      },
+      include: [{
+        model: User,
+        as: 'Medecin',
+        attributes: ['id', 'prenom', 'nom', 'specialite', 'etablissements', 'langues', 'photo_profil']
+      }]
+    });
+    // On map pour ne retourner que les infos utiles du médecin
+    const medecins = demandes
+      .map(d => d.Medecin)
+      .filter(m => !!m); // Sécurité
+    return res.json({ success: true, data: medecins });
+  } catch (err) {
+    console.error("getMesTraitants:", err);
+    return res.status(500).json({ success: false, message: "Erreur serveur" });
+  }
+};
+

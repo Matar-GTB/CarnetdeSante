@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.jsx
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { getTokenPayload } from '../utils/tokenUtils';
 import api from '../services/api';
@@ -6,16 +5,17 @@ import api from '../services/api';
 export const AuthContext = createContext({
   token: null,
   role: null,
-  login: async () => {},
+  user: null,
+  loginContext: async () => {},
   logout: () => {}
 });
 
 export function AuthProvider({ children }) {
-  // --- État local du token et rôle ---
   const [token, setToken] = useState(localStorage.getItem('token'));
-  const [role, setRole]   = useState(null);
+  const [role, setRole] = useState(null);
+  const [user, setUser] = useState(null);
 
-  // --- 1️⃣ Hydratation initiale & test d'expiration à chaque changement de token ---
+  // 1️⃣ Vérifie le token au chargement ou à chaque changement
   useEffect(() => {
     if (!token) {
       setRole(null);
@@ -24,16 +24,30 @@ export function AuthProvider({ children }) {
 
     const { exp, role } = getTokenPayload(token);
     if (Date.now() > exp * 1000) {
-      // token déjà expiré
-      setToken(null);
+      setToken(null); // expiré
     } else {
-      // token valide : on stocke et on met le rôle
       setRole(role);
       localStorage.setItem('token', token);
     }
   }, [token]);
 
-  // --- 2️⃣ Synchronisation multi‐onglets via l'événement storage ---
+  // 1️⃣bis : Charge les infos utilisateur
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const { data } = await api.get('/users/me');
+        if (data.success) setUser(data.data);
+      } catch (err) {
+        console.error('Erreur chargement profil :', err);
+        setUser(null); // ex: 401
+      }
+    };
+
+    if (token) fetchProfile();
+    else setUser(null);
+  }, [token]);
+
+  // 2️⃣ Synchronisation multi‐onglets
   useEffect(() => {
     const handleStorage = e => {
       if (e.key === 'token') {
@@ -44,15 +58,14 @@ export function AuthProvider({ children }) {
     return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
-  // --- 3️⃣ Rafraîchissement proactif 1 min avant expiration ---
+  // 3️⃣ Rafraîchissement proactif
   useEffect(() => {
     if (!token) return;
 
     const { exp } = getTokenPayload(token);
-    const msBefore = exp * 1000 - Date.now() - 60_000; // 1 minute avant
+    const msBefore = exp * 1000 - Date.now() - 60_000;
 
     if (msBefore <= 0) {
-      // si on est déjà passé, purge
       setToken(null);
       return;
     }
@@ -62,25 +75,25 @@ export function AuthProvider({ children }) {
         const { data } = await api.post('/auth/refresh-token', {}, { withCredentials: true });
         setToken(data.token);
       } catch {
-        // si refresh échoue, on déconnecte
-        setToken(null);
+        setToken(null); // refresh échoué
       }
     }, msBefore);
 
     return () => clearTimeout(timerId);
   }, [token]);
 
-  // --- 4️⃣ Méthodes exposées pour login/logout ---
-  const login = useCallback(newToken => {
+  // 4️⃣ Méthodes de login / logout
+  const loginContext = useCallback(newToken => {
     setToken(newToken);
   }, []);
 
   const logout = useCallback(() => {
     setToken(null);
+    localStorage.removeItem('token');
   }, []);
 
   return (
-    <AuthContext.Provider value={{ token, role, login, logout }}>
+    <AuthContext.Provider value={{ token, role, user, loginContext, logout }}>
       {children}
     </AuthContext.Provider>
   );

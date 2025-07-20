@@ -183,3 +183,91 @@
   color: #636e72;
   margin-top: 1rem;
 }
+.refused-badge {
+  color: #fff;
+  background: #d33044;
+  border-radius: 5px;
+  padding: 0 8px;
+  font-size: 0.85em;
+  margin-left: 8px;
+}
+.dot.refused {
+  color: #d33044;
+}
+.cancelled-badge {
+  background: #ffe1e6;
+  color: #cb1f3b;
+  font-size: 0.9em;
+  padding: 2px 8px;
+  border-radius: 8px;
+  margin-left: 9px;
+  font-weight: bold;
+}
+.dot.cancelled {
+  background: #cb1f3b;
+  color: #fff;
+}
+.cancel-reason {
+  font-size: 0.95em;
+  color: #cc2d40;
+  margin-top: 4px;
+}
+.btn-cancel {
+  background: #ffe1e6;
+  color: #cb1f3b;
+  border: none;
+  border-radius: 7px;
+  padding: 4px 12px;
+  cursor: pointer;
+  margin-top: 7px;
+}
+.btn-cancel:hover {
+  background: #ffb4c1;
+}
+.btn-retour {
+  position: sticky;
+  top: 1rem;
+  z-index: 2;
+  background: #e6e8f1;
+  color: #2d5ca4;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-retour:hover {
+  background: #c6d1ed;
+}
+.badge-traitant {
+  display: inline-block;
+  margin-left: 8px;
+  background: #55efc4;
+  color: #065f46;
+  padding: 2px 10px;
+  border-radius: 7px;
+  font-size: 0.87em;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  vertical-align: middle;
+}
+.consult-search-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+.consult-search-bar input {
+  width: 350px;
+  max-width: 95vw;
+  padding: 0.7rem 1.1rem;
+  border-radius: 2rem;
+  border: 1.5px solid #bbb;
+  font-size: 1rem;
+  outline: none;
+  transition: border .2s;
+}
+.consult-search-bar input:focus {
+  border: 1.5px solid #6c5ce7;
+}

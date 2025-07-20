@@ -1,43 +1,180 @@
-.medication-form {
+/* ====== Conteneur principal du formulaire médicament ====== */
+.medication-form-container {
+  max-width: 900px;
+  width: 100vw;
+  margin: 40px auto 0 auto;
   background: #fff;
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  max-width: 600px;
-  margin: 2rem auto;
-}
-
-.medication-form h2 {
-  margin-bottom: 1rem;
-  color: #341f97;
-}
-
-.medication-form label {
-  display: block;
-  margin-top: 1rem;
-  font-weight: 600;
-}
-
-.medication-form input,
-.medication-form select {
-  width: 100%;
-  padding: 0.6rem;
-  margin-top: 0.3rem;
-  border: 1px solid #ccc;
-  border-radius: 0.5rem;
-}
-
-.medication-form .actions {
-  margin-top: 1.5rem;
+  border-radius: 22px;
+  box-shadow: 0 4px 32px 0 rgba(100, 80, 255, 0.08);
+  padding: 2.5rem 2.5rem 2rem 2.5rem;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.medication-form button {
-  padding: 0.5rem 1.2rem;
-  background: #341f97;
-  color: white;
+/* ====== Structure de base du formulaire ====== */
+.medication-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  align-items: center;             /* <-- AJOUT: Centre tous les éléments enfants */
+}
+
+/* ====== Libellé/champ du formulaire ====== */
+.medication-form label {
+  font-weight: 500;
+  color: #3a3b4b;
+  margin-bottom: 6px;
+  font-size: 1.11rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  max-width: 720px;                /* <-- AJOUT: largeur max harmonisée */
+}
+
+.medication-form input[type="text"],
+.medication-form input[type="date"],
+.medication-form input[type="time"],
+.medication-form select {
+  border: 1.5px solid #e4e5ef;
+  border-radius: 9px;
+  padding: 8px 14px;
+  font-size: 1.08rem;
+  background: #f9fafd;
+  transition: border 0.18s;
+  margin-top: 3px;
+  width: 100%;                     /* <-- AJOUT: force la largeur */
+  max-width: 720px;                /* <-- même largeur que les labels */
+  box-sizing: border-box;          /* <-- important pour padding */
+}
+
+.frequency-selector {
+  width: 100%;
+  max-width: 720px;                /* <-- Pour le composant heures/intervalle */
+  margin: 0 auto;
+}
+
+.hours-list {
+  width: 100%;
+  max-width: 720px;
+}
+
+/* ====== Bouton retour en haut ====== */
+.btn-retour {
+  background: none;
   border: none;
-  border-radius: 0.5rem;
+  color: #705cf6;
+  font-size: 1.15rem;
   cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 2px;
+  align-self: flex-start;
+  transition: color 0.15s;
+  padding-left: 0.1rem;
+}
+.btn-retour:hover {
+  color: #4422b6;
+}
+
+/* ====== Titre du formulaire ====== */
+h2 {
+  color: #392cb1;
+  font-size: 2rem;
+  margin-bottom: 0.7rem;
+  letter-spacing: 1px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ====== Case à cocher ====== */
+.medication-form input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #6c5ce7;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* ====== Boutons étapes ====== */
+.step-buttons {
+  display: flex;
+  gap: 18px;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 720px;                /* <-- Largeur des boutons harmonisée */
+  margin-top: 20px;
+}
+.step-buttons button {
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 7px 28px;
+  border: none;
+  background: #edeaff;
+  color: #5b49b1;
+  cursor: pointer;
+  transition: background 0.17s;
+}
+.step-buttons button[type="submit"] {
+  background: linear-gradient(90deg, #6c5ce7, #7158e2 87%);
+  color: #fff;
+}
+.step-buttons button:hover {
+  background: #dad4fb;
+}
+.step-buttons button[type="submit"]:hover {
+  background: linear-gradient(90deg, #7158e2 40%, #341f97 100%);
+}
+
+/* ====== Message de validation/erreur ====== */
+.message {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: #6c5ce7;
+  font-weight: 600;
+  background: #f3f0ff;
+  border-radius: 8px;
+  padding: 8px 0;
+}
+
+/* ====== Version mobile (responsive) ====== */
+@media (max-width: 850px) {
+  .medication-form-container,
+  .medication-form label,
+  .medication-form input[type="text"],
+  .medication-form input[type="date"],
+  .medication-form input[type="time"],
+  .medication-form select,
+  .frequency-selector,
+  .hours-list,
+  .step-buttons {
+    max-width: 99vw;
+  }
+  .medication-form-container {
+    padding: 1.2rem 0.3rem 1.2rem 0.3rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px 0 rgba(100, 80, 255, 0.11);
+  }
+  h2 {
+    font-size: 1.4rem;
+  }
+  .medication-form label {
+    font-size: 1rem;
+  }
+}
+.required-star {
+  color: #e04e4e;
+  margin-left: 4px;
+  font-size: 1.11em;
+  font-weight: 700;
+}
+
+.optional-label {
+  color: #888ca0;
+  margin-left: 6px;
+  font-size: 0.96em;
+  font-style: italic;
+  font-weight: 400;
 }

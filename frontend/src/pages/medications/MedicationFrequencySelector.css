@@ -1,0 +1,93 @@
+/* ========== SECTION INTERVALLE : TOUT SUR UNE LIGNE ========== */
+
+.interval-row {
+  display: flex;
+  align-items: center;
+  gap: 32px;             /* Espace entre le bloc intervalle et le bloc début/fin */
+  justify-content: center;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.freq-label {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 1.13rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+  justify-content: flex-start;
+}
+
+
+.interval-input {
+  width: 62px;
+  height: 40px;
+  font-size: 1.27rem;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 10px;
+  border: 1.4px solid #d1d5db;
+  background: #f7f8fa;
+  margin: 0 2px;
+  box-shadow: 0 1.5px 7px 0 rgba(110, 90, 255, 0.03);
+  transition: border 0.18s;
+}
+
+.interval-label {
+  font-size: 1.07rem;
+  font-weight: 500;
+  color: #7158e2;
+  margin: 0 3px 0 1px;
+}
+
+.interval-time-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.interval-time-row label {
+  font-size: 1rem;
+  color: #3a3b4b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+/* Input heure/début/fin compact */
+.hour-input.compact {
+  min-width: 90px;
+  width: 90px;
+  max-width: 110px;
+  padding: 6px 12px;
+  border-radius: 9px;
+  border: 1.2px solid #d1d5db;
+  background: #f7f8fa;
+  font-size: 1.07rem;
+  margin: 0;
+}
+
+/* ================== Responsive mobile ================== */
+@media (max-width: 700px) {
+  .interval-row,
+  .interval-time-row {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+    width: 100%;
+  }
+  .freq-label {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+    margin-right: 0;
+  }
+  .hour-input.compact, .interval-input {
+    width: 55vw;
+    min-width: 85px;
+    font-size: 1.05rem;
+    height: 38px;
+  }
+}

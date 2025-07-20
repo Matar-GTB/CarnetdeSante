@@ -1,18 +1,22 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './UserMenu.css';
+import { AuthContext } from '../contexts/AuthContext';
+import { getTokenPayload } from '../utils/tokenUtils';
 
 const UserMenu = ({ user }) => {
   const [open, setOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const navigate = useNavigate();
   const menuRef = useRef();
+  const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
 
   const initials = `${user?.prenom?.[0] || ''}${user?.nom?.[0] || ''}`.toUpperCase();
+  const role = getTokenPayload()?.role;
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
+    logout();
+    navigate('/auth/login');
   };
 
   useEffect(() => {
@@ -38,6 +42,10 @@ const UserMenu = ({ user }) => {
       {open && (
         <ul className="user-menu-dropdown">
           <li><Link to="/profile">👤 Mon profil</Link></li>
+
+          {role === 'medecin' && (
+            <li><Link to="/disponibilites">🗓️ Disponibilités</Link></li>
+          )}
 
           <li className="parametres-toggle" onClick={() => setShowSettings(prev => !prev)}>
             ⚙️ Paramètres ▸

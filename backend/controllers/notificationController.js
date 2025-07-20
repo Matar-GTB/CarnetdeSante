@@ -1,13 +1,10 @@
 import Notification from '../models/Notification.js';
 import User from '../models/User.js';
-import { genererRappelsMedicaments } from '../utils/rappels/genererRappelsMedicaments.js';
 /**
  * 🔔 Obtenir les notifications de l'utilisateur connecté
  */
 export const getNotifications = async (req, res) => {
   try {
-    await genererRappelsMedicaments(req.user.userId); // Génère les rappels à chaque requête
-
     const notifications = await Notification.findAll({
       where: { utilisateur_id: req.user.userId },
       order: [['date_creation', 'DESC']],

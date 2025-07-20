@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import './RendezVousAutre.css';
 import { getMedecinsDisponibles, createAppointment } from '../../services/appointmentService';
 import { getTokenPayload } from '../../utils/tokenUtils';
+import { useContext } from 'react';
+import { AuthContext } from '../../contexts/AuthContext';
 
 export default function RendezVousAutre() {
   const [allDocs, setAllDocs]         = useState([]);
@@ -12,6 +14,7 @@ export default function RendezVousAutre() {
   const [formData, setFormData]       = useState({ date: '', heure: '' });
   const [showList, setShowList]       = useState(false);
   const wrapperRef = useRef(null);
+  const { token } = useContext(AuthContext);
 
   // Chargement des médecins
   useEffect(() => {
@@ -46,7 +49,7 @@ export default function RendezVousAutre() {
   }, [query, allDocs]);
 
   // Récupérer l’ID du patient
-  const userId = getTokenPayload(localStorage.getItem('token'))?.userId;
+  const userId = getTokenPayload(token)?.userId;
 
   const handleSelect = doc => {
     setSelected(doc);

@@ -36,3 +36,18 @@ export const deleteAppointment = async (id) => {
   await api.delete(`/appointments/${id}`);
   return true;
 };
+//Refus
+export const refuseAppointment = async (id) => {
+  const res = await api.patch(`/appointments/${id}/refuse`);
+  return res.data.data;
+};
+//8
+export const cancelAppointment = async (id, message) => {
+  const res = await api.patch(`/appointments/${id}/cancel`, { message });
+  return res.data.data;
+};
+// 9) Récupérer les créneaux disponibles d’un médecin pour une date donnée
+export const getCreneauxDisponibles = async (medecinId, date) => {
+  const res = await api.get(`/appointments/${medecinId}/disponibles/${date}`);
+  return res.data.data;
+};

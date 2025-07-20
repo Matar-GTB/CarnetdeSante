@@ -5,7 +5,7 @@ import api from './api';
  * Récupérer la liste complète des médecins (pour la recherche de traitant)
  */
 export const getAllMedecins = async () => {
-  const res = await api.get('/appointments/disponibles');
+  const res = await api.get('/users/doctors');
   return res.data.data;
 };
 
@@ -35,3 +35,13 @@ export const getMyPatients = async () => {
   const res = await api.get('/traitants/patients');
   return res.data.data;
 };
+
+/**
+ * Récupère la liste des médecins traitants acceptés pour le patient connecté
+ * @returns {Promise<Array>}  // Array de médecins : { id, prenom, nom, specialite, etablissements, ... }
+ */
+export const getMyTraitants = async () => {
+  const res = await api.get('/traitants/mes-traitants');
+  return res.data.data;
+};
+

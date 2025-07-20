@@ -1,15 +1,16 @@
 // frontend/components/LoginForm.jsx
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import { login } from '../../services/authService';
-
+import { AuthContext } from '../../contexts/AuthContext';
 const LoginForm = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDepasse] = useState('');
   const [error, setError] = useState('');
  const [showPassword, setShowPassword] = useState(false); // 👁️ état pour afficher/masquer
+const { loginContext } = useContext(AuthContext); // la fonction définie dans ton contexte
 
 const handleConnexion = async (e) => {
   e.preventDefault();
@@ -18,15 +19,7 @@ const handleConnexion = async (e) => {
   try {
     const data = await login({ email, mot_de_passe: motDePasse });
 
-      // Sauvegarde dans localStorage
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify({
-        id: data.id,
-        email: data.email,
-        role: data.role,
-        nom: data.nom_complet
-      }));
-
+      loginContext(data.token);
       navigate('/dashboard');
     } catch (err) {
       console.error(err);

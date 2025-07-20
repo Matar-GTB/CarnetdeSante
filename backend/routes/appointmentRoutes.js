@@ -1,37 +1,46 @@
-// backend/routes/appointmentRoutes.js
-
 import express from 'express';
 import {
   createAppointment,
   acceptAppointment,
+  refuseAppointment,
+  cancelAppointment,
   getMedecinsTraitants,
   getMedecinsDisponibles,
   getAppointmentsByUser,
-  deleteAppointment
+  deleteAppointment,
+  getCreneauxDisponibles
 } from '../controllers/appointmentController.js';
-import  { authMiddleware } from '../middlewares/authMiddleware.js';
+import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// Toutes les routes nécessitent authentification
+// Toutes les routes nécessitent une authentification
 router.use(authMiddleware);
 
-// 1) Demande de RDV (patient) → statut 'en_attente'
+// Création d'une demande de RDV (patient)
 router.post('/', createAppointment);
 
-// 2) Médecin accepte une demande → passe en 'planifie'
+// Accepter une demande (médecin)
 router.patch('/:id/accept', acceptAppointment);
 
-// 3) Liste des médecins traitants pour le patient
+// Refuser une demande (médecin)
+router.patch('/:id/refuse', refuseAppointment);
+
+// Annuler un RDV (patient ou médecin)
+router.patch('/:id/cancel', cancelAppointment);
+
+// Supprimer définitivement un RDV (patient ou médecin)
+router.delete('/:id', deleteAppointment);
+
+// Liste des médecins traitants pour le patient connecté
 router.get('/traitants', getMedecinsTraitants);
 
-// 4) Liste de tous les médecins (pour recherche)
+// Liste de tous les médecins disponibles pour la prise de RDV
 router.get('/disponibles', getMedecinsDisponibles);
 
-// 5) Récupérer les RDV d’un utilisateur
+// Liste des RDV pour un utilisateur donné (patient ou médecin)
 router.get('/user/:userId', getAppointmentsByUser);
-
-// 6) Annuler / supprimer un RDV
-router.delete('/:id', deleteAppointment);
+//
+router.get('/:medecinId/disponibles/:date', getCreneauxDisponibles);
 
 export default router;

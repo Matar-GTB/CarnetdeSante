@@ -34,7 +34,7 @@ const Appointment = sequelize.define('Appointment', {
     defaultValue: null
   },
   statut: {
-    type: DataTypes.ENUM('en_attente', 'planifie', 'termine', 'annule', 'reprogramme'),
+    type: DataTypes.ENUM('en_attente', 'planifie', 'termine', 'annule', 'reprogramme', 'refuse'),
     defaultValue: 'en_attente'
   },
   notes: {

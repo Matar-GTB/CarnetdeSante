@@ -3,7 +3,8 @@ import express from 'express';
 import {
   createDemandeTraitant,
   getDemandeTraitantByPatient,
-  getPatientsByMedecin
+  getPatientsByMedecin,
+   getMesTraitants
 } from '../controllers/traitantController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
@@ -29,5 +30,9 @@ router.get('/requests', getDemandeTraitantByPatient);
  * GET /api/traitants/patients
  */
 router.get('/patients', getPatientsByMedecin);
-
+/**
+  *Patient → liste de ses médecins traitants (acceptés)
+ * GET /api/traitants/mes-traitants
+ */
+router.get('/mes-traitants', getMesTraitants);
 export default router;

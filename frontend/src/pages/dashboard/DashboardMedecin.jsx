@@ -10,7 +10,7 @@ const DashboardMedecin = () => {
         icon={<FaCalendarCheck />}
         title="Mes Consultations"
         description="Gérer vos rendez-vous avec les patients"
-        onClick={() => window.location.href = '/rendezvous'}
+        onClick={() => window.location.href = '/consultations"'}
       />
       <DashboardCard
         icon={<FaShareAlt />}

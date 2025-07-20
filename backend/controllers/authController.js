@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { Op } from 'sequelize';
 import User from '../models/User.js';
-
+import HorairesTravail from '../models/HorairesTravail.js';
 const JWT_SECRET = process.env.JWT_SECRET || 'secret_dev';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 const RESET_TOKEN_EXPIRATION = 60 * 60 * 1000; // 1h
@@ -29,6 +29,21 @@ export const login = async (req, res) => {
   prenom: user.prenom,
   nom: user.nom
 });
+// 🔁 Génération du refreshToken
+const refreshToken = jwt.sign(
+  { userId: user.id },
+  process.env.JWT_REFRESH_SECRET || 'refresh_dev',
+  { expiresIn: '7d' }
+);
+
+// 🍪 Envoi en cookie sécurisé
+res.cookie('refreshToken', refreshToken, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'Strict',
+  maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
+});
+
 
     res.json({
   id: user.id,
@@ -74,6 +89,19 @@ export const register = async (req, res) => {
       role: role || 'patient',
       ...data
     });
+    if (nouvelUtilisateur.role === 'medecin') {
+  const jours = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
+  const horairesPromises = jours.map(jour =>
+    HorairesTravail.create({
+      medecin_id: nouvelUtilisateur.id,
+      jour_semaine: jour,
+      heure_debut: '08:00',
+      heure_fin: '16:00',
+      duree_creneau: 30
+    })
+  );
+  await Promise.all(horairesPromises);
+}
 
     const token = generateToken({
   userId: user.id,
@@ -102,6 +130,7 @@ export const register = async (req, res) => {
   photo_profil: user.photo_profil,
   token
 });
+
 
   } catch (err) {
     handleError(res, err, 'Erreur lors de l’inscription');
@@ -178,6 +207,7 @@ export const resetPassword = async (req, res) => {
     user.mot_de_passe = newPassword;
     user.token_reinitialisation = null;
     user.expiration_token_reinitialisation = null;
+    user.tokenVersion += 1;
     await user.save();
 
     res.json({ message: 'Mot de passe réinitialisé avec succès' });
@@ -211,3 +241,40 @@ function handleError(res, err, context = 'Erreur') {
       : `${context}: ${err.message}`
   });
 }
+
+/**
+ * 🔄 Renouvellement du token d'accès via refreshToken (cookie)
+ */
+export const refreshAccessToken = async (req, res) => {
+  try {
+    const token = req.cookies.refreshToken;
+    if (!token) return res.status(401).json({ message: 'RefreshToken manquant' });
+
+    const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET || 'refresh_dev');
+    const user = await User.findByPk(decoded.userId);
+
+    if (!user) return res.status(403).json({ message: 'Utilisateur inconnu' });
+
+    const newAccessToken = generateToken({
+      userId: user.id,
+      role: user.role,
+      prenom: user.prenom,
+      nom: user.nom
+    });
+
+    res.json({ token: newAccessToken });
+  } catch (err) {
+    handleError(res, err, 'Erreur lors du renouvellement du token');
+  }
+};
+/**
+ * 🚪 Déconnexion : supprime le refreshToken
+ */
+export const logout = (req, res) => {
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'Strict'
+  });
+  res.json({ message: 'Déconnecté avec succès' });
+};

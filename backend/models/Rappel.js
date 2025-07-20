@@ -25,6 +25,13 @@ const Rappel = sequelize.define('Rappel', {
     allowNull: false,
     defaultValue: 'aucune'
   },
+
+ envoye: {
+  type: DataTypes.BOOLEAN,
+  allowNull: false,
+  defaultValue: false
+ },
+
   canaux: {
     type: DataTypes.JSONB,
     allowNull: false,

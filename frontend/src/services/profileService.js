@@ -34,3 +34,8 @@ export const updateUserProfileWithPhoto = async (token, formData) => {
   });
   return res.data.data;
 };
+export const getPublicDoctorProfile = async (doctorId) => {
+  const res = await axios.get(`${API_URL}/doctors/${doctorId}/public`);
+  // Les champs retournés : voir getPublicMedecinProfile (tarifs, faq, etc.)
+  return res.data;
+};

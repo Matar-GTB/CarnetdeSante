@@ -3,32 +3,35 @@ import {
   getProfile,
   updateProfile,
   getAllDoctors,
-  getDoctorDetails,
+  getDoctorDetails, // (Profil complet, pour admin ou médecin lui-même)
+  getPublicMedecinProfile,
   searchDoctors,
   updateProfileWithPhoto
 } from '../controllers/userController.js';
 import { uploadProfilePhoto } from '../middlewares/uploadMiddleware.js';
-
-
-import { authMiddleware} from '../middlewares/authMiddleware.js';
+import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { checkRole } from '../middlewares/roleMiddleware.js';
 
 const router = express.Router();
-router.put('/profile-with-photo', authMiddleware, uploadProfilePhoto, updateProfileWithPhoto);
-// 🔐 Profil utilisateur connecté (nécessite authentification)
+
+// Profil utilisateur connecté (nécessite authentification)
 router.get('/me', authMiddleware, getProfile);
-
-// 🔄 Mise à jour du profil
 router.put('/me', authMiddleware, updateProfile);
+router.put('/profile-with-photo', authMiddleware, uploadProfilePhoto, updateProfileWithPhoto);
 
-// 🔍 Rechercher des médecins avec filtres (accessible sans token)
+// Recherche de médecins (publique)
 router.get('/search', searchDoctors);
 
-// 🌐 Obtenir la liste publique de tous les médecins
+// Liste publique de tous les médecins
 router.get('/doctors', getAllDoctors);
 
-// ℹ Obtenir le profil public d’un médecin par son ID
+// Profil public d’un médecin, version “Doctolib-like” avec tarifs/FAQ/présentation/etc.
+router.get('/doctors/:id/public', getPublicMedecinProfile);
+
+// Profil complet d’un médecin (réservé, ex : médecin lui-même, admin)
 router.get('/doctors/:id', getDoctorDetails);
+
+// (Optionnel) Liste utilisateurs, à sécuriser si besoin
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const role = req.query.role;

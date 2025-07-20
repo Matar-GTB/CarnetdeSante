@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import sequelize from './config/db.js';
+import './utils/rappels/rappelScheduler.js';
 
 // Import des routes
 import authRoutes from './routes/authRoutes.js';
@@ -14,6 +15,8 @@ import notificationRoutes from './routes/notificationRoutes.js';
 import traitantRoutes from './routes/traitantRoutes.js';
 import rappelRoutes from './routes/rappelRoutes.js';
 import medicationRoutes from './routes/medicationRoutes.js';
+import indisponibiliteRoutes from './routes/indisponibiliteRoutes.js';
+import horairesRoutes from './routes/horairesRoutes.js';
 
 dotenv.config();
 
@@ -34,7 +37,7 @@ const allowedOrigins = [
      }
    },
    credentials: true,
-   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+   methods: ['GET','POST','PUT','DELETE','OPTIONS', 'PATCH'],
    allowedHeaders: ['Content-Type','Authorization']
  }));
 app.use(express.json());
@@ -50,6 +53,8 @@ app.use('/api/sharing', sharingRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/rappels', rappelRoutes);
 app.use('/api/medications', medicationRoutes);
+app.use('/api/indispos', indisponibiliteRoutes);
+app.use('/api/horaires', horairesRoutes);
 
 // Route de test
 app.get('/', (req, res) => {

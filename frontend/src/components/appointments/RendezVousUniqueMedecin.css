@@ -1,0 +1,72 @@
+.appointment-form {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 500px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.appointment-form h3 {
+  margin-bottom: 1rem;
+  color: #2d3436;
+}
+
+.appointment-form input[type="date"] {
+  padding: 0.5rem;
+  border: 1px solid #dcdde1;
+  border-radius: 6px;
+  width: 100%;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.creneaux-grille {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.creneaux-grille button {
+  padding: 0.5rem 1rem;
+  background-color: #dfe6e9;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.creneaux-grille button:hover {
+  background-color: #a29bfe;
+  color: white;
+}
+
+.creneaux-grille button.selected {
+  background-color: #6c5ce7;
+  color: white;
+  font-weight: bold;
+}
+
+.appointment-form button[type="submit"] {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #6c5ce7;
+  color: white;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.appointment-form button[type="submit"]:hover {
+  background-color: #5a4ae0;
+}
+
+.appointment-form p {
+  color: #636e72;
+  font-size: 0.95rem;
+}

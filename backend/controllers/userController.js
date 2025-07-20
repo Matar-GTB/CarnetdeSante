@@ -3,7 +3,7 @@ import User from '../models/User.js';
 import { Op } from 'sequelize';
 
 /**
- * 🔐 Obtenir le profil de l'utilisateur connecté (patient ou médecin)
+ * 🔐Obtenir le profil de l'utilisateur connecté (patient ou médecin)
  */
 export const getProfile = async (req, res) => {
   try {
@@ -164,3 +164,18 @@ export const updateProfileWithPhoto = async (req, res) => {
   }
 };
 
+export const getPublicMedecinProfile = async (req, res) => {
+  const id = req.params.id;
+  const medecin = await User.findOne({
+    where: { id, role: 'medecin' },
+    attributes: [
+      'id', 'prenom', 'nom', 'photo_profil', 'specialite', 'etablissements',
+      'adresse', 'description', 'langues', 'diplome', 'parcours_professionnel',
+      'horaires_travail', 'accessibilite', 'accepte_nouveaux_patients',
+      'moyens_paiement', 'tarifs', 'faq', 'email', 'telephone'
+    ]
+  });
+  if (!medecin) return res.status(404).json({ message: "Médecin introuvable" });
+  res.json({ success: true, data: medecin });
+
+};

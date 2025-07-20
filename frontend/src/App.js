@@ -18,11 +18,13 @@ import AccountSettings             from './pages/Settings/AccountSettings';
 import AppointmentsPage            from './pages/appointments/AppointmentsPage';
 import ConsultationsPage           from './pages/Consultations/ConsultationsPage';
 import RequestTraitantPage         from './pages/medecinTraitant/RequestTraitantPage';
-import CreateRappelPage from './pages/rappels/CreateRappelPage.jsx';
 import RappelsPage from './pages/rappels/RappelsPage';
 import NotificationsPage from './pages/notifications/NotificationsPage';
 import NotificationSettings from './pages/Settings/NotificationSettings';
 import MedicationForm from './pages/medications/MedicationForm';
+import MedecinProfilePublicPage from './pages/Profile/MedecinProfilePublicPage';
+import AppointmentWithMedecinPage from './pages/appointments/AppointmentWithMedecinPage';
+import DisponibilitesPage from './pages/medecin/DisponibilitesPage';
 
 
 
@@ -57,8 +59,10 @@ export default function App() {
       <Route path="/rendezvous" element={<ProtectedRoute><AppointmentsPage /></ProtectedRoute>} />
       <Route path="/consultations" element={<ProtectedRoute><ConsultationsPage /></ProtectedRoute>} />
       <Route path="/traitant/request" element={<ProtectedRoute><RequestTraitantPage /></ProtectedRoute>} />
+        <Route path="/appointments/with/:medecinId" element={<ProtectedRoute><AppointmentWithMedecinPage /></ProtectedRoute>} />
+
       {/* Rappel */}
-        <Route path="/rappels/nouveau" element={<ProtectedRoute><CreateRappelPage/></ProtectedRoute>} />
+       
         <Route path="/rappels" element={<ProtectedRoute><RappelsPage /></ProtectedRoute>} />
 <Route
   path="/medications"
@@ -83,6 +87,16 @@ export default function App() {
       {/* Profil & settings */}
       <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
       <Route path="/settings/account" element={<ProtectedRoute><AccountSettings /></ProtectedRoute>} />
+<Route
+  path="/disponibilites"
+  element={
+    <ProtectedRoute allowedRoles={['medecin']}>
+      <DisponibilitesPage />
+    </ProtectedRoute>
+  }
+/>
+  {/* autres routes */}
+  <Route path="/doctors/:id/public" element={<MedecinProfilePublicPage />} />
 
       {/* Logout */}
       <Route path="/logout" element={<ProtectedRoute><Logout /></ProtectedRoute>} />

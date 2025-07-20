@@ -128,7 +128,19 @@ const User = sequelize.define('User', {
   horaires_travail: DataTypes.TEXT,
   accessibilite: DataTypes.TEXT,
 
+tarifs: DataTypes.TEXT,
+faq: {
+  type: DataTypes.JSONB,
+  defaultValue: []
+},
+
+
   // Sécurité
+  tokenVersion: {
+  type: DataTypes.INTEGER,
+  defaultValue: 0
+},
+
   token_reinitialisation: DataTypes.STRING,
   expiration_token_reinitialisation: DataTypes.DATE,
   est_verifie: {

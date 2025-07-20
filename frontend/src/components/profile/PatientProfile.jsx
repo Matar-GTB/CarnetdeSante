@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './PatientProfile.css';
 import { getUserProfile, updateUserProfile } from '../../services/profileService';
-import { getTokenPayload } from '../../utils/tokenUtils';
+import { useContext } from 'react';
+import { AuthContext } from '../../contexts/AuthContext';
 
-const PatientProfile = ({ token }) => {
-  const payload = getTokenPayload(token);
+const PatientProfile = () => {
+  const { token, role } = useContext(AuthContext);
 
   const [form, setForm] = useState({
     groupe_sanguin: '',
@@ -17,7 +18,7 @@ const PatientProfile = ({ token }) => {
   const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
-    if (payload?.role !== 'patient') {
+    if (role !== 'patient') {
       setAuthorized(false);
       return;
     }
@@ -35,7 +36,7 @@ const PatientProfile = ({ token }) => {
       .catch(err => {
         console.error('Erreur chargement données patient :', err.response?.data || err.message);
       });
-  }, [token, payload]);
+  }, [token, role]);
 
   const handleChange = e =>
     setForm({ ...form, [e.target.name]: e.target.value });

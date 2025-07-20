@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './MedecinProfile.css';
 import { getUserProfile, updateUserProfile } from '../../services/profileService';
-import { getTokenPayload } from '../../utils/tokenUtils';
+import { useContext } from 'react';
+import { AuthContext } from '../../contexts/AuthContext';
 
-const MedecinProfile = ({ token }) => {
-  const payload = getTokenPayload(token);
+const MedecinProfile = () => {
+  const { token, role } = useContext(AuthContext);
+
+
 
   const [form, setForm] = useState({
     specialite: '',
@@ -25,7 +28,7 @@ const MedecinProfile = ({ token }) => {
   const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
-    if (payload?.role !== 'medecin') {
+    if (role !== 'medecin') {
       setAuthorized(false);
       return;
     }
@@ -52,7 +55,7 @@ const MedecinProfile = ({ token }) => {
       .catch(err => {
         console.error('Erreur chargement données médecin :', err.response?.data || err.message);
       });
-  }, [token, payload]);
+  }, [token, role]);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
