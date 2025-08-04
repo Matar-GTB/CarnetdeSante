@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Sélecteur de Mode d'Authentification</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            color: #333;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        .mode-option {
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+        .mode-option:hover {
+            border-color: #007bff;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,123,255,0.1);
+        }
+        .mode-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .mode-description {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .security-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+        .security-standard {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        .security-high {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        .current-mode {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 CarnetDeSante</h1>
+        <p class="subtitle">Choisissez votre mode d'authentification</p>
+        
+        <a href="?authMode=traditional" class="mode-option">
+            <div class="mode-title">📱 Mode Traditionnel</div>
+            <div class="mode-description">
+                Authentification avec localStorage et JWT.<br>
+                Compatible avec tous les navigateurs.
+            </div>
+            <span class="security-badge security-standard">Sécurité Standard</span>
+        </a>
+        
+        <a href="?authMode=cookies" class="mode-option">
+            <div class="mode-title">🍪 Mode Cookies HttpOnly</div>
+            <div class="mode-description">
+                Authentification sécurisée avec cookies HttpOnly.<br>
+                Protection renforcée contre les attaques XSS.
+            </div>
+            <span class="security-badge security-high">Sécurité Élevée</span>
+        </a>
+        
+        <div class="current-mode">
+            <strong>Mode actuel:</strong> <span id="current-mode">Détection...</span>
+        </div>
+    </div>
+
+    <script>
+        // Détecter le mode actuel
+        const getCurrentMode = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlMode = urlParams.get('authMode');
+            
+            if (urlMode) {
+                localStorage.setItem('authMode', urlMode);
+                return urlMode;
+            }
+            
+            return localStorage.getItem('authMode') || 'traditional';
+        };
+
+        const currentMode = getCurrentMode();
+        document.getElementById('current-mode').textContent = 
+            currentMode === 'cookies' ? '🍪 Cookies HttpOnly' : '📱 Traditionnel';
+
+        // Redirection automatique vers l'app après sélection
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('authMode')) {
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

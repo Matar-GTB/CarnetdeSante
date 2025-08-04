@@ -1,0 +1,509 @@
+/* components/profile/EmergencyProfile.css */
+
+.emergency-profile {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* En-tête d'urgence */
+.emergency-header {
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.emergency-header.error {
+  background: rgba(231, 76, 60, 0.95);
+}
+
+.emergency-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.emergency-icon {
+  font-size: 2.5rem;
+  animation: pulse-emergency 2s infinite;
+}
+
+@keyframes pulse-emergency {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.emergency-title h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.emergency-warning {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  margin-top: 1rem;
+}
+
+.emergency-warning p {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background: white;
+  margin: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #ecf0f1;
+  border-top: 4px solid #e74c3c;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Erreur */
+.error-container {
+  background: white;
+  margin: 2rem;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.error-message h2 {
+  color: #e74c3c;
+  margin-bottom: 1rem;
+}
+
+.error-help {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #fef9e7;
+  border-left: 4px solid #f39c12;
+  border-radius: 8px;
+}
+
+.error-help h3 {
+  color: #d68910;
+  margin-bottom: 1rem;
+}
+
+.error-help ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.error-help li {
+  margin-bottom: 0.5rem;
+  color: #7d6608;
+}
+
+/* Sections principales */
+.patient-identity-emergency,
+.critical-medical-info,
+.emergency-contacts,
+.treating-doctor,
+.emergency-services {
+  background: white;
+  margin: 1rem 2rem;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-left: 6px solid #e74c3c;
+}
+
+.patient-identity-emergency h2,
+.critical-medical-info h2,
+.emergency-contacts h2,
+.treating-doctor h2,
+.emergency-services h2 {
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.section-icon {
+  font-size: 1.8rem;
+}
+
+/* Identité */
+.identity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.identity-item {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border-left: 4px solid #3498db;
+}
+
+.identity-item label {
+  display: block;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.identity-item strong {
+  display: block;
+  color: #2c3e50;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+/* Informations critiques */
+.critical-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.critical-item {
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.critical-item.blood-type {
+  background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+  color: white;
+  border-color: #d63031;
+}
+
+.critical-item.allergies {
+  background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+  color: white;
+  border-color: #e17055;
+}
+
+.critical-item.medical-history {
+  background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+  color: white;
+  border-color: #0984e3;
+}
+
+.critical-item.treatments {
+  background: linear-gradient(135deg, #55a3ff 0%, #3742fa 100%);
+  color: white;
+  border-color: #3742fa;
+}
+
+.critical-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.critical-icon {
+  font-size: 1.5rem;
+}
+
+.critical-header strong {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.critical-value {
+  font-size: 1.2rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+/* Contacts */
+.contacts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.contact-card {
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.contact-card:hover {
+  transform: translateY(-3px);
+}
+
+.contact-card.primary {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+}
+
+.contact-card.secondary {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+}
+
+.contact-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.contact-icon {
+  font-size: 1.5rem;
+}
+
+.contact-info {
+  margin-bottom: 1.5rem;
+}
+
+.contact-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.contact-phone {
+  font-size: 1.1rem;
+}
+
+.phone-link {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.phone-link:hover {
+  text-decoration: underline;
+}
+
+/* Boutons d'appel */
+.call-button {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.call-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.call-button.emergency {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.call-button.secondary {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.call-button.doctor {
+  background: #27ae60;
+  color: white;
+}
+
+.call-button.samu {
+  background: #e74c3c;
+  color: white;
+}
+
+.call-button.pompiers {
+  background: #f39c12;
+  color: white;
+}
+
+.call-button.europeen {
+  background: #3498db;
+  color: white;
+}
+
+/* Médecin traitant */
+.doctor-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border-left: 4px solid #27ae60;
+}
+
+.doctor-info strong {
+  display: block;
+  color: #2c3e50;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.doctor-specialty {
+  color: #7f8c8d;
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.doctor-phone {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+/* Services d'urgence */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.service-card {
+  text-align: center;
+  padding: 2rem 1rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-3px);
+}
+
+.service-card.samu {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+}
+
+.service-card.pompiers {
+  background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
+  color: white;
+}
+
+.service-card.europeen {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+}
+
+.service-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.service-icon {
+  font-size: 2rem;
+}
+
+.service-number {
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Footer */
+.emergency-footer {
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  margin: 2rem 0 0 0;
+  padding: 2rem;
+  text-align: center;
+}
+
+.access-info p {
+  margin-bottom: 0.5rem;
+}
+
+.access-info small {
+  color: #bdc3c7;
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .emergency-profile {
+    padding: 0;
+  }
+  
+  .emergency-header {
+    padding: 1.5rem 1rem;
+  }
+  
+  .emergency-title h1 {
+    font-size: 2rem;
+  }
+  
+  .emergency-icon {
+    font-size: 2rem;
+  }
+  
+  .patient-identity-emergency,
+  .critical-medical-info,
+  .emergency-contacts,
+  .treating-doctor,
+  .emergency-services {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .identity-grid,
+  .critical-grid,
+  .contacts-grid,
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .doctor-card {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .service-number {
+    font-size: 2.5rem;
+  }
+}

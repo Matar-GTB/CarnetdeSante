@@ -1,0 +1,232 @@
+/* components/profile/UserProfile.css */
+
+.user-profile {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 0 2rem 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.role-icon {
+  font-size: 3rem;
+}
+
+/* Overlay pour nouvelle photo */
+.photo-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(52, 152, 219, 0.9);
+  color: white;
+  padding: 0.25rem;
+  font-size: 0.7rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.new-photo-indicator {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Actions de photo */
+.photo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Cacher l'input file natif */
+.avatar-section input[type="file"] {
+  display: none !important;
+  visibility: hidden !important;
+  position: absolute !important;
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+}
+
+.photo-confirm-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.save-photo-btn,
+.cancel-photo-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 2px solid transparent;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.save-photo-btn {
+  background: rgba(46, 204, 113, 0.9);
+  color: white;
+  border-color: rgba(46, 204, 113, 0.3);
+}
+
+.save-photo-btn:hover {
+  background: rgba(46, 204, 113, 1);
+  transform: translateY(-1px);
+}
+
+.cancel-photo-btn {
+  background: rgba(231, 76, 60, 0.9);
+  color: white;
+  border-color: rgba(231, 76, 60, 0.3);
+}
+
+.cancel-photo-btn:hover {
+  background: rgba(231, 76, 60, 1);
+  transform: translateY(-1px);
+}
+
+.change-photo-btn {
+  background: rgba(255, 255, 255, 0.9);
+  color: #667eea;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.change-photo-btn:hover {
+  background: white;
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-info h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.role-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-transform: capitalize;
+}
+
+.email {
+  opacity: 0.9;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Informations spécifiques aux rôles */
+.specialty,
+.etablissement,
+.birth-date {
+  opacity: 0.9;
+  font-size: 1rem;
+  margin: 0.25rem 0;
+  font-style: italic;
+}
+
+.specialty {
+  color: #f39c12;
+  font-weight: 500;
+}
+
+.etablissement {
+  color: #ecf0f1;
+}
+
+.birth-date {
+  color: #bdc3c7;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-info h1 {
+    font-size: 1.8rem;
+  }
+
+  .edit-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .save-btn,
+  .cancel-btn {
+    width: 100%;
+  }
+}

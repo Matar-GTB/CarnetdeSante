@@ -1,0 +1,80 @@
+// test-profile.html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Profile Patient</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/history@5/umd/history.production.min.js"></script>
+    <script src="https://unpkg.com/react-router@6/umd/react-router.development.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6/umd/react-router-dom.development.js"></script>
+    <link rel="stylesheet" href="./src/pages/Profile/PatientProfilePublic.css">
+    <script type="text/babel" src="./src/test-component.js"></script>
+    <script type="text/babel" src="./src/test-profile-display.js"></script>
+    <style>
+        /* Styles de débogage */
+        .debug-outline * {
+            outline: 1px solid rgba(255, 0, 0, 0.2);
+        }
+        
+        .debug-info {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 300px;
+            max-height: 200px;
+            overflow: auto;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body class="debug-outline">
+    <div id="root"></div>
+    <div class="debug-info"></div>
+    
+    <script>
+        // Affichage des informations de débogage
+        const debugInfo = document.querySelector('.debug-info');
+        const updateDebugInfo = () => {
+            const profileContainer = document.querySelector('.patient-profile-public');
+            if (profileContainer) {
+                const styles = window.getComputedStyle(profileContainer);
+                debugInfo.innerHTML = `
+                    <strong>patient-profile-public:</strong><br>
+                    width: ${styles.width}<br>
+                    height: ${styles.height}<br>
+                    background: ${styles.background}<br>
+                    padding: ${styles.padding}<br>
+                    margin: ${styles.margin}<br>
+                    display: ${styles.display}<br>
+                `;
+            }
+        };
+
+        // Observer les changements
+        const observer = new MutationObserver(updateDebugInfo);
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true
+        });
+
+        // Log des erreurs CSS
+        const originalError = console.error;
+        console.error = function(...args) {
+            if (args[0] && typeof args[0] === 'string' && args[0].includes('CSS')) {
+                debugInfo.innerHTML += `<br><span style="color: #ff6b6b">CSS Error: ${args[0]}</span>`;
+            }
+            originalError.apply(console, args);
+        };
+    </script>
+</body>
+</html>

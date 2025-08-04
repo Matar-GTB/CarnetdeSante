@@ -1,0 +1,541 @@
+/* src/components/Messaging/MessageBubble.css */
+
+.message-bubble-container {
+  display: flex;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.message-bubble-container.own {
+  flex-direction: row-reverse;
+}
+
+.message-bubble-container.other {
+  flex-direction: row;
+}
+
+.message-avatar {
+  width: 32px;
+  height: 32px;
+  margin: 0 8px;
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+
+.message-avatar .avatar-placeholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #657786, #495a6b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.message-bubble {
+  max-width: 70%;
+  position: relative;
+  border-radius: 18px;
+  padding: 12px 16px;
+  word-wrap: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+/* Messages temporaires (en cours d'envoi) */
+.message-bubble.temporary {
+  opacity: 0.6;
+  background: linear-gradient(135deg, #b0b0b0, #909090) !important;
+  animation: sending-pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes sending-pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.message-bubble.own {
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  color: white;
+  margin-left: auto;
+  border-bottom-right-radius: 6px;
+}
+
+.message-bubble.other {
+  background: white;
+  color: #1a1a1a;
+  border: 1px solid #e1e8ed;
+  margin-right: auto;
+  border-bottom-left-radius: 6px;
+}
+
+.message-bubble:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.reply-context {
+  display: flex;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid #4a90e2;
+}
+
+.message-bubble.own .reply-context {
+  background: rgba(255, 255, 255, 0.2);
+  border-left-color: rgba(255, 255, 255, 0.5);
+}
+
+.reply-indicator {
+  width: 3px;
+  background: #4a90e2;
+  margin-right: 8px;
+  border-radius: 2px;
+}
+
+.reply-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.reply-author {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4a90e2;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.message-bubble.own .reply-author {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.reply-text {
+  font-size: 13px;
+  opacity: 0.8;
+  font-style: italic;
+}
+
+.message-content {
+  position: relative;
+}
+
+.message-text {
+  font-size: 15px;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.media-content {
+  margin: 8px 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.message-image {
+  max-width: 100%;
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+}
+
+.message-image:hover {
+  transform: scale(1.02);
+}
+
+.message-video {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 12px;
+}
+
+.message-audio {
+  width: 100%;
+  max-width: 300px;
+}
+
+.file-content {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.message-bubble.own .file-content {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.file-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+.file-link:hover {
+  opacity: 0.8;
+}
+
+.file-icon {
+  font-size: 18px;
+}
+
+.file-name {
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.message-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.message-time {
+  font-size: 11px;
+  opacity: 0.7;
+  font-weight: 400;
+}
+
+.message-status {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.read-status {
+  color: #4caf50;
+}
+
+.sent-status {
+  color: inherit;
+  opacity: 0.6;
+}
+
+.message-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.reaction-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 12px;
+}
+
+.message-bubble.own .reaction-button {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.reaction-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+}
+
+.message-bubble.own .reaction-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.reaction-button.user-reacted {
+  background: #4a90e2;
+  color: white;
+  border-color: #4a90e2;
+}
+
+.reaction-emoji {
+  font-size: 14px;
+}
+
+.reaction-count {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.message-actions {
+  position: absolute;
+  top: -8px;
+  display: flex;
+  gap: 4px;
+  background: white;
+  padding: 4px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.message-actions.own {
+  right: -60px;
+}
+
+.message-actions.other {
+  left: -60px;
+}
+
+.action-button {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  background: #f1f3f4;
+  transform: scale(1.1);
+}
+
+.emoji-picker-container {
+  position: absolute;
+  top: -10px;
+  z-index: 20;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e1e8ed;
+}
+
+.emoji-picker-container.own {
+  right: 0;
+}
+
+.emoji-picker-container.other {
+  left: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .message-bubble {
+    max-width: 85%;
+    padding: 10px 14px;
+  }
+  
+  .message-text {
+    font-size: 14px;
+  }
+  
+  .message-actions.own {
+    right: -50px;
+  }
+  
+  .message-actions.other {
+    left: -50px;
+  }
+}
+
+/* Animations */
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.message-bubble-container {
+  animation: messageAppear 0.3s ease-out;
+}
+
+@keyframes reactionPop {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.reaction-button.user-reacted {
+  animation: reactionPop 0.3s ease-out;
+}
+
+/* MESSAGE AUDIO - Interface similaire à WhatsApp */
+.audio-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  min-width: 180px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+.message-bubble.own .audio-message {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.message-bubble.other .audio-message {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.audio-message .audio-play-btn {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #4a90e2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.message-bubble.own .audio-message .audio-play-btn {
+  background: rgba(255, 255, 255, 0.9);
+  color: #4a90e2;
+}
+
+.message-bubble.other .audio-message .audio-play-btn {
+  background: #4a90e2;
+  color: white;
+}
+
+.audio-message .audio-play-btn:hover {
+  transform: scale(1.1);
+}
+
+.audio-message .audio-waveform {
+  flex: 1;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.audio-message .waveform-bars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+  width: 100%;
+}
+
+.audio-message .waveform-bars span {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 1px;
+  min-width: 2px;
+  transition: all 0.3s ease;
+}
+
+.message-bubble.own .audio-message .waveform-bars span {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.message-bubble.other .audio-message .waveform-bars span {
+  background: #4a90e2;
+}
+
+/* Barres actives pendant la lecture */
+.audio-message .waveform-bars span.active {
+  background: #25d366 !important;
+  opacity: 1;
+}
+
+.message-bubble.own .audio-message .waveform-bars span.active {
+  background: rgba(255, 255, 255, 1) !important;
+}
+
+.message-bubble.other .audio-message .waveform-bars span.active {
+  background: #25d366 !important;
+}
+
+/* Variation des hauteurs pour simuler une forme d'onde */
+.audio-message .waveform-bars span:nth-child(1) { height: 6px; }
+.audio-message .waveform-bars span:nth-child(2) { height: 12px; }
+.audio-message .waveform-bars span:nth-child(3) { height: 16px; }
+.audio-message .waveform-bars span:nth-child(4) { height: 20px; }
+.audio-message .waveform-bars span:nth-child(5) { height: 14px; }
+.audio-message .waveform-bars span:nth-child(6) { height: 8px; }
+.audio-message .waveform-bars span:nth-child(7) { height: 18px; }
+.audio-message .waveform-bars span:nth-child(8) { height: 10px; }
+.audio-message .waveform-bars span:nth-child(9) { height: 16px; }
+.audio-message .waveform-bars span:nth-child(10) { height: 6px; }
+.audio-message .waveform-bars span:nth-child(11) { height: 12px; }
+.audio-message .waveform-bars span:nth-child(12) { height: 20px; }
+.audio-message .waveform-bars span:nth-child(13) { height: 8px; }
+.audio-message .waveform-bars span:nth-child(14) { height: 14px; }
+.audio-message .waveform-bars span:nth-child(15) { height: 6px; }
+.audio-message .waveform-bars span:nth-child(16) { height: 10px; }
+.audio-message .waveform-bars span:nth-child(17) { height: 16px; }
+.audio-message .waveform-bars span:nth-child(18) { height: 8px; }
+.audio-message .waveform-bars span:nth-child(19) { height: 12px; }
+.audio-message .waveform-bars span:nth-child(20) { height: 4px; }
+
+.audio-message .audio-duration {
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  flex-shrink: 0;
+  min-width: 35px;
+  text-align: right;
+  opacity: 0.8;
+}
+
+.message-bubble.own .audio-message .audio-duration {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.message-bubble.other .audio-message .audio-duration {
+  color: #657786;
+}
+
+/* Animation pour les barres d'onde au hover */
+.audio-message:hover .waveform-bars span {
+  animation: waveform-pulse 1.5s infinite ease-in-out;
+}
+
+.audio-message:hover .waveform-bars span:nth-child(odd) {
+  animation-delay: 0.1s;
+}
+
+.audio-message:hover .waveform-bars span:nth-child(even) {
+  animation-delay: 0.2s;
+}
+
+@keyframes waveform-pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}

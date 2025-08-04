@@ -1,0 +1,119 @@
+/* src/components/role-specific/medecin/MedecinQuickActions.css */
+
+.medecin-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.quick-action-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+}
+
+.quick-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.quick-action-btn:active {
+  transform: translateY(0);
+}
+
+.quick-action-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.quick-action-title {
+  font-weight: 600;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.quick-action-desc {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Variantes de couleurs pour différents types d'actions */
+.quick-action-btn.primary {
+  background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 100%);
+}
+
+.quick-action-btn.primary:hover {
+  background: linear-gradient(135deg, #3d1178 0%, #5a1884 100%);
+}
+
+.quick-action-btn.secondary {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.quick-action-btn.secondary:hover {
+  background: linear-gradient(135deg, #218838 0%, #1ba085 100%);
+}
+
+.quick-action-btn.info {
+  background: linear-gradient(135deg, #17a2b8 0%, #007bff 100%);
+}
+
+.quick-action-btn.info:hover {
+  background: linear-gradient(135deg, #138496 0%, #0056b3 100%);
+}
+
+.quick-action-btn.warning {
+  background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+  color: #333;
+}
+
+.quick-action-btn.warning:hover {
+  background: linear-gradient(135deg, #e0a800 0%, #e8650e 100%);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .medecin-quick-actions {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+  }
+  
+  .quick-action-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .quick-action-icon {
+    font-size: 1.25rem;
+  }
+  
+  .quick-action-title {
+    font-size: 0.9rem;
+  }
+  
+  .quick-action-desc {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .medecin-quick-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+}

@@ -3,6 +3,8 @@ import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 import User from './User.js';
 
+
+
 const PriseMedicament = sequelize.define('PriseMedicament', {
   id: {
     type: DataTypes.INTEGER,
@@ -54,9 +56,5 @@ const PriseMedicament = sequelize.define('PriseMedicament', {
   timestamps: false
 });
 
-PriseMedicament.belongsTo(User, {
-  foreignKey: 'utilisateur_id',
-  as: 'Utilisateur'
-});
 
 export default PriseMedicament;

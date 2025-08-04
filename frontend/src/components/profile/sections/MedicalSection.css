@@ -1,0 +1,99 @@
+/* components/profile/sections/MedicalSection.css */
+
+.medical-section {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  border-left: 4px solid #27ae60;
+}
+
+.medical-section h3 {
+  color: #27ae60;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.medical-section h3::before {
+  content: '🏥';
+  font-size: 1.2rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #27ae60;
+  font-size: 0.95rem;
+}
+
+.form-group select,
+.form-group textarea {
+  padding: 0.75rem;
+  border: 2px solid #d5f4e6;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #27ae60;
+  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+}
+
+.form-group select:disabled,
+.form-group textarea:disabled {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Styles spéciaux pour les éléments médicaux critiques */
+.form-group[data-critical="true"] label {
+  color: #e74c3c;
+}
+
+.form-group[data-critical="true"] select,
+.form-group[data-critical="true"] textarea {
+  border-color: #e74c3c;
+}
+
+.form-group[data-critical="true"] select:focus,
+.form-group[data-critical="true"] textarea:focus {
+  border-color: #c0392b;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .medical-section {
+    padding: 1.5rem;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}

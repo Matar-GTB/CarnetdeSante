@@ -1,0 +1,513 @@
+/* 
+================================================================================
+ConversationList.css - DOCUMENTATION DES STYLES
+================================================================================
+Ce fichier gère l'affichage de la liste des conversations dans la messagerie.
+
+STRUCTURE PRINCIPALE :
+1. .conversation-list : Container principal de la liste
+2. .conversation-header : En-tête avec titre et bouton "Nouvelle conversation"
+3. .conversation-search : Zone de recherche avec input et icônes
+4. .conversations-scroll : Zone scrollable contenant les conversations
+5. .conversation-item : Chaque conversation individuelle
+
+FONCTIONNALITÉS :
+- Recherche en temps réel dans les conversations
+- Indicateurs de statut en ligne
+- Badges pour messages non lus
+- Design responsive pour mobile
+- Animations pour nouveaux messages
+
+COULEURS PRINCIPALES :
+- Bleu principal : #4a90e2 (boutons, bordures actives)
+- Fond gris clair : #f8f9fa (zones d'en-tête)
+- Texte principal : #1a1a1a
+- Texte secondaire : #657786
+- Rouge notifications : #ff4757
+================================================================================
+*/
+
+/* src/components/Messaging/ConversationList.css */
+
+/* CONTAINER PRINCIPAL - Structure générale de la liste des conversations */
+.conversation-list {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Prend toute la hauteur disponible */
+  background: white; /* Fond blanc pour contraste */
+}
+
+/* EN-TÊTE DE LA LISTE - Titre et bouton nouvelle conversation */
+.conversation-header {
+  display: flex;
+  justify-content: space-between; /* Titre à gauche, bouton à droite */
+  align-items: center;
+  padding: 1rem; /* Espacement uniforme */
+  border-bottom: 1px solid #e1e8ed; /* Séparateur visuel */
+  background: #f8f9fa; /* Fond gris clair pour distinction */
+}
+
+/* TITRE DE LA SECTION */
+.conversation-header h3 {
+  margin: 0; /* Supprime les marges par défaut */
+  color: #2c3e50; /* Couleur foncée pour lisibilité */
+  font-size: 1.2rem;
+  font-weight: 600; /* Poids moyen pour hiérarchie visuelle */
+}
+
+/* BOUTON NOUVELLE CONVERSATION - Design moderne avec gradient */
+.new-conversation-btn {
+  background: linear-gradient(135deg, #007bff, #0056b3); /* Gradient bleu */
+  color: white;
+  border: none;
+  padding: 8px 16px; /* Padding équilibré */
+  border-radius: 20px; /* Forme arrondie moderne */
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px; /* Espace entre icône et texte */
+  transition: all 0.2s ease; /* Animation fluide */
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2); /* Ombre subtile */
+}
+
+/* EFFET HOVER DU BOUTON - Animation au survol */
+.new-conversation-btn:hover {
+  background: linear-gradient(135deg, #0056b3, #004085); /* Gradient plus foncé */
+  transform: translateY(-1px); /* Légère élévation */
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3); /* Ombre plus marquée */
+}
+
+/* EFFET ACTIVE DU BOUTON - Retour en position au clic */
+.new-conversation-btn:active {
+  transform: translateY(0); /* Retour position normale */
+}
+
+/* ZONE DE RECHERCHE - Permet de filtrer les conversations */
+.conversation-search {
+  padding: 0.5rem; /* RÉDUIT : Espacement réduit pour barre plus compacte */
+  border-bottom: 1px solid #e1e8ed; /* Séparateur avec la liste */
+  background: white; /* Fond blanc pour contraste */
+}
+
+/* CONTAINER DE L'INPUT DE RECHERCHE - Position relative pour icônes */
+.search-input-container {
+  position: relative; /* Permet positionnement absolu des icônes */
+  display: flex;
+  align-items: center;
+}
+
+/* ICÔNE DE RECHERCHE - Positionnée à gauche de l'input */
+.search-icon {
+  position: absolute;
+  left: 10px; /* RÉDUIT : Distance réduite du bord gauche */
+  color: #657786; /* Couleur grise pour discrétion */
+  font-size: 14px; /* RÉDUIT : Taille d'icône réduite */
+  z-index: 1; /* Au-dessus de l'input */
+  display: flex; /* AJOUTÉ : Pour centrer l'icône React */
+  align-items: center; /* AJOUTÉ : Pour centrer l'icône React */
+}
+
+/* INPUT DE RECHERCHE - Champ de saisie principal */
+.search-input {
+  width: 100%; /* Prend toute la largeur disponible */
+  padding: 8px 35px 8px 30px; /* RÉDUIT : Padding vertical réduit pour compacité */
+  border: 1px solid #e1e8ed; /* Bordure grise discrète */
+  border-radius: 16px; /* RÉDUIT : Forme moins arrondie pour plus de compacité */
+  background: white;
+  font-size: 13px; /* RÉDUIT : Taille de police légèrement réduite */
+  outline: none; /* Supprime l'outline par défaut */
+  transition: all 0.2s ease; /* Animation fluide des changements */
+}
+
+/* FOCUS DE L'INPUT - Mise en évidence lors de la saisie */
+.search-input:focus {
+  border-color: #4a90e2; /* Bordure bleue active */
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1); /* Halo bleu subtil */
+}
+
+/* BOUTON EFFACER RECHERCHE - X pour vider le champ */
+.clear-search {
+  position: absolute;
+  right: 10px; /* RÉDUIT : Distance réduite du bord droit */
+  background: none;
+  border: none;
+  color: #657786; /* Couleur discrète */
+  cursor: pointer;
+  padding: 0;
+  font-size: 12px; /* RÉDUIT : Taille réduite */
+  width: 18px; /* RÉDUIT : Largeur réduite */
+  height: 18px; /* RÉDUIT : Hauteur réduite */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* Forme circulaire */
+  transition: all 0.2s ease; /* Animation au survol */
+}
+
+/* HOVER DU BOUTON EFFACER - Effet de survol */
+.clear-search:hover {
+  background: #f1f3f4; /* Fond gris clair */
+  color: #1a1a1a; /* Couleur plus foncée */
+}
+
+/* ZONE SCROLLABLE DES CONVERSATIONS - Container principal avec scroll */
+.conversations-scroll {
+  flex: 1; /* Prend tout l'espace restant */
+  overflow-y: auto; /* Scroll vertical autorisé */
+  overflow-x: hidden; /* Pas de scroll horizontal */
+  /* STYLES POUR LA BARRE DE DÉFILEMENT - Design personnalisé */
+  scrollbar-width: thin; /* Barre fine sur Firefox */
+  scrollbar-color: #4a90e2 #e1e8ed; /* Couleur thumb et track sur Firefox */
+}
+
+/* STYLES WEBKIT POUR LA BARRE DE DÉFILEMENT - Chrome, Safari, Edge */
+.conversations-scroll::-webkit-scrollbar {
+  width: 6px; /* Largeur de la barre */
+}
+
+.conversations-scroll::-webkit-scrollbar-track {
+  background: #f1f3f4; /* Couleur du rail */
+  border-radius: 3px; /* Coins arrondis */
+}
+
+.conversations-scroll::-webkit-scrollbar-thumb {
+  background: #4a90e2; /* Couleur du curseur */
+  border-radius: 3px; /* Coins arrondis */
+  transition: background-color 0.2s ease; /* Animation de couleur */
+}
+
+.conversations-scroll::-webkit-scrollbar-thumb:hover {
+  background: #357abd; /* Couleur plus foncée au survol */
+}
+
+/* ITEM DE CONVERSATION INDIVIDUEL - Chaque ligne de conversation */
+.conversation-item {
+  display: flex;
+  align-items: center; /* Alignement vertical centré */
+  padding: 8px 12px; /* RÉDUIT : Padding vertical et horizontal réduits pour compacité */
+  cursor: pointer; /* Indique la cliquabilité */
+  border-bottom: 1px solid #f1f3f4; /* Séparateur subtil entre conversations */
+  transition: all 0.2s ease; /* Animation fluide des changements */
+  position: relative; /* Pour la bordure active */
+}
+
+/* HOVER DE L'ITEM - État de survol */
+.conversation-item:hover {
+  background: #f8f9fa; /* Fond gris clair au survol */
+}
+
+/* ITEM ACTIF - Conversation actuellement ouverte */
+.conversation-item.active {
+  background: #e3f2fd; /* Fond bleu clair */
+  border-right: 3px solid #4a90e2; /* Bordure droite bleue pour indication */
+}
+
+/* AVATAR DE LA CONVERSATION - Photo de profil ou placeholder */
+.conversation-avatar {
+  position: relative; /* Pour l'indicateur de statut en ligne */
+  margin-right: 10px; /* RÉDUIT : Espace réduit avec le contenu */
+  flex-shrink: 0; /* Ne se comprime pas lors du manque d'espace */
+}
+
+/* IMAGE D'AVATAR - Photo de profil réelle */
+.avatar-image {
+  width: 40px; /* RÉDUIT : Taille réduite de 48px à 40px */
+  height: 40px; /* RÉDUIT : Taille réduite de 48px à 40px */
+  border-radius: 50%; /* Forme circulaire */
+  object-fit: cover; /* Ajuste l'image sans déformation */
+  border: 2px solid #e1e8ed; /* Bordure grise subtile */
+}
+
+/* PLACEHOLDER D'AVATAR - Initiales quand pas de photo */
+.avatar-placeholder {
+  width: 10px; /* RÉDUIT : Taille réduite de 48px à 20px */
+  height: 10px; /* RÉDUIT : Taille réduite de 48px à 20px */
+  border-radius: 50%; /* Forme circulaire */
+  background: linear-gradient(135deg, #4a90e2, #357abd); /* Gradient bleu */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white; /* Texte blanc sur fond bleu */
+  font-weight: bold; /* Texte en gras */
+  font-size: 16px; /* RÉDUIT : Taille réduite de 18px à 16px */
+  border: 2px solid #e1e8ed; /* Bordure cohérente avec l'image */
+}
+
+/* INDICATEUR DE STATUT EN LIGNE - Point vert en bas à droite */
+.online-indicator {
+  position: absolute;
+  bottom: 2px; /* Position en bas */
+  right: 2px; /* Position à droite */
+  width: 12px;
+  height: 12px;
+  background: #4caf50; /* Vert pour "en ligne" */
+  border-radius: 50%; /* Forme circulaire */
+  border: 2px solid white; /* Bordure blanche pour contraste */
+}
+
+/* CONTENU TEXTUEL DE LA CONVERSATION - Nom, rôle, dernier message */
+.conversation-content {
+  flex: 1; /* Prend tout l'espace disponible */
+  min-width: 0; /* Permet la troncature du texte */
+}
+
+/* EN-TÊTE DE LA CONVERSATION - Nom, rôle et heure */
+.conversation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Répartit les éléments */
+  margin-bottom: 2px; /* RÉDUIT : Espace réduit avec l'aperçu du message */
+}
+
+/* NOM DU PARTICIPANT - Nom principal affiché */
+.participant-name {
+  font-size: 14px; /* RÉDUIT : Taille réduite de 16px à 14px */
+  font-weight: 600; /* Semi-gras pour importance */
+  color: #1a1a1a; /* Couleur foncée pour lisibilité */
+  margin: 0;
+  margin-right: 6px; /* RÉDUIT : Espace réduit avec les autres éléments */
+  white-space: nowrap; /* Empêche le retour à la ligne */
+  overflow: hidden; /* Cache le texte qui dépasse */
+  text-overflow: ellipsis; /* Ajoute "..." quand tronqué */
+  flex: 1; /* Prend l'espace disponible */
+}
+
+/* BADGE DE RÔLE - Médecin, Patient, etc. */
+.participant-role {
+  font-size: 10px; /* RÉDUIT : Taille réduite de 12px à 10px */
+  color: #657786; /* Couleur grise pour discrétion */
+  background: #f1f3f4; /* Fond gris clair */
+  padding: 1px 4px; /* RÉDUIT : Padding réduit de 2px 6px à 1px 4px */
+  border-radius: 8px; /* RÉDUIT : Forme réduite de 10px à 8px */
+  white-space: nowrap; /* Empêche le retour à la ligne */
+  margin-right: 6px; /* RÉDUIT : Espace réduit avec l'heure */
+}
+
+/* HEURE DU DERNIER MESSAGE - Timestamp */
+.message-time {
+  font-size: 11px; /* RÉDUIT : Taille réduite de 12px à 11px */
+  color: #657786; /* Couleur grise discrète */
+  white-space: nowrap; /* Empêche le retour à la ligne */
+}
+
+/* APERÇU DE LA CONVERSATION - Dernier message et badge */
+.conversation-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Message à gauche, badge à droite */
+}
+
+/* CONTENEUR DU DERNIER MESSAGE */
+.last-message {
+  flex: 1; /* Prend l'espace disponible */
+  min-width: 0; /* Permet la troncature */
+}
+
+/* TEXTE DU DERNIER MESSAGE - Aperçu du contenu */
+.message-text {
+  font-size: 12px; /* RÉDUIT : Taille réduite de 14px à 12px */
+  color: #657786; /* Couleur grise pour message secondaire */
+  white-space: nowrap; /* Empêche le retour à la ligne */
+  overflow: hidden; /* Cache le texte qui dépasse */
+  text-overflow: ellipsis; /* Ajoute "..." quand tronqué */
+}
+
+/* INDICATEUR DE MÉDIA - Icône pour photos, audio, etc. */
+.media-indicator {
+  font-size: 12px; /* RÉDUIT : Taille réduite de 14px à 12px */
+  color: #4a90e2; /* Couleur bleue pour attirer l'attention */
+  font-weight: 500; /* Légèrement en gras */
+}
+
+/* MESSAGE "AUCUN MESSAGE" - État initial */
+.no-messages {
+  font-size: 12px; /* RÉDUIT : Taille réduite de 14px à 12px */
+  color: #aab8c2; /* Couleur très grise pour état vide */
+  font-style: italic; /* Italique pour indiquer l'absence */
+}
+
+/* BADGE MESSAGES NON LUS - Compteur rouge */
+.unread-badge {
+  background: #ff4757; /* Rouge vif pour urgence */
+  color: white;
+  font-size: 10px; /* RÉDUIT : Taille réduite de 12px à 10px */
+  font-weight: bold; /* Texte en gras pour visibilité */
+  padding: 2px 6px; /* RÉDUIT : Padding réduit de 2px 8px à 2px 6px */
+  border-radius: 8px; /* RÉDUIT : Forme réduite de 10px à 8px */
+  min-width: 16px; /* RÉDUIT : Largeur minimum réduite de 20px à 16px */
+  text-align: center; /* Centrage du texte */
+  margin-left: 6px; /* RÉDUIT : Espace réduit avec le message */
+  flex-shrink: 0; /* Ne se comprime jamais */
+}
+
+/* ÉTATS VIDES - Messages quand aucune conversation */
+.no-conversations {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px; /* Hauteur fixe pour centrage */
+  text-align: center;
+  color: #657786; /* Couleur grise pour état vide */
+}
+
+/* TITRES DES ÉTATS VIDES */
+.empty-state h4,
+.no-results h4 {
+  margin: 0 0 8px 0; /* Marge inférieure uniquement */
+  font-size: 18px;
+  color: #1a1a1a; /* Couleur foncée pour le titre */
+}
+
+/* DESCRIPTIONS DES ÉTATS VIDES */
+.empty-state p,
+.no-results p {
+  margin: 0; /* Supprime toutes les marges */
+  font-size: 14px;
+  line-height: 1.4; /* Hauteur de ligne pour lisibilité */
+}
+
+/* RESPONSIVE DESIGN - Adaptations pour écrans mobiles */
+@media (max-width: 768px) {
+  /* ITEM DE CONVERSATION - Padding augmenté sur mobile */
+  .conversation-item {
+    padding: 16px; /* Plus d'espace tactile */
+  }
+  
+  /* BADGE DE RÔLE - Masqué sur mobile pour économiser l'espace */
+  .participant-role {
+    display: none;
+  }
+  
+  /* EN-TÊTE DE CONVERSATION - Layout vertical sur mobile */
+  .conversation-header {
+    flex-direction: column; /* Empilement vertical */
+    align-items: flex-start; /* Alignement à gauche */
+  }
+  
+  /* HEURE DU MESSAGE - Alignement à droite sur mobile */
+  .message-time {
+    align-self: flex-end; /* Position à droite */
+  }
+}
+
+/* ANIMATIONS - Effets visuels pour l'interactivité */
+
+/* Animation pour les nouveaux messages - Highlight temporaire */
+@keyframes newMessage {
+  0% {
+    background: #e8f5e8; /* Fond vert clair initial */
+  }
+  100% {
+    background: transparent; /* Retour au fond normal */
+  }
+}
+
+/* Classe appliquée aux nouveaux messages */
+.conversation-item.new-message {
+  animation: newMessage 2s ease-out; /* Animation de 2 secondes */
+}
+
+/* APERÇU AUDIO - Interface similaire à WhatsApp */
+.audio-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #dcf8c6; /* Fond vert clair comme WhatsApp */
+  padding: 6px 10px;
+  border-radius: 12px;
+  max-width: 200px;
+  margin: 2px 0;
+}
+
+.audio-play-btn {
+  width: 20px;
+  height: 20px;
+  background: #25d366; /* Vert WhatsApp */
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.audio-play-btn:hover {
+  background: #20b954;
+  transform: scale(1.1);
+}
+
+.audio-waveform {
+  flex: 1;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.waveform-bars {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  height: 100%;
+  width: 100%;
+}
+
+.waveform-bars span {
+  flex: 1;
+  background: #25d366;
+  border-radius: 1px;
+  min-width: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Variation des hauteurs pour simuler une forme d'onde */
+.waveform-bars span:nth-child(1) { height: 4px; }
+.waveform-bars span:nth-child(2) { height: 8px; }
+.waveform-bars span:nth-child(3) { height: 12px; }
+.waveform-bars span:nth-child(4) { height: 16px; }
+.waveform-bars span:nth-child(5) { height: 10px; }
+.waveform-bars span:nth-child(6) { height: 6px; }
+.waveform-bars span:nth-child(7) { height: 14px; }
+.waveform-bars span:nth-child(8) { height: 8px; }
+.waveform-bars span:nth-child(9) { height: 12px; }
+.waveform-bars span:nth-child(10) { height: 4px; }
+.waveform-bars span:nth-child(11) { height: 10px; }
+.waveform-bars span:nth-child(12) { height: 16px; }
+.waveform-bars span:nth-child(13) { height: 6px; }
+.waveform-bars span:nth-child(14) { height: 8px; }
+.waveform-bars span:nth-child(15) { height: 4px; }
+
+.audio-duration {
+  font-size: 11px;
+  color: #4a4a4a;
+  font-family: 'Courier New', monospace;
+  flex-shrink: 0;
+  min-width: 30px;
+}
+
+/* Animation pour les barres d'onde */
+@keyframes waveform-pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.audio-preview:hover .waveform-bars span {
+  animation: waveform-pulse 1.5s infinite ease-in-out;
+}
+
+.audio-preview:hover .waveform-bars span:nth-child(odd) {
+  animation-delay: 0.1s;
+}
+
+.audio-preview:hover .waveform-bars span:nth-child(even) {
+  animation-delay: 0.2s;
+}

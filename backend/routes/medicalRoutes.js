@@ -4,9 +4,13 @@ import {
   uploadDocument,
   getVaccinations,
   addVaccination,
+  updateVaccination,
   deleteDocument,
   downloadDocument,
-  deleteVaccination
+  deleteVaccination,
+  getStatistiquesVaccination,
+  getCalendrierVaccinal,
+  updatePreferencesNotification
 } from '../controllers/medicalController.js';
 
 import { authMiddleware } from '../middlewares/authMiddleware.js';
@@ -32,5 +36,12 @@ router.get('/documents/:id/download', authMiddleware, downloadDocument);
 router.get('/vaccinations', authMiddleware, getVaccinations);
 router.post('/vaccinations', authMiddleware, addVaccination);
 router.delete('/vaccinations/:id', authMiddleware, deleteVaccination);
+router.put('/vaccinations/:id', authMiddleware, updateVaccination);
+
+// 📊 Nouvelles routes
+router.get('/vaccinations/statistiques', authMiddleware, getStatistiquesVaccination);
+router.get('/vaccinations/calendrier', authMiddleware, getCalendrierVaccinal);
+router.post('/vaccinations/preferences-notification', authMiddleware, updatePreferencesNotification);
+
 
 export default router;

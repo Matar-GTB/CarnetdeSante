@@ -1,0 +1,296 @@
+/* components/profile/MedecinUserProfile.css */
+
+.medecin-user-profile {
+  background: linear-gradient(135deg, #f8fffe 0%, #e8f8f5 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(46, 125, 50, 0.1);
+  margin-bottom: 2rem;
+  border: 2px solid #e8f5e8;
+  position: relative;
+  overflow: hidden;
+}
+
+.medecin-user-profile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #2e7d32, #388e3c, #43a047);
+}
+
+.medecin-profile-header {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+/* Section Avatar */
+.medecin-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.medecin-avatar {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
+  border: 4px solid #fff;
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+}
+
+.medecin-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.medecin-avatar .avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+}
+
+.medecin-icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.photo-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(46, 125, 50, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* Actions photo */
+.photo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 120px;
+}
+
+.change-photo-btn {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.change-photo-btn:hover {
+  background: #388e3c;
+  transform: translateY(-2px);
+}
+
+.photo-confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.save-photo-btn {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.cancel-photo-btn {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Informations du profil */
+.medecin-profile-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.medecin-identity h1 {
+  color: #2e7d32;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  text-shadow: 0 2px 4px rgba(46, 125, 50, 0.1);
+}
+
+.medecin-badges {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.role-badge {
+  background: linear-gradient(135deg, #4caf50, #388e3c);
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.specialty-badge {
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+/* Détails */
+.medecin-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.detail-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  border-left: 3px solid #4caf50;
+}
+
+.detail-icon {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.detail-text {
+  color: #2c3e50;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Préférences professionnelles */
+.medecin-preferences {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 0.5rem;
+  border-top: 2px solid rgba(76, 175, 80, 0.1);
+}
+
+.preference-tag {
+  background: rgba(76, 175, 80, 0.1);
+  color: #2e7d32;
+  padding: 0.4rem 0.8rem;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  transition: all 0.2s ease;
+}
+
+.preference-tag.active {
+  background: rgba(76, 175, 80, 0.2);
+  border-color: #4caf50;
+  transform: scale(1.02);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .medecin-profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  
+  .medecin-identity h1 {
+    font-size: 1.6rem;
+  }
+  
+  .medecin-details {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .medecin-badges {
+    justify-content: center;
+  }
+  
+  .medecin-preferences {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .medecin-user-profile {
+    padding: 1.5rem;
+  }
+  
+  .medecin-avatar {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .medecin-icon {
+    font-size: 2.5rem;
+  }
+  
+  .medecin-identity h1 {
+    font-size: 1.4rem;
+  }
+  
+  .detail-item {
+    padding: 0.4rem;
+  }
+  
+  .detail-text {
+    font-size: 0.9rem;
+  }
+}

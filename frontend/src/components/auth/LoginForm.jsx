@@ -1,16 +1,21 @@
 // frontend/components/LoginForm.jsx
 import React, { useState,useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Login.css';
 import { login } from '../../services/authService';
 import { AuthContext } from '../../contexts/AuthContext';
+
 const LoginForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDepasse] = useState('');
   const [error, setError] = useState('');
- const [showPassword, setShowPassword] = useState(false); // 👁️ état pour afficher/masquer
-const { loginContext } = useContext(AuthContext); // la fonction définie dans ton contexte
+  const [showPassword, setShowPassword] = useState(false);
+  const { loginContext } = useContext(AuthContext); // Fonction loginContext du contexte
+
+  // Récupérer la page de destination sauvegardée
+  const from = location.state?.from?.pathname || '/dashboard';
 
 const handleConnexion = async (e) => {
   e.preventDefault();
@@ -18,14 +23,22 @@ const handleConnexion = async (e) => {
 
   try {
     const data = await login({ email, mot_de_passe: motDePasse });
-
-      loginContext(data.token);
-      navigate('/dashboard');
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || 'Échec de la connexion');
+    
+    console.log('🍪 Données de connexion reçues:', data);
+    
+    // Avec les cookies, pas besoin de stocker le token
+    // Le serveur définit automatiquement le cookie
+    if (data.success && data.user) {
+      loginContext(data.user); // Passer les données utilisateur au contexte
+      navigate(from, { replace: true }); // Rediriger vers la page de destination sauvegardée
+    } else {
+      setError('Erreur de connexion');
     }
-  };
+  } catch (err) {
+    console.error('Erreur de connexion:', err);
+    setError(err.message || 'Échec de la connexion');
+  }
+};
 
   return (
     <form className="login-form" onSubmit={handleConnexion}>

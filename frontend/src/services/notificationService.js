@@ -1,4 +1,4 @@
-import { API } from './authService';
+import { API } from './authService'; 
 
 /**
  * 🔔 Récupère la liste des notifications

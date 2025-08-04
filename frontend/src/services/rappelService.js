@@ -1,43 +1,38 @@
-// src/services/rappelService.js
-// Ce fichier gère les appels API pour les rappels programmés
-
 import { API } from './authService';
 
-/**
- * Récupère la liste des rappels programmés de l'utilisateur
- */
-export const getRappelsApi = () =>
-  API.get('/rappels')
-    .then(res => res.data);
+// ✅ Ajoute manuellement le token dans chaque requête :
 
-/**
- * Récupère un rappel par son ID
- */
-export const getRappelApi = id =>
-  API.get(`/rappels/${id}`)
-    .then(res => res.data);
+export const getRappelsApi = (token) =>
+  API.get('/rappels', {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(res => res.data);
 
-/**
- * Crée un nouveau rappel
- * @param {object} data - { type_rappel, details, recurrence, canaux }
- */
-export const creerRappelApi = data =>
-  API.post('/rappels', data)
-    .then(res => res.data);
+export const getRappelApi = (id, token) =>
+  API.get(`/rappels/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(res => res.data);
 
-/**
- * Modifie un rappel existant
- * @param {number} id
- * @param {object} data - mêmes champs que pour la création
- */
-export const modifierRappelApi = (id, data) =>
-  API.put(`/rappels/${id}`, data)
-    .then(res => res.data);
+export const creerRappelApi = (data, token) =>
+  API.post('/rappels', data, {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(res => res.data);
 
-/**
- * Supprime un rappel
- * @param {number} id
- */
-export const supprimerRappelApi = id =>
-  API.delete(`/rappels/${id}`)
-    .then(res => res.data);
+export const modifierRappelApi = (id, data, token) =>
+  API.put(`/rappels/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(res => res.data);
+
+export const supprimerRappelApi = (id, token) =>
+  API.delete(`/rappels/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(res => res.data);
+
+export const getHistoriqueRappelsApi = (token) =>
+  API.get('/rappels/historique', {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(res => res.data);
+
+export const supprimerRappelsMultiplesApi = (ids, token) =>
+  API.post('/rappels/supprimer-multiples', { ids }, {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(res => res.data);

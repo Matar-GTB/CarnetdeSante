@@ -1,0 +1,257 @@
+/* src/components/Messaging/MessagingInterface.css */
+
+/* 
+================================================================================
+MODIFICATIONS APPORTÉES :
+================================================================================
+1. FOND DE PAGE : Changé de gradient bleu-violet (#667eea/#764ba2) vers gris neutre (#f5f5f5)
+   - Raison : Suppression des bordures bleu-violet indésirables
+   
+2. COULEURS BOUTONS ET ÉLÉMENTS : Tous les #4a90e2 (bleu) changés vers #888 (gris)
+   - Bouton retour, scrollbars, loading spinner
+   - Raison : Design plus neutre et professionnel
+   
+3. LAYOUT : Structure maintenue pour scroll uniquement dans la zone messages
+   - height: 100vh, overflow: hidden sur .messaging-interface
+   - Raison : Empêcher le scroll de toute la page
+================================================================================
+*/
+
+.messaging-interface {
+  height: 100vh; /* CORRIGÉ : Remis à 100vh pour éviter le contenu coupé */
+  width: 100vw; /* Prend toute la largeur de l'écran */
+  display: flex;
+  flex-direction: column;
+  background: #f5f5f5; /* MODIFIÉ : Fond gris neutre au lieu du gradient bleu-violet */
+  overflow: hidden; /* AUCUN SCROLL - page figée */
+  position: fixed; /* Fixe la position pour empêcher tout mouvement */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.messaging-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-width: 1500px; /* Limite la largeur */
+  width: 100%;
+  margin: 0.5rem auto; /* CORRIGÉ : Marges réduites pour éviter le contenu coupé */
+  background: white; /* Fond blanc pour le contenu */
+  border-radius: 12px; /* Coins arrondis */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Ombre */
+  overflow: hidden; /* Empêche le débordement */
+}
+
+.messaging-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 1rem;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e3e3e3;
+  border-top: 4px solid #888; /* MODIFIÉ : Gris au lieu de #4a90e2 (bleu) */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.messaging-header {
+  background: white;
+  padding: 0.75rem 1.25rem; /* Padding réduit */
+  border-bottom: 1px solid #e1e8ed;
+  border-radius: 12px 12px 0 0; /* Coins arrondis en haut */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px; /* Hauteur réduite */
+  flex-shrink: 0; /* Empêche la compression du header */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Légère ombre */
+}
+
+.messaging-header h2 {
+  margin: 0;
+  color: #1a1a1a;
+  font-size: 1.25rem;
+  font-weight: 600;
+  flex: 1; /* Prend l'espace disponible */
+  text-align: center; /* Centre le titre */
+}
+
+/* Styles pour le bouton retour */
+.messaging-header .btn-back {
+  background: #888; /* MODIFIÉ : Gris au lieu de #4a90e2 (bleu) pour design neutre */
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  flex-shrink: 0; /* Ne se compresse pas */
+}
+
+.messaging-header .btn-back:hover {
+  background: #357abd;
+  transform: translateY(-1px);
+}
+
+.messaging-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden; /* AUCUN SCROLL - seuls les enfants (liste contacts + messages) peuvent scroller */
+  min-height: 0; /* Important : permet au flex de fonctionner correctement */
+}
+
+.conversations-panel {
+  width: 400px; /* MODIFIÉ : Réduit de 350px à 400px pour plus d'espace au chat */
+  background: white;
+  border-right: 1px solid #e1e8ed;
+  border-radius: 0 0 0 12px; /* Coin arrondi en bas à gauche */
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* ✅ SCROLL AUTORISÉ - Liste des contacts */
+  overflow-x: hidden;
+  max-height: 100%; /* MODIFIÉ : Réduit à 80% pour ne pas prendre toute la hauteur */
+  /* Styles pour la barre de défilement de la liste des contacts */
+  scrollbar-width: thin;
+  scrollbar-color: #888 #e1e8ed; /* MODIFIÉ : Thumb gris au lieu de #4a90e2 (bleu) */
+}
+
+/* Styles pour WebKit (Chrome, Safari, Edge) pour la liste des contacts */
+.conversations-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.conversations-panel::-webkit-scrollbar-track {
+  background: #f1f3f4;
+  border-radius: 3px;
+}
+
+.conversations-panel::-webkit-scrollbar-thumb {
+  background: #888; /* MODIFIÉ : Gris au lieu de #4a90e2 (bleu) */
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.conversations-panel::-webkit-scrollbar-thumb:hover {
+  background: #357abd;
+}
+
+.chat-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* AUCUN SCROLL - seul le messages-container dans ChatWindow peut scroller */
+  max-height: 100%; /* Ne dépasse pas le parent */
+  border-radius: 0 0 12px 0; /* Coin arrondi en bas à droite */
+}
+
+.no-conversation-selected {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: white;
+}
+
+.no-conversation-content {
+  text-align: center;
+  color: #657786;
+}
+
+.no-conversation-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #1a1a1a;
+}
+
+.no-conversation-content p {
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .messaging-container {
+    margin: 0.5rem;
+    border-radius: 8px;
+  }
+  
+  .messaging-content {
+    flex-direction: column;
+  }
+  
+  .conversations-panel {
+    width: 100%;
+    height: 40%;
+    border-right: none;
+    border-bottom: 1px solid #e1e8ed;
+    border-radius: 0;
+  }
+
+  .chat-panel {
+    height: 60%;
+    border-radius: 0;
+  }
+}
+
+/* Animations */
+.messaging-interface * {
+  transition: all 0.2s ease;
+}
+
+/* Scrollbar styling */
+.messaging-interface ::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messaging-interface ::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.messaging-interface ::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.messaging-interface ::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* CORRECTION : Styles pour s'assurer que les médias (photos, audio) s'affichent correctement */
+.messaging-interface .message-image,
+.messaging-interface .message-audio,
+.messaging-interface .message-video,
+.messaging-interface .media-content {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+.messaging-interface .file-content {
+  display: block !important;
+  visibility: visible !important;
+}
+
+.messaging-interface .attached-files-preview {
+  display: block !important;
+  visibility: visible !important;
+}

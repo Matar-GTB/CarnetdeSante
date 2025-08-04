@@ -1,0 +1,126 @@
+/* src/pages/medications/MedicationsPage.css */
+.medications-page {
+  max-width: 1300px;
+  margin: auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+}
+
+.medications-page h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.message {
+  background: #e0f7fa;
+  color: #00796b;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.message.fade-out {
+  opacity: 0;
+}
+
+.med-card strong {
+  color: #6c5ce7;
+}
+.btn-ajouter {
+  background-color: #5e35b1;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: background 0.3s ease;
+}
+
+.btn-ajouter:hover {
+  background-color: #4527a0;
+}
+
+.medication-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.med-card {
+  position: relative;
+  background: #f5f5f5;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.med-card:hover {
+  transform: translateY(-4px);
+}
+
+.med-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.med-card p {
+  font-size: 0.95rem;
+  margin: 0.3rem 0;
+  color: #444;
+}
+
+.btn-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.btn-edit,
+.btn-delete {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-edit {
+  background-color: #0288d1;
+  color: white;
+}
+
+.btn-edit:hover {
+  background-color: #0277bd;
+}
+
+.btn-delete {
+  background-color: #f99997;
+  color: white;
+}
+.btn-ajouter {
+  background-color: #6c5ce7;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.btn-delete:hover {
+  background-color: #c62828;
+}
+/* MedicationsPage.css */
+.btn-retour {
+  margin-bottom: 1rem;
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}

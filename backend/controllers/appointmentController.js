@@ -8,6 +8,10 @@ import { Op } from 'sequelize';
 import Rappel from '../models/Rappel.js';
 import HorairesTravail from '../models/HorairesTravail.js';
 import Indisponibilite from '../models/Indisponibilite.js';
+import dayjs from 'dayjs';
+import fr from 'dayjs/locale/fr.js';
+dayjs.locale(fr);
+
 /**
  * 1) Créer une demande de RDV (statut = 'en_attente')
  * Validation créneau : libre, dans les horaires, pas bloqué, pas de chevauchement
@@ -21,7 +25,8 @@ export const createAppointment = async (req, res) => {
       heure_debut,
       heure_fin,
       type_rendezvous,
-      notes
+      notes,
+      canaux
     } = req.body;
 
     // 1. Sécurité : un patient ne peut créer que pour lui-même
@@ -114,6 +119,21 @@ export const createAppointment = async (req, res) => {
     // 8. Rappels patient (si la date de rappel est future)
     const dateHeureRDV = new Date(`${date_rendezvous}T${heure_debut}`);
     const now = new Date();
+    const dateRDV = dayjs(`${date_rendezvous}T${heure_debut}`);
+    const maintenant = dayjs();
+
+    const joursDiff = dateRDV.startOf('day').diff(maintenant.startOf('day'), 'day');
+    let messageRappel = `Rendez-vous avec Dr ${nom_medecin} `;
+
+    if (joursDiff === 0) {
+      messageRappel += `aujourd’hui à ${heure_debut}`;
+    } else if (joursDiff === 1) {
+      messageRappel += `demain à ${heure_debut}`;
+    } else {
+      const jourSemaine = dateRDV.format('dddd');
+      messageRappel += `${jourSemaine} à ${heure_debut} (dans ${joursDiff} jours)`;
+    }
+
     for (const offset of [24, 2]) {
       const rappelDate = new Date(dateHeureRDV.getTime() - offset * 60 * 60 * 1000);
       if (rappelDate > now) {
@@ -125,14 +145,11 @@ export const createAppointment = async (req, res) => {
             date: date_rendezvous,
             heure: heure_debut,
             type: type_rendezvous,
-            nom_medecin,
-            message: offset === 24
-              ? `Rendez-vous avec Dr ${nom_medecin} demain à ${heure_debut}`
-              : `Rendez-vous avec Dr ${nom_medecin} dans 2h à ${heure_debut}`
+            nom_medecin
           }),
           date_heure: rappelDate,
-          recurrence: 'aucune',
-          canaux: JSON.stringify({ notification: true }),
+          canaux: JSON.stringify(canaux || { notification: true }),
+          message: messageRappel,
           envoye: false,
         });
       }
@@ -219,7 +236,7 @@ export const getMedecinsTraitants = async (req, res) => {
         {
           model: User,
           as: 'Medecin',
-          attributes: ['id', 'prenom', 'nom', 'specialite', 'etablissements']
+          attributes: ['id', 'prenom', 'nom', 'specialite', 'etablissements', 'photo_profil']
         }
       ]
     });
@@ -241,7 +258,7 @@ export const getMedecinsDisponibles = async (req, res) => {
   try {
     const medecins = await User.findAll({
       where: { role: 'medecin' },
-      attributes: ['id', 'prenom', 'nom', 'specialite', 'langues', 'etablissements']
+      attributes: ['id', 'prenom', 'nom', 'specialite', 'langues', 'etablissements', 'photo_profil']
     });
     return res.json({ success: true, data: medecins });
   } catch (error) {
@@ -383,7 +400,6 @@ export const getCreneauxDisponibles = async (req, res) => {
   try {
     const { medecinId, date } = req.params;
 
-    // 1. Récupérer les horaires du jour
     const dateObj = new Date(date);
     const jourSemaine = dateObj.toLocaleDateString('fr-FR', { weekday: 'long' }).toLowerCase();
 
@@ -392,12 +408,12 @@ export const getCreneauxDisponibles = async (req, res) => {
     });
 
     if (!horaire) {
-      return res.json({ success: true, data: [] }); // Pas de travail ce jour-là
+      return res.json({ success: true, data: {creneaux: [], duree: null,travail: false } });
     }
 
     const { heure_debut, heure_fin, duree_creneau } = horaire;
 
-    // 2. Générer tous les créneaux possibles
+    // Génère les créneaux entre heure_debut et heure_fin
     const generateTimeSlots = (start, end, duration) => {
       const slots = [];
       const [startH, startM] = start.split(':').map(Number);
@@ -405,7 +421,7 @@ export const getCreneauxDisponibles = async (req, res) => {
       let current = new Date(0, 0, 0, startH, startM);
       const endTime = new Date(0, 0, 0, endH, endM);
 
-      while (current.getTime() + duration * 60000 <= endTime.getTime()) {
+      while (current.getTime() < endTime.getTime()) {
         const h = current.getHours().toString().padStart(2, '0');
         const m = current.getMinutes().toString().padStart(2, '0');
         slots.push(`${h}:${m}`);
@@ -417,7 +433,7 @@ export const getCreneauxDisponibles = async (req, res) => {
 
     const allSlots = generateTimeSlots(heure_debut, heure_fin, duree_creneau);
 
-    // 3. Retirer les RDV existants
+    // Récupère tous les RDV planifiés ou en attente
     const existingRDVs = await Appointment.findAll({
       where: {
         medecin_id: medecinId,
@@ -426,9 +442,31 @@ export const getCreneauxDisponibles = async (req, res) => {
       }
     });
 
-    const busyTimes = existingRDVs.map(r => r.heure_debut);
+    // Fonction pour soustraire 1 minute à une heure
+    const subtractOneMinute = (timeStr) => {
+  const [h, m] = timeStr.split(':').map(Number);
+  const date = new Date(0, 0, 0, h, m);
+  date.setMinutes(Math.max(0, date.getMinutes() - 1));
+  return date.toTimeString().slice(0, 5);
+};
 
-    // 4. Retirer les indisponibilités exceptionnelles
+
+    // Créneaux bloqués par RDV existants
+    let busyTimes = [];
+    for (const rdv of existingRDVs) {
+      const start = rdv.heure_debut;
+      const end = subtractOneMinute(rdv.heure_fin);
+      const blocked = generateTimeSlots(start, end, duree_creneau);
+      busyTimes.push(...blocked);
+    }
+const computeEndTime = (start, duration) => {
+  const [h, m] = start.split(':').map(Number);
+  const date = new Date(0, 0, 0, h, m);
+  date.setMinutes(date.getMinutes() + duration - 1);
+  return date.toTimeString().slice(0, 5); // Fin incluse
+};
+
+    // Créneaux bloqués par indisponibilités
     const indispos = await Indisponibilite.findAll({
       where: {
         medecin_id: medecinId,
@@ -437,18 +475,27 @@ export const getCreneauxDisponibles = async (req, res) => {
       }
     });
 
-    const blockedSlots = [];
+    let blockedSlots = [];
     for (const ind of indispos) {
       const indStart = ind.heure_debut;
-      const indEnd = ind.heure_fin;
+      const indEnd = subtractOneMinute(ind.heure_fin);
       const blocked = generateTimeSlots(indStart, indEnd, duree_creneau);
       blockedSlots.push(...blocked);
     }
 
-    // 5. Filtrer les créneaux
-    const availableSlots = allSlots.filter(s => !busyTimes.includes(s) && !blockedSlots.includes(s));
+    // Supprimer les créneaux déjà pris ou bloqués
+    const availableSlots = allSlots.filter(
+      s => !busyTimes.includes(s) && !blockedSlots.includes(s)
+    );
 
-    return res.json({ success: true, data: availableSlots });
+    return res.json({
+  success: true,
+  data: {
+    creneaux: availableSlots,
+    duree: duree_creneau,
+    travail: true
+  }
+    });
   } catch (error) {
     console.error('Erreur créneaux dispo:', error);
     return res.status(500).json({ success: false, message: 'Erreur récupération créneaux' });

@@ -1,0 +1,369 @@
+/* src/pages/dashboard/PatientDashboard.css */
+
+.patient-dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+/* En-tête */
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #4a148c, #6a1b9a);
+  color: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(74, 20, 140, 0.3);
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.welcome-subtitle {
+  margin: 0.5rem 0 0 0;
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* Alertes santé */
+.health-alerts {
+  margin-bottom: 2rem;
+}
+
+.health-alerts h3 {
+  color: #e53e3e;
+  margin-bottom: 1rem;
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.alert:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  color: #856404;
+}
+
+.alert-info {
+  background-color: #d4edda;
+  border-left: 4px solid #28a745;
+  color: #155724;
+}
+
+/* Actions rapides */
+.quick-actions {
+  margin-bottom: 2rem;
+}
+
+.quick-actions h3 {
+  color: #2d3748;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+.action-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.action-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 2px solid transparent;
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border-color: #4a148c;
+}
+
+.action-icon {
+  font-size: 2.5rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4a148c, #6a1b9a);
+  border-radius: 50%;
+  color: white;
+}
+
+.action-text h4 {
+  margin: 0 0 0.5rem 0;
+  color: #2d3748;
+  font-size: 1.1rem;
+}
+
+.action-text p {
+  margin: 0;
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+/* Dashboard principal */
+.dashboard-main {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-top: 4px solid #4a148c;
+}
+
+.dashboard-card h3 {
+  margin: 0 0 1.5rem 0;
+  color: #2d3748;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Rendez-vous */
+.appointments-list, .medications-list, .notifications-list {
+  margin-bottom: 1.5rem;
+}
+
+.appointment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  border-left: 3px solid #4a148c;
+}
+
+.appointment-date {
+  font-weight: 600;
+  color: #4a148c;
+  font-size: 0.9rem;
+}
+
+.appointment-details {
+  text-align: right;
+}
+
+.appointment-details strong {
+  display: block;
+  color: #2d3748;
+  font-size: 1.1rem;
+}
+
+.appointment-details span {
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+/* Médicaments */
+.medication-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f0fff4;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  border-left: 3px solid #28a745;
+}
+
+.med-name {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.med-schedule {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.med-time {
+  background: #28a745;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Notifications */
+.notification-item {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.notification-item.unread {
+  background: #ebf8ff;
+  border-left: 3px solid #3182ce;
+}
+
+.notification-item.read {
+  background: #f7fafc;
+  border-left: 3px solid #cbd5e0;
+}
+
+.notif-content strong {
+  display: block;
+  color: #2d3748;
+  margin-bottom: 0.25rem;
+}
+
+.notif-content p {
+  margin: 0;
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.notif-date {
+  font-size: 0.8rem;
+  color: #a0aec0;
+  white-space: nowrap;
+}
+
+/* Boutons */
+.view-all-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #4a148c, #6a1b9a);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-all-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 20, 140, 0.3);
+}
+
+/* États vides */
+.empty-state {
+  text-align: center;
+  color: #a0aec0;
+  font-style: italic;
+  padding: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Insights */
+.dashboard-insights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.insight-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-top: 4px solid #6366f1;
+}
+
+.insight-card h3 {
+  margin: 0 0 1.5rem 0;
+  color: #2d3748;
+  font-size: 1.3rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 8px;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #4a148c;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #718096;
+}
+
+.ai-recommendations p {
+  padding: 0.75rem;
+  background: #f0f9ff;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  border-left: 3px solid #0ea5e9;
+  color: #0c4a6e;
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .patient-dashboard {
+    padding: 1rem;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 2rem;
+  }
+  
+  .action-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-main {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-insights {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

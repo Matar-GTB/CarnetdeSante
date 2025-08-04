@@ -1,4 +1,3 @@
-// frontend/components/medecin/DisponibilitesMedecin.jsx
 import React, { useEffect, useState } from 'react';
 import './DisponibilitesMedecin.css';
 import {
@@ -9,21 +8,25 @@ import {
 
 const joursSemaine = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
 
-const DisponibilitesMedecin = ({ medecinId, token }) => {
+const DisponibilitesMedecin = () => {
   const [horaires, setHoraires] = useState({});
   const [editJour, setEditJour] = useState(null);
   const [form, setForm] = useState({ heure_debut: '', heure_fin: '', duree_creneau: 30 });
 
-  // Charger les horaires à l’ouverture
   useEffect(() => {
-    if (medecinId) {
-      getHorairesTravail(medecinId, token).then((res) => {
-        const obj = {};
-        res.forEach(h => obj[h.jour_semaine] = h);
-        setHoraires(obj);
-      });
+    fetchHoraires();
+  }, []);
+
+  const fetchHoraires = async () => {
+    try {
+      const res = await getHorairesTravail();
+      const obj = {};
+      res.forEach(h => obj[h.jour_semaine] = h);
+      setHoraires(obj);
+    } catch (error) {
+      console.error('Erreur chargement horaires', error);
     }
-  }, [medecinId, token]);
+  };
 
   const handleEdit = (jour) => {
     setEditJour(jour);
@@ -36,22 +39,24 @@ const DisponibilitesMedecin = ({ medecinId, token }) => {
   };
 
   const handleSave = async () => {
-    await updateHoraireJour(editJour, form, token);
-    const updated = await getHorairesTravail(medecinId, token);
-    const obj = {};
-    updated.forEach(h => obj[h.jour_semaine] = h);
-    setHoraires(obj);
-    setEditJour(null);
+    try {
+      await updateHoraireJour(editJour, form);
+      await fetchHoraires();
+      setEditJour(null);
+    } catch (error) {
+      alert('Erreur lors de la sauvegarde du créneau');
+    }
   };
 
   const handleDelete = async (jour) => {
     const id = horaires[jour]?.id;
     if (id && window.confirm('Supprimer ce créneau ?')) {
-      await deleteHoraireJour(id, token);
-      const updated = await getHorairesTravail(medecinId, token);
-      const obj = {};
-      updated.forEach(h => obj[h.jour_semaine] = h);
-      setHoraires(obj);
+      try {
+        await deleteHoraireJour(id);
+        await fetchHoraires();
+      } catch (error) {
+        alert('Erreur lors de la suppression');
+      }
     }
   };
 

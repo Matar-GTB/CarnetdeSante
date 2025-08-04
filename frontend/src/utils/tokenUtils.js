@@ -1,27 +1,11 @@
 import { jwtDecode } from 'jwt-decode';
 
-
 /**
- * 🔐 Récupère et décode le token depuis le localStorage
- */
-export const getTokenPayloadFromStorage = () => {
-  const token = localStorage.getItem('token');
-  if (!token || typeof token !== 'string') return null;
-
-  try {
-    return jwtDecode(token);
-  } catch (err) {
-    console.error("Erreur de décodage du token", err);
-    return null;
-  }
-};
-
-/**
- * 🎯 Décode un token donné
+ * 🔓 Décode un token JWT (accessToken)
  */
 export const getTokenPayload = (token) => {
-  if (!token || typeof token !== 'string') return null;
   try {
+    if (typeof token !== 'string') return null;
     return jwtDecode(token);
   } catch (err) {
     console.error("Erreur de décodage du token", err);
@@ -29,6 +13,9 @@ export const getTokenPayload = (token) => {
   }
 };
 
+/**
+ * 🔒 Vérifie si un token est expiré
+ */
 export const isTokenExpired = (token) => {
   const payload = getTokenPayload(token);
   if (!payload?.exp) return true;
@@ -37,6 +24,9 @@ export const isTokenExpired = (token) => {
   return payload.exp < now;
 };
 
+/**
+ * 🎭 Rôle extrait du token
+ */
 export const getUserRole = (token) => {
   const payload = getTokenPayload(token);
   return payload?.role || null;

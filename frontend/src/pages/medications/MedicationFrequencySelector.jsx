@@ -10,21 +10,27 @@ const MedicationFrequencySelector = ({ onChange }) => {
   const [interval, setInterval] = useState(30); // en minutes
   const [intervalStart, setIntervalStart] = useState('08:00');
   const [intervalEnd, setIntervalEnd] = useState('20:00');
+  const [canaux, setCanaux] = useState({
+    email: false,
+    sms: false,
+    notification: true
+  });
 
   // Met à jour le parent à chaque changement
   React.useEffect(() => {
     if (mode === 'custom') {
-      onChange({ type: 'custom', hours });
+      onChange({ type: 'custom', hours, canaux });
     } else {
       onChange({
         type: 'interval',
         interval: parseInt(interval),
         start: intervalStart,
-        end: intervalEnd
+        end: intervalEnd,
+        canaux
       });
     }
     // eslint-disable-next-line
-  }, [mode, frequency, hours, interval, intervalStart, intervalEnd]);
+  }, [mode, frequency, hours, interval, intervalStart, intervalEnd, canaux]);
 
   // Gère la sélection du nombre de prises
   const handleFrequencyChange = (e) => {
@@ -142,6 +148,32 @@ const MedicationFrequencySelector = ({ onChange }) => {
           </div>
         </div>
       )}
+      <div className="canaux-row" style={{ marginTop: 16 }}>
+        <label>
+          <input
+            type="checkbox"
+            checked={canaux.email}
+            onChange={e => setCanaux(prev => ({ ...prev, email: e.target.checked }))}
+          />
+          Email
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={canaux.sms}
+            onChange={e => setCanaux(prev => ({ ...prev, sms: e.target.checked }))}
+          />
+          SMS
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={canaux.notification}
+            onChange={e => setCanaux(prev => ({ ...prev, notification: e.target.checked }))}
+          />
+          Notification
+        </label>
+      </div>
     </div>
   );
 };

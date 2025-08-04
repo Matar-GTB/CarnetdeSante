@@ -5,195 +5,286 @@ import crypto from 'crypto';
 import { Op } from 'sequelize';
 import User from '../models/User.js';
 import HorairesTravail from '../models/HorairesTravail.js';
+
 const JWT_SECRET = process.env.JWT_SECRET || 'secret_dev';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
 const RESET_TOKEN_EXPIRATION = 60 * 60 * 1000; // 1h
 const SALT_ROUNDS = 12;
 
-/**
- *  Connexion utilisateur
- */
+// 🔐 Génération du token d'accès
+function generateToken(payload, expiresIn = JWT_EXPIRES_IN) {
+  return jwt.sign(payload, JWT_SECRET, { expiresIn });
+}
+
+function handleError(res, err, context = 'Erreur') {
+  console.error(err);
+  res.status(500).json({ message: `${context}: ${err.message}` });
+}
+
+function sendPasswordResetEmail(email, token) {
+  const resetURL = `${process.env.CLIENT_URL || 'http://localhost:3000'}/reset-password/${token}`;
+  console.log(`[Reset] Mail à ${email}: ${resetURL}`);
+}
+
 export const login = async (req, res) => {
   try {
     const { email, mot_de_passe } = req.body;
-    if (!email || !mot_de_passe) return res.status(400).json({ message: 'Email et mot de passe requis' });
+    if (!email || !mot_de_passe)
+      return res.status(400).json({ message: 'Email et mot de passe requis' });
 
     const user = await User.findOne({ where: { email } });
-    if (!user || !(await user.verifyPassword(mot_de_passe))) {
+    if (!user || !(await user.verifyPassword(mot_de_passe)))
       return res.status(401).json({ message: 'Identifiants invalides' });
-    }
 
-    const token = generateToken({
-  userId: user.id,
-  role: user.role,
-  prenom: user.prenom,
-  nom: user.nom
-});
-// 🔁 Génération du refreshToken
-const refreshToken = jwt.sign(
-  { userId: user.id },
-  process.env.JWT_REFRESH_SECRET || 'refresh_dev',
-  { expiresIn: '7d' }
-);
+    // Token d'accès court (15 minutes)
+    const accessToken = generateToken({
+      userId: user.id,
+      role: user.role,
+      prenom: user.prenom,
+      nom: user.nom
+    }, '15m');
 
-// 🍪 Envoi en cookie sécurisé
-res.cookie('refreshToken', refreshToken, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'Strict',
-  maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
-});
+    // Token de refresh long (7 jours)
+    const refreshToken = jwt.sign(
+      { userId: user.id, type: 'refresh' },
+      process.env.JWT_REFRESH_SECRET || 'refresh_dev',
+      { expiresIn: '7d' }
+    );
 
+    // Configuration sécurisée des cookies HttpOnly
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN : undefined,
+      path: '/'
+    };
 
-    res.json({
-  id: user.id,
-  email: user.email,
-  role: user.role,
-  nom: user.nom,
-  prenom: user.prenom,
-  adresse: user.adresse,
-  telephone: user.telephone,
-  sexe: user.sexe,
-  date_naissance: user.date_naissance,
-  specialite: user.specialite,
-  langues: user.langues,
-  moyens_paiement: user.moyens_paiement,
-  accepte_nouveaux_patient: user.accepte_nouveaux_patient,
-  accepte_non_traitants: user.accepte_non_traitants,
-  horaires_travail: user.horaires_travail,
-  accessibilite: user.accessibilite,
-  photo_profil: user.photo_profil,
-  token
-});
+    // Cookie pour le token d'accès (15 minutes)
+    res.cookie('accessToken', accessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60 * 1000 // 15 minutes
+    });
 
+    // Cookie pour le token de refresh (7 jours)
+    res.cookie('refreshToken', refreshToken, {
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
+    });
+
+    // Réponse sans token dans le body (seulement les infos utilisateur)
+    const userResponse = { ...user.toJSON() };
+    delete userResponse.mot_de_passe;
+    
+    res.json({ 
+      success: true,
+      user: userResponse,
+      message: 'Connexion réussie'
+    });
   } catch (err) {
     handleError(res, err, 'Erreur lors de la connexion');
   }
 };
 
-/**
- * Inscription utilisateur
- */
 export const register = async (req, res) => {
   try {
-    const { email, mot_de_passe, role, ...data } = req.body;
+    const { email, mot_de_passe, role = 'patient', ...data } = req.body;
 
-    if (!email || !mot_de_passe) return res.status(400).json({ message: 'Email et mot de passe requis' });
+    if (!email || !mot_de_passe)
+      return res.status(400).json({ message: 'Email et mot de passe requis' });
 
     const exists = await User.findOne({ where: { email } });
-    if (exists) return res.status(409).json({ message: 'Email déjà utilisé' });
+    if (exists)
+      return res.status(409).json({ message: 'Email déjà utilisé' });
 
-    const user = await User.create({
-      email,
-      mot_de_passe,
-      role: role || 'patient',
-      ...data
+    const user = await User.create({ email, mot_de_passe, role, ...data });
+
+    if (role === 'medecin') {
+      const jours = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
+      const horairesPromises = jours.map(jour =>
+        HorairesTravail.create({
+          medecin_id: user.id,
+          jour_semaine: jour,
+          heure_debut: '08:00',
+          heure_fin: '16:00',
+          duree_creneau: 30
+        })
+      );
+      await Promise.all(horairesPromises);
+    }
+
+    // Token d'accès court pour l'inscription
+    const accessToken = generateToken({
+      userId: user.id,
+      role: user.role,
+      prenom: user.prenom,
+      nom: user.nom
+    }, '15m');
+
+    // Token de refresh pour l'inscription
+    const refreshToken = jwt.sign(
+      { userId: user.id, type: 'refresh' },
+      process.env.JWT_REFRESH_SECRET || 'refresh_dev',
+      { expiresIn: '7d' }
+    );
+
+    // Configuration des cookies
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN : undefined,
+      path: '/'
+    };
+
+    // Définir les cookies
+    res.cookie('accessToken', accessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60 * 1000 // 15 minutes
     });
-    if (nouvelUtilisateur.role === 'medecin') {
-  const jours = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
-  const horairesPromises = jours.map(jour =>
-    HorairesTravail.create({
-      medecin_id: nouvelUtilisateur.id,
-      jour_semaine: jour,
-      heure_debut: '08:00',
-      heure_fin: '16:00',
-      duree_creneau: 30
-    })
-  );
-  await Promise.all(horairesPromises);
-}
 
-    const token = generateToken({
-  userId: user.id,
-  role: user.role,
-  prenom: user.prenom,
-  nom: user.nom
-});
+    res.cookie('refreshToken', refreshToken, {
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
+    });
 
-    res.status(201).json({
-  id: user.id,
-  email: user.email,
-  role: user.role,
-  nom: user.nom,
-  prenom: user.prenom,
-  adresse: user.adresse,
-  telephone: user.telephone,
-  sexe: user.sexe,
-  date_naissance: user.date_naissance,
-  specialite: user.specialite,
-  langues: user.langues,
-  moyens_paiement: user.moyens_paiement,
-  accepte_nouveaux_patient: user.accepte_nouveaux_patient,
-  accepte_non_traitants: user.accepte_non_traitants,
-  horaires_travail: user.horaires_travail,
-  accessibilite: user.accessibilite,
-  photo_profil: user.photo_profil,
-  token
-});
+    const userResponse = { ...user.toJSON() };
+    delete userResponse.mot_de_passe;
 
-
+    res.status(201).json({ 
+      success: true,
+      user: userResponse,
+      message: 'Inscription réussie'
+    });
   } catch (err) {
     handleError(res, err, 'Erreur lors de l’inscription');
   }
 };
 
-/**
- * 🛠 Envoi du token de réinitialisation
- */
+export const refreshAccessToken = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    
+    if (!refreshToken) {
+      return res.status(401).json({ message: 'Token de refresh manquant' });
+    }
+
+    // Vérification du refresh token
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || 'refresh_dev');
+    
+    if (decoded.type !== 'refresh') {
+      return res.status(403).json({ message: 'Type de token invalide' });
+    }
+
+    const user = await User.findByPk(decoded.userId);
+    if (!user) {
+      return res.status(403).json({ message: 'Utilisateur introuvable' });
+    }
+
+    // Générer un nouveau token d'accès
+    const newAccessToken = generateToken({
+      userId: user.id,
+      role: user.role,
+      prenom: user.prenom,
+      nom: user.nom
+    }, '15m');
+
+    // Configuration des cookies
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN : undefined,
+      path: '/'
+    };
+
+    // Nouveau cookie d'accès
+    res.cookie('accessToken', newAccessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60 * 1000 // 15 minutes
+    });
+
+    // Optionnel : renouveler aussi le refresh token pour une sécurité accrue
+    const newRefreshToken = jwt.sign(
+      { userId: user.id, type: 'refresh' },
+      process.env.JWT_REFRESH_SECRET || 'refresh_dev',
+      { expiresIn: '7d' }
+    );
+
+    res.cookie('refreshToken', newRefreshToken, {
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
+    });
+
+    res.json({ 
+      success: true,
+      user: {
+        id: user.id,
+        role: user.role,
+        prenom: user.prenom,
+        nom: user.nom,
+        email: user.email
+      },
+      message: 'Token renouvelé avec succès'
+    });
+  } catch (err) {
+    // Effacer les cookies en cas d'erreur
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+    handleError(res, err, 'Erreur lors du renouvellement du token');
+  }
+};
+
+export const logout = (req, res) => {
+  // Configuration des cookies pour la suppression
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+    domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN : undefined,
+    path: '/'
+  };
+
+  // Supprimer les deux cookies
+  res.clearCookie('accessToken', cookieOptions);
+  res.clearCookie('refreshToken', cookieOptions);
+  
+  res.json({ 
+    success: true,
+    message: 'Déconnecté avec succès' 
+  });
+};
+
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: 'Email requis' });
 
     const user = await User.findOne({ where: { email } });
-    if (user) {
-      const token = crypto.randomBytes(32).toString('hex');
-      const expiration = new Date(Date.now() + RESET_TOKEN_EXPIRATION);
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
 
-      await user.update({
-        token_reinitialisation: token,
-        expiration_token_reinitialisation: expiration
-      });
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiration = new Date(Date.now() + RESET_TOKEN_EXPIRATION);
 
-      sendPasswordResetEmail(user.email, token);
-    }
+    user.token_reinitialisation = token;
+    user.expiration_token_reinitialisation = expiration;
+    await user.save();
 
-    res.json({ message: 'Si votre email est valide, un lien a été envoyé' });
+    sendPasswordResetEmail(user.email, token);
+    res.json({ message: 'Email de réinitialisation envoyé' });
+
   } catch (err) {
     handleError(res, err, 'Erreur lors de la demande de réinitialisation');
   }
 };
-
-/**
- * 🔍 Vérification du token de réinitialisation
- */
-export const validateResetToken = async (req, res) => {
-  try {
-    const token = req.params.token;
-    const user = await User.findOne({
-      where: {
-        token_reinitialisation: token,
-        expiration_token_reinitialisation: { [Op.gt]: new Date() }
-      }
-    });
-
-    if (!user) return res.status(400).json({ message: 'Token invalide ou expiré' });
-    res.json({ message: 'Token valide' });
-  } catch (err) {
-    handleError(res, err, 'Erreur lors de la validation du token');
-  }
-};
-
-/**
- *  Réinitialisation du mot de passe
- */
 export const resetPassword = async (req, res) => {
   try {
-    const token = req.params.token;
-    const { newPassword } = req.body;
+    const { token } = req.params;
+    const { nouveau_mot_de_passe } = req.body;
 
-    if (!newPassword || newPassword.length < 8)
-      return res.status(400).json({ message: 'Mot de passe invalide (min. 8 caractères)' });
+    if (!nouveau_mot_de_passe) {
+      return res.status(400).json({ message: 'Le nouveau mot de passe est requis' });
+    }
 
     const user = await User.findOne({
       where: {
@@ -202,79 +293,37 @@ export const resetPassword = async (req, res) => {
       }
     });
 
-    if (!user) return res.status(400).json({ message: 'Token invalide ou expiré' });
+    if (!user) {
+      return res.status(400).json({ message: 'Lien de réinitialisation invalide ou expiré' });
+    }
 
-    user.mot_de_passe = newPassword;
+    user.mot_de_passe = await bcrypt.hash(nouveau_mot_de_passe, SALT_ROUNDS);
     user.token_reinitialisation = null;
     user.expiration_token_reinitialisation = null;
-    user.tokenVersion += 1;
     await user.save();
 
     res.json({ message: 'Mot de passe réinitialisé avec succès' });
   } catch (err) {
-    handleError(res, err, 'Erreur lors de la réinitialisation');
+    handleError(res, err, 'Erreur lors de la réinitialisation du mot de passe');
   }
 };
-
-/**
- *  Génère un token JWT
- */
-function generateToken(payload) {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-}
-
-/**
- *  Simule l'envoi d'un mail de réinitialisation
- */
-function sendPasswordResetEmail(email, token) {
-  console.log(`[Reset] Mail à ${email}: ${(process.env.CLIENT_URL || 'http://localhost:3000')}/reset-password/${token}`);
-}
-
-/**
- *  Gestion centralisée des erreurs
- */
-function handleError(res, err, context = 'Erreur') {
-  console.error(err);
-  res.status(500).json({
-    message: process.env.NODE_ENV === 'production'
-      ? 'Erreur serveur'
-      : `${context}: ${err.message}`
-  });
-}
-
-/**
- * 🔄 Renouvellement du token d'accès via refreshToken (cookie)
- */
-export const refreshAccessToken = async (req, res) => {
+export const validateResetToken = async (req, res) => {
   try {
-    const token = req.cookies.refreshToken;
-    if (!token) return res.status(401).json({ message: 'RefreshToken manquant' });
+    const { token } = req.params;
 
-    const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET || 'refresh_dev');
-    const user = await User.findByPk(decoded.userId);
-
-    if (!user) return res.status(403).json({ message: 'Utilisateur inconnu' });
-
-    const newAccessToken = generateToken({
-      userId: user.id,
-      role: user.role,
-      prenom: user.prenom,
-      nom: user.nom
+    const user = await User.findOne({
+      where: {
+        token_reinitialisation: token,
+        expiration_token_reinitialisation: { [Op.gt]: new Date() }
+      }
     });
 
-    res.json({ token: newAccessToken });
+    if (!user) {
+      return res.status(400).json({ message: 'Token invalide ou expiré' });
+    }
+
+    res.json({ message: 'Token valide' });
   } catch (err) {
-    handleError(res, err, 'Erreur lors du renouvellement du token');
+    handleError(res, err, 'Erreur lors de la validation du token');
   }
-};
-/**
- * 🚪 Déconnexion : supprime le refreshToken
- */
-export const logout = (req, res) => {
-  res.clearCookie('refreshToken', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'Strict'
-  });
-  res.json({ message: 'Déconnecté avec succès' });
 };

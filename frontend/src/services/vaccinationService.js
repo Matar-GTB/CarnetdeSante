@@ -1,28 +1,38 @@
-import axios from 'axios';
+import { API } from './authService';
 
-const API_URL = 'http://localhost:5000/api/medical/vaccinations';
+const API_URL = '/medical/vaccinations';  // baseURL déjà préfixée par api
 
-const getAuthHeaders = () => ({
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
-  },
-});
-
-// 🔍 Récupérer les vaccins du patient connecté OU d’un patient ciblé (médecin)
 export const getVaccinations = async (patientId = null) => {
   const url = patientId ? `${API_URL}?patientId=${patientId}` : API_URL;
-  const res = await axios.get(url, getAuthHeaders());
-  return res.data;
+  const { data } = await API.get(url);
+  return data;
 };
-
-// ➕ Ajouter un vaccin (seulement pour le patient connecté)
 export const addVaccination = async (vaccinData) => {
-  const res = await axios.post(API_URL, vaccinData, getAuthHeaders());
-  return res.data;
+  const { data } = await API.post(API_URL, vaccinData);
+  return data;
 };
 
-// ❌ Supprimer un vaccin (autorisé uniquement pour le patient lui-même)
 export const deleteVaccination = async (id) => {
-  const res = await axios.delete(`${API_URL}/${id}`, getAuthHeaders());
-  return res.data;
+  const { data } = await API.delete(`${API_URL}/${id}`);
+  return data;
+};
+
+export const updateVaccination = async (id, vaccinData) => {
+  const { data } = await API.put(`${API_URL}/${id}`, vaccinData);
+  return data;
+};
+
+export const getStatistiquesVaccination = async () => {
+  const { data } = await API.get(`${API_URL}/statistiques`);
+  return data;
+};
+
+export const getCalendrierVaccinal = async (mois, annee) => {
+  const { data } = await API.get(`${API_URL}/calendrier?mois=${mois}&annee=${annee}`);
+  return data;
+};
+
+export const updatePreferencesNotification = async (preferences) => {
+  const { data } = await API.put(`${API_URL}/preferences-notification`, { preferences });
+  return data;
 };

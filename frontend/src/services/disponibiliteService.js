@@ -1,52 +1,44 @@
-// frontend/services/disponibiliteService.js
-import axios from 'axios';
-
-const API = 'http://localhost:5000/api';
+// src/services/disponibiliteService.js
+import { API } from './authService'; // ✅ API unifiée
 
 export const getHorairesTravail = async () => {
-  const token = localStorage.getItem('token');
-  const res = await axios.get(`${API}/horaires`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+  const res = await API.get('/horaires');
   return res.data.data;
 };
 
 export const updateHoraireJour = async (jour, data) => {
-  const token = localStorage.getItem('token');
-  const res = await axios.put(`${API}/horaires/${jour}`, data, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+  const res = await API.put(`/horaires/${jour}`, data);
   return res.data.data;
 };
 
 export const deleteHoraireJour = async (jour) => {
-  const token = localStorage.getItem('token');
-  const res = await axios.delete(`${API}/horaires/${jour}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+  const res = await API.delete(`/horaires/${jour}`);
   return res.data.message;
 };
 
 export const getIndisponibilites = async () => {
-  const token = localStorage.getItem('token');
-  const res = await axios.get(`${API}/indispos/medecin`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+  const res = await API.get('/indispos/medecin');
   return res.data.data;
 };
 
 export const createIndisponibilite = async (data) => {
-  const token = localStorage.getItem('token');
-  const res = await axios.post(`${API}/indispos`, data, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+  const res = await API.post('/indispos', data);
   return res.data.data;
 };
 
 export const deleteIndisponibilite = async (id) => {
-  const token = localStorage.getItem('token');
-  const res = await axios.delete(`${API}/indispos/${id}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+  const res = await API.delete(`/indispos/${id}`);
   return res.data.message;
 };
+
+// Export par défaut
+const disponibiliteService = {
+  getHorairesTravail,
+  updateHoraireJour,
+  deleteHoraireJour,
+  getIndisponibilites,
+  createIndisponibilite,
+  deleteIndisponibilite
+};
+
+export default disponibiliteService;

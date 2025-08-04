@@ -1,0 +1,455 @@
+/* AdminDashboard.css */
+
+.admin-dashboard {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  min-height: 100vh;
+}
+
+.admin-dashboard.loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid #4a148c;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* En-tête Admin */
+.admin-header {
+  background: linear-gradient(135deg, #1e293b, #334155);
+  color: white;
+  padding: 2rem;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 20px 40px rgba(30, 41, 59, 0.3);
+}
+
+.header-content h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.header-content p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 1.1rem;
+}
+
+.system-status {
+  text-align: right;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Grille des statistiques */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-left: 4px solid;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card.users { border-left-color: #3b82f6; }
+.stat-card.patients { border-left-color: #10b981; }
+.stat-card.medecins { border-left-color: #8b5cf6; }
+.stat-card.appointments { border-left-color: #f59e0b; }
+
+.stat-icon {
+  font-size: 2.5rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+}
+
+.stat-content h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.stat-content p {
+  margin: 0 0 0.5rem 0;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.stat-change {
+  font-size: 0.9rem;
+  color: #16a34a;
+  font-weight: 500;
+}
+
+/* Grille principale admin */
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.admin-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.admin-section h2 {
+  margin: 0 0 1.5rem 0;
+  color: #1e293b;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* Alertes */
+.alert-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.alert-item {
+  padding: 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-left: 4px solid;
+}
+
+.alert-item.warning {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border-left-color: #f59e0b;
+}
+
+.alert-item.info {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  border-left-color: #3b82f6;
+}
+
+.alert-item.success {
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  border-left-color: #10b981;
+}
+
+.alert-icon {
+  font-size: 1.5rem;
+}
+
+.alert-item div {
+  flex: 1;
+}
+
+.alert-item strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #1e293b;
+}
+
+.alert-item p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.alert-item button {
+  padding: 0.5rem 1rem;
+  background: #4a148c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.alert-item button:hover {
+  background: #6a1b9a;
+}
+
+/* Actions rapides */
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.action-btn {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.action-btn:hover {
+  border-color: #4a148c;
+  background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 20, 140, 0.1);
+}
+
+.action-icon {
+  font-size: 2rem;
+}
+
+/* Activité récente */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  /* Styles pour la barre de défilement */
+  scrollbar-width: thin;
+  scrollbar-color: #4a90e2 #e1e8ed;
+}
+
+/* Styles pour WebKit (Chrome, Safari, Edge) */
+.activity-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.activity-list::-webkit-scrollbar-track {
+  background: #f1f3f4;
+  border-radius: 3px;
+}
+
+.activity-list::-webkit-scrollbar-thumb {
+  background: #4a90e2;
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.activity-list::-webkit-scrollbar-thumb:hover {
+  background: #357abd;
+}
+
+.activity-item {
+  padding: 1rem;
+  border-radius: 12px;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  border-left: 3px solid;
+}
+
+.activity-item.info { 
+  background: #f0f9ff; 
+  border-left-color: #3b82f6; 
+}
+
+.activity-item.success { 
+  background: #f0fdf4; 
+  border-left-color: #10b981; 
+}
+
+.activity-item.warning { 
+  background: #fffbeb; 
+  border-left-color: #f59e0b; 
+}
+
+.activity-time {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-content p {
+  margin: 0 0 0.5rem 0;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.activity-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.activity-badge.info {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.activity-badge.success {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.activity-badge.warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Métriques système */
+.system-metrics {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.system-metrics h2 {
+  margin: 0 0 1.5rem 0;
+  color: #1e293b;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.metric-card {
+  text-align: center;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+  border-color: #4a148c;
+  transform: translateY(-2px);
+}
+
+.metric-card h4 {
+  margin: 0 0 1rem 0;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.metric-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #4a148c;
+  margin-bottom: 0.5rem;
+}
+
+.metric-card p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-dashboard {
+    padding: 1rem;
+  }
+  
+  .admin-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .action-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}

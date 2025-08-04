@@ -1,6 +1,6 @@
-/* DisponibilitesMedecin.css */
-
-.disponibilites-container {
+/* Conteneur principal */
+.disponibilites-container,
+.dispo-section {
   padding: 2rem;
   background-color: #f8f9fa;
   border-radius: 12px;
@@ -8,12 +8,15 @@
   margin-bottom: 2rem;
 }
 
-.disponibilites-container h2 {
+/* Titres */
+.disponibilites-container h2,
+.dispo-section h3 {
   font-size: 1.6rem;
   margin-bottom: 1.2rem;
   color: #343a40;
 }
 
+/* Tableau horaires */
 .horaire-table {
   width: 100%;
   border-collapse: collapse;
@@ -46,6 +49,7 @@
   width: 90%;
 }
 
+/* Boutons horaires */
 .horaire-table button {
   margin: 0 4px;
   padding: 5px 10px;
@@ -68,4 +72,67 @@
 
 .horaire-table button:nth-child(2):hover {
   background-color: #c0392b;
+}
+
+/* Formulaire indisponibilité */
+.dispo-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.dispo-form input,
+.dispo-form button {
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.dispo-form input {
+  flex: 1 1 150px;
+}
+
+.dispo-form button {
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.dispo-form button:hover {
+  background-color: #5a4bd8;
+}
+
+/* Liste des indisponibilités */
+.dispo-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.dispo-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.dispo-list li button {
+  background: none;
+  border: none;
+  color: #d63031;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.dispo-list li button:hover {
+  color: #e17055;
 }

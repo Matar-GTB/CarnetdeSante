@@ -1,0 +1,322 @@
+/* 
+================================================================================
+ChatWindow.css - MODIFICATIONS APPORTÉES
+================================================================================
+1. STICKY INPUT : 
+   - .input-container rendu sticky en bas avec position: sticky, bottom: 0
+   - Raison : Input reste visible en bas lors du scroll des messages
+
+2. SCROLL OPTIMISÉ :
+   - .messages-container avec overflow-y: auto pour scroll uniquement des messages
+   - .chat-window avec overflow: hidden pour empêcher scroll global
+   - Raison : Seule la zone des messages scroll, pas toute la page
+
+3. HAUTEURS OPTIMISÉES :
+   - max-height: 100% sur .chat-window pour empêcher dépassement
+   - flex: 1 sur .messages-container pour prendre l'espace disponible
+   - Raison : Layout parfaitement contenu dans la fenêtre
+
+AUCUNE modification de couleur n'a été faite sur ce fichier.
+================================================================================
+*/
+
+/* src/components/Messaging/ChatWindow.css */
+
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 100%; /* Empêche le dépassement */
+  background: white;
+  overflow: visible; /* CORRIGÉ : Permet l'affichage des médias */
+}
+
+.chat-header {
+  padding: 0.75rem 1.25rem; /* Padding réduit */
+  border-bottom: 1px solid #e1e8ed;
+  background: white;
+  z-index: 10;
+  flex-shrink: 0; /* Empêche la compression du header */
+}
+
+.chat-participant-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.participant-avatar {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.participant-avatar .avatar-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e1e8ed;
+}
+
+.participant-avatar .avatar-placeholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: normal; /* MODIFIÉ : Normal pour les icônes */
+  font-size: 20px; /* MODIFIÉ : Taille ajustée pour les icônes */
+  border: 2px solid #e1e8ed;
+}
+
+.participant-avatar .online-indicator {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  background: #4caf50;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.participant-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.participant-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.participant-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.participant-role {
+  font-size: 13px;
+  color: #4a90e2;
+  font-weight: 500;
+}
+
+.connection-status {
+  font-size: 12px;
+}
+
+.status-online {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.status-offline {
+  color: #657786;
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto; /* ✅ SCROLL AUTORISÉ - Zone des messages */
+  overflow-x: visible; /* CORRIGÉ : Permet l'affichage des médias qui pourraient dépasser */
+  position: relative;
+  background: #f8f9fa;
+  max-height: 100%; /* Assure que la hauteur ne dépasse pas le parent */
+  min-height: 0; /* Permet au flex de fonctionner correctement */
+  /* Styles pour la barre de défilement des messages */
+  scrollbar-width: thin;
+  scrollbar-color: #4a90e2 #e1e8ed;
+}
+
+/* Styles pour WebKit (Chrome, Safari, Edge) */
+.messages-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: #e1e8ed;
+  border-radius: 4px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: #4a90e2;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background: #357abd;
+}
+
+.messages-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Espacement entre les messages */
+}
+
+.message-group {
+  margin-bottom: 1.5rem;
+}
+
+.date-separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.date-text {
+  background: #657786;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.scroll-to-bottom {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+
+.scroll-to-bottom:hover {
+  background: #30b64d;
+  transform: scale(1.05);
+}
+
+.chat-input-container {
+  background: transparent; /* Laisse le MessageInput gérer son propre style */
+  border-top: none; /* Le MessageInput a son propre design */
+  flex-shrink: 0; /* Empêche la compression de la zone de saisie */
+  position: sticky; /* MODIFIÉ : Fixe la zone de saisie en bas - IMPORTANT pour UX */
+  bottom: 0;
+  z-index: 10; /* S'assure qu'elle reste au-dessus */
+}
+
+.reply-preview {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f1f3f4;
+  border-left: 3px solid #4a90e2;
+  margin: 0 16px 0 16px;
+  border-radius: 8px 8px 0 0;
+}
+
+.reply-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.reply-label {
+  display: block;
+  font-size: 12px;
+  color: #4a90e2;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.reply-message {
+  font-size: 14px;
+  color: #657786;
+}
+
+.text-reply {
+  font-style: italic;
+}
+
+.media-reply {
+  color: #4a90e2;
+  font-weight: 500;
+}
+
+.cancel-reply {
+  background: none;
+  border: none;
+  color: #657786;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-left: 8px;
+  transition: all 0.2s ease;
+}
+
+.cancel-reply:hover {
+  background: #e1e8ed;
+  color: #1a1a1a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chat-header {
+    padding: 1rem;
+  }
+  
+  .participant-name {
+    font-size: 16px;
+  }
+  
+  .participant-status {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .messages-content {
+    padding: 0.5rem;
+  }
+  
+  .scroll-to-bottom {
+    bottom: 15px;
+    right: 15px;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-group {
+  animation: slideIn 0.3s ease-out;
+}
+
+.reply-preview {
+  animation: slideIn 0.2s ease-out;
+}

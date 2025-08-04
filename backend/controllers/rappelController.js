@@ -67,3 +67,39 @@ export const supprimerRappel = async (req, res) => {
     res.status(500).json({ erreur: 'Erreur serveur' });
   }
 };
+
+// Historique des rappels (à adapter selon ta logique métier)
+export const historiqueRappels = async (req, res) => {
+  const utilisateurId = req.user.userId;
+  try {
+    const liste = await Rappel.findAll({
+      where: {
+        utilisateur_id: utilisateurId,
+        envoye: true // ✅ Afficher les rappels déjà envoyés
+      }
+    });
+    res.json(liste);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erreur: 'Erreur serveur' });
+  }
+};
+
+
+// Suppression multiple
+export const supprimerRappelsMultiples = async (req, res) => {
+  const utilisateurId = req.user.userId;
+  const { ids } = req.body;
+  try {
+    await Rappel.destroy({
+      where: {
+        utilisateur_id: utilisateurId,
+        id: ids
+      }
+    });
+    res.json({ message: 'Rappels supprimés' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erreur: 'Erreur serveur' });
+  }
+};

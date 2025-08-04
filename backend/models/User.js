@@ -75,7 +75,11 @@ const User = sequelize.define('User', {
   groupe_sanguin: {
     type: DataTypes.STRING(5),
     validate: {
-      is: /^(A|B|AB|O)[+-]$/i
+      isValidBloodType(value) {
+        if (value && value.trim() !== '' && !/^(A|B|AB|O)[+-]$/i.test(value)) {
+          throw new Error('Groupe sanguin invalide. Format attendu: A+, B-, AB+, O-, etc.');
+        }
+      }
     }
   },
   adresse: DataTypes.TEXT,
@@ -98,10 +102,81 @@ const User = sequelize.define('User', {
   // Champs patients
   allergies: DataTypes.TEXT,
   antecedents_medicaux: DataTypes.TEXT,
+  traitements_actuels: DataTypes.TEXT,
+  
+  // Données biométriques et médicales
+  poids: {
+    type: DataTypes.DECIMAL(5, 2), // Ex: 123.45 kg
+    validate: {
+      min: 0,
+      max: 500
+    }
+  },
+  taille: {
+    type: DataTypes.DECIMAL(5, 2), // Ex: 175.50 cm
+    validate: {
+      min: 0,
+      max: 300
+    }
+  },
+  electrophorese: DataTypes.TEXT, // Résultats d'électrophorèse
+  
+  numero_secu: {
+  type: DataTypes.STRING(15),
+  allowNull: true
+},
+  
+  // Contacts d'urgence
+  contact_urgence: {
+    type: DataTypes.STRING(20),
+    validate: {
+      isPhoneNumber(value) {
+        if (value && !/^\+?[0-9\s.-]{8,20}$/.test(value)) {
+          throw new Error('Numéro de téléphone d\'urgence invalide');
+        }
+      }
+    }
+  },
+  personne_urgence: DataTypes.STRING(100),
+  
+  // Préférences utilisateur
+  langue_preferee: {
+    type: DataTypes.STRING(10),
+    defaultValue: 'fr',
+    validate: {
+      isIn: {
+        args: [['fr', 'en', 'es', 'de', 'it']],
+        msg: 'Langue non supportée'
+      }
+    }
+  },
 
   // Champs médecins
+  numero_ordre: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+    validate: {
+      isNumeroOrdre(value) {
+        if (value && !/^[0-9]{8,15}$/.test(value.replace(/\s/g, ''))) {
+          throw new Error('Numéro d\'ordre invalide');
+        }
+      }
+    }
+  },
   specialite: DataTypes.STRING(100),
+  sous_specialites: DataTypes.TEXT, // Ajout du champ sous-spécialités
   etablissements: DataTypes.TEXT,
+  adresse_cabinet: DataTypes.TEXT,
+  telephone_cabinet: {
+    type: DataTypes.STRING(20),
+    validate: {
+      isPhoneNumber(value) {
+        if (value && !/^\+?[0-9\s.-]{8,20}$/.test(value)) {
+          throw new Error('Numéro de téléphone cabinet invalide');
+        }
+      }
+    }
+  },
   diplome: DataTypes.STRING,
   parcours_professionnel: DataTypes.TEXT,
   langues: {
@@ -125,7 +200,32 @@ const User = sequelize.define('User', {
     type: DataTypes.BOOLEAN,
     defaultValue: true
   },
+  teleconsultation: { // Ajout du champ téléconsultation
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
   horaires_travail: DataTypes.TEXT,
+  jours_disponibles: DataTypes.TEXT, // Ajout du champ jours disponibles
+  duree_consultation: { // Ajout du champ durée consultation
+    type: DataTypes.INTEGER,
+    defaultValue: 30,
+    validate: {
+      min: 10,
+      max: 120
+    }
+  },
+  profil_public: { // Ajout du champ profil public
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  visible_recherche: { // Ajout du champ visible dans recherche
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
+  },
+  afficher_avis: { // Ajout du champ afficher avis
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
+  },
   accessibilite: DataTypes.TEXT,
 
 tarifs: DataTypes.TEXT,
@@ -143,6 +243,17 @@ faq: {
 
   token_reinitialisation: DataTypes.STRING,
   expiration_token_reinitialisation: DataTypes.DATE,
+  
+  // Tokens d'urgence
+  emergency_token: DataTypes.STRING,
+  emergency_token_expires: DataTypes.DATE,
+  
+  // Paramètres de visibilité
+  visibility_settings: {
+    type: DataTypes.JSONB,
+    defaultValue: {}
+  },
+  
   est_verifie: {
     type: DataTypes.BOOLEAN,
     defaultValue: false

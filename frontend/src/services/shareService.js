@@ -1,22 +1,16 @@
-import axios from 'axios';
-
-const API_URL = 'http://localhost:5000/api/sharing';
-
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    }
-  };
-};
+// src/services/shareService.js
+import { API } from './authService'; // ✅ API unifiée
 
 export const generateShareLink = async ({ selectedDocs, medecinId, dureeEnHeures = 24 }) => {
-  const res = await axios.post(`${API_URL}/generate`, {
-    selectedDocs,
-    medecinId,
-    dureeEnHeures
-  }, getAuthHeaders());
+  const res = await API.post('/sharing/generate', {
+    documents: selectedDocs,
+    medecin_id: medecinId,
+    duree_heures: dureeEnHeures
+  });
+  return res.data;
+};
 
+export const getSharedDocs = async (shareToken) => {
+  const res = await API.get(`/sharing/${shareToken}`);
   return res.data;
 };

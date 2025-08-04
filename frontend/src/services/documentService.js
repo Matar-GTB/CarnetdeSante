@@ -1,16 +1,5 @@
-// src/services/documentService.js
-import axios from 'axios';
-
-const API_BASE = 'http://localhost:5000/api/medical';
-
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    }
-  };
-};
+﻿// src/services/documentService.js
+import { API } from './authService'; //  API unifiée
 
 function getFilename(disposition) {
   if (!disposition) return 'document';
@@ -19,49 +8,39 @@ function getFilename(disposition) {
 }
 
 /**
- * Liste tous les documents de l’utilisateur connecté
+ * Liste tous les documents de l'utilisateur connecté
  */
 export const getUserDocuments = async () => {
-  const res = await axios.get(`${API_BASE}/documents`, getAuthHeaders());
+  const res = await API.get('/medical/documents');
   return res.data;  // assume API renvoie { data: [...] } ou directement [...]
 };
 
 /**
- * Upload d’un document (FormData)
+ * Upload d'un document (FormData)
  */
 export const uploadDocument = async (formData) => {
-  const res = await axios.post(
-    `${API_BASE}/upload`,
-    formData,
-    {
-      ...getAuthHeaders(),
-      headers: {
-        ...getAuthHeaders().headers,
-        'Content-Type': 'multipart/form-data'
-      }
+  const res = await API.post('/medical/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
     }
-  );
+  });
   return res.data;
 };
 
 /**
- * Suppression d’un document
+ * Suppression d'un document
  */
 export const deleteDocument = async (documentId) => {
-  await axios.delete(
-    `${API_BASE}/documents/${documentId}`,
-    getAuthHeaders()
-  );
+  await API.delete(`/medical/documents/${documentId}`);
 };
 
 /**
- * Téléchargement d’un document (blob + nom de fichier)
+ * Téléchargement d'un document (blob + nom de fichier)
  */
 export const downloadDocument = async (documentId) => {
-  const { data: blob, headers } = await axios.get(
-    `${API_BASE}/documents/${documentId}/download`,
+  const { data: blob, headers } = await API.get(
+    `/medical/documents/${documentId}/download`,
     {
-      ...getAuthHeaders(),
       responseType: 'blob'
     }
   );

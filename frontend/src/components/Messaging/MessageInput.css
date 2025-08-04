@@ -1,0 +1,444 @@
+/* src/components/Messaging/MessageInput.css */
+
+.message-input-container {
+  background: white;
+  padding: 16px;
+}
+
+.selected-files {
+  margin-bottom: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e1e8ed;
+}
+
+.file-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #e1e8ed;
+}
+
+.file-preview:last-child {
+  margin-bottom: 0;
+}
+
+.file-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.file-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.file-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-size {
+  font-size: 12px;
+  color: #657786;
+}
+
+.remove-file {
+  background: #ff4757;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.remove-file:hover {
+  background: #ff3742;
+  transform: scale(1.1);
+}
+
+.message-form {
+  position: relative;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: #f8f9fa;
+  border: 2px solid #e1e8ed;
+  border-radius: 24px;
+  padding: 8px;
+  transition: all 0.2s ease;
+}
+
+.input-wrapper:focus-within {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.attachment-button {
+  background: none;
+  border: none;
+  color: #657786;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  font-size: 18px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.attachment-button:hover:not(:disabled) {
+  background: #e8f4f8;
+  color: #4a90e2;
+  transform: scale(1.05);
+}
+
+.attachment-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.message-textarea {
+  flex: 1;
+  border: none;
+  background: transparent;
+  resize: none;
+  outline: none;
+  font-size: 15px;
+  line-height: 1.4;
+  padding: 8px 4px;
+  color: #1a1a1a;
+  font-family: inherit;
+  min-height: 24px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.message-textarea::placeholder {
+  color: #657786;
+}
+
+.message-textarea:disabled {
+  color: #aab8c2;
+  cursor: not-allowed;
+}
+
+.send-button {
+  background: #e1e8ed;
+  color: #657786;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.send-button.active {
+  background: #4a90e2;
+  color: white;
+  transform: scale(1.05);
+}
+
+.send-button:hover:not(:disabled).active {
+  background: #357abd;
+  transform: scale(1.1);
+}
+
+.send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.send-icon {
+  font-size: 16px;
+}
+
+/* Bouton d'enregistrement vocal */
+.record-button {
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  font-size: 18px;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(74, 144, 226, 0.3);
+}
+
+.record-button svg {
+  font-size: 22px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.record-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #357abd, #2a5f8f);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+}
+
+.record-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* État d'enregistrement */
+.recording-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(45deg, #ff4757, #ff6b81);
+  border-radius: 25px;
+  padding: 8px 12px;
+  color: white;
+  animation: recording-pulse 2s infinite;
+  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3);
+}
+
+.cancel-recording-button,
+.stop-recording-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 16px;
+}
+
+.cancel-recording-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.stop-recording-button {
+  background: rgba(255, 255, 255, 0.9);
+  color: #ff4757;
+}
+
+.stop-recording-button:hover {
+  background: white;
+  transform: scale(1.1);
+}
+
+.recording-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+}
+
+.recording-time {
+  font-weight: 600;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+}
+
+.recording-wave {
+  font-size: 18px;
+  animation: wave 1s ease-in-out infinite alternate;
+  color: white;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.8));
+}
+
+.recording-wave svg {
+  font-size: 22px;
+  color: white;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9));
+}
+
+@keyframes wave {
+  0% { transform: scale(1) rotate(-5deg); opacity: 0.7; }
+  100% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+}
+
+/* Animation de pulsation pour l'enregistrement */
+@keyframes recording-pulse {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3), 0 0 0 0 rgba(255, 71, 87, 0.4);
+  }
+  50% {
+    box-shadow: 0 2px 12px rgba(255, 71, 87, 0.4), 0 0 0 8px rgba(255, 71, 87, 0);
+  }
+}
+
+.file-input {
+  display: none;
+}
+
+/* Aperçu audio spécial */
+.audio-preview {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.audio-preview:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+}
+
+.play-audio-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.play-audio-btn svg {
+  font-size: 18px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.play-audio-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.audio-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.audio-info .file-name {
+  color: white !important;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.audio-info .file-name svg {
+  font-size: 18px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.audio-info .file-size {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .message-input-container {
+    padding: 12px;
+  }
+  
+  .input-wrapper {
+    padding: 6px;
+  }
+  
+  .attachment-button,
+  .send-button {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .message-textarea {
+    font-size: 16px; /* Empêche le zoom sur iOS */
+  }
+}
+
+/* Animations */
+@keyframes fileAdded {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.file-preview {
+  animation: fileAdded 0.3s ease-out;
+}
+
+@keyframes sendPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.send-button.active:active {
+  animation: sendPulse 0.2s ease-out;
+}
+
+/* Scrollbar pour textarea */
+.message-textarea::-webkit-scrollbar {
+  width: 4px;
+}
+
+.message-textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.message-textarea::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+}
+
+.message-textarea::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

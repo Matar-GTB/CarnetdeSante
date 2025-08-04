@@ -1,4 +1,5 @@
-import { API } from './authService';
+import { API } from './authService'; // ✅ API unifiée
+
 
 export const getMedicationsApi = () =>
   API.get('/medications').then(res => res.data.data);
@@ -11,3 +12,5 @@ export const updateMedicationApi = (id, data) =>
 
 export const deleteMedicationApi = (id) =>
   API.delete(`/medications/${id}`).then(res => res.data);
+export const getMedicationByIdApi = (id) =>
+  API.get(`/medications/${id}`).then(res => res.data);

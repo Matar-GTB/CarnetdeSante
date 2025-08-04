@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Profil Patient Public</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .warning { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test - Profil Patient Public</h1>
+    
+    <div class="test-card">
+        <h2>📋 État actuel</h2>
+        <div class="status info">
+            <strong>Frontend React :</strong> ✅ En cours d'exécution (port 3000)
+        </div>
+        <div class="status warning">
+            <strong>Backend API :</strong> ⚠️ Problème de démarrage
+        </div>
+        <div class="status success">
+            <strong>Solution temporaire :</strong> ✅ Données de test implémentées
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2>🔗 Liens de test</h2>
+        <p>Testez les profils patients avec les données de test :</p>
+        
+        <a href="http://localhost:3000/patients/5/public" class="btn" target="_blank">
+            👤 Patient 5 - Sophie Martin
+        </a>
+        
+        <a href="http://localhost:3000/patients/6/public" class="btn" target="_blank">
+            👤 Patient 6 - Jean Dubois
+        </a>
+        
+        <a href="http://localhost:3000/patients/999/public" class="btn" target="_blank">
+            ❌ Patient inexistant (test d'erreur)
+        </a>
+    </div>
+
+    <div class="test-card">
+        <h2>📝 Données de test disponibles</h2>
+        
+        <h3>Patient 5 - Sophie Martin</h3>
+        <ul>
+            <li>📧 Email : Privé (non visible)</li>
+            <li>📱 Téléphone : Privé (non visible)</li>
+            <li>📍 Ville : Paris</li>
+            <li>🎂 Date de naissance : 15 mars 1985 (39 ans)</li>
+            <li>🌍 Langue : Français</li>
+        </ul>
+
+        <h3>Patient 6 - Jean Dubois</h3>
+        <ul>
+            <li>📧 Email : Public (visible)</li>
+            <li>📱 Téléphone : Privé (non visible)</li>
+            <li>📍 Ville : Lyon</li>
+            <li>🎂 Date de naissance : 22 juillet 1978 (46 ans)</li>
+            <li>🌍 Langue : Français</li>
+        </ul>
+    </div>
+
+    <div class="test-card">
+        <h2>🛠️ Étapes suivantes</h2>
+        <ol>
+            <li>✅ <strong>Composant PatientProfilePublic</strong> - Implémenté</li>
+            <li>✅ <strong>Service profileService</strong> - Mis à jour avec données de test</li>
+            <li>✅ <strong>Routes React</strong> - Configurées dans App.js</li>
+            <li>⏳ <strong>Backend API</strong> - À réparer (problème de démarrage)</li>
+            <li>⏳ <strong>Intégration complète</strong> - Une fois le backend opérationnel</li>
+        </ol>
+    </div>
+
+    <div class="test-card">
+        <h2>🎯 Objectifs atteints</h2>
+        <div class="status success">
+            ✅ <strong>Modularisation réussie</strong> : UserProfile se concentre maintenant sur la photo de profil uniquement
+        </div>
+        <div class="status success">
+            ✅ <strong>Profil public patient</strong> : Page dédiée avec informations limitées et respect de la confidentialité
+        </div>
+        <div class="status success">
+            ✅ <strong>UI/UX améliorée</strong> : Interface claire avec sections organisées et avertissements de confidentialité
+        </div>
+    </div>
+
+    <script>
+        // Vérifier que React Dev Server est accessible
+        fetch('http://localhost:3000')
+            .then(response => {
+                if (response.ok) {
+                    console.log('✅ Frontend React accessible');
+                } else {
+                    console.log('⚠️ Frontend React non accessible');
+                }
+            })
+            .catch(error => {
+                console.log('❌ Erreur connexion frontend:', error);
+            });
+    </script>
+</body>
+</html>

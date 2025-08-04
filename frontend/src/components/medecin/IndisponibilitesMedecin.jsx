@@ -1,4 +1,3 @@
-// IndisponibilitesMedecin.jsx
 import React, { useEffect, useState } from 'react';
 import {
   getIndisponibilites,
@@ -30,42 +29,83 @@ const IndisponibilitesMedecin = () => {
     }
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await createIndisponibilite(form);
-      setForm({ date_debut: '', date_fin: '', heure_debut: '', heure_fin: '', motif: '' });
+      setForm({
+        date_debut: '',
+        date_fin: '',
+        heure_debut: '',
+        heure_fin: '',
+        motif: ''
+      });
       fetchIndispos();
     } catch (err) {
-      alert("Erreur ajout indisponibilité");
+      alert("❌ Erreur ajout indisponibilité");
     }
   };
 
-  const handleDelete = async id => {
+  const handleDelete = async (id) => {
     if (!window.confirm('Supprimer cette indisponibilité ?')) return;
-    await deleteIndisponibilite(id);
-    fetchIndispos();
+    try {
+      await deleteIndisponibilite(id);
+      fetchIndispos();
+    } catch {
+      alert("❌ Erreur lors de la suppression");
+    }
   };
 
   return (
     <div className="dispo-section">
-      <h3>Indisponibilités ponctuelles</h3>
+      <h3>🚫 Indisponibilités ponctuelles</h3>
+
       <form onSubmit={handleSubmit} className="dispo-form">
-        <input type="date" value={form.date_debut} onChange={e => setForm({ ...form, date_debut: e.target.value })} required />
-        <input type="date" value={form.date_fin} onChange={e => setForm({ ...form, date_fin: e.target.value })} required />
-        <input type="time" value={form.heure_debut} onChange={e => setForm({ ...form, heure_debut: e.target.value })} required />
-        <input type="time" value={form.heure_fin} onChange={e => setForm({ ...form, heure_fin: e.target.value })} required />
-        <input type="text" placeholder="Motif (facultatif)" value={form.motif} onChange={e => setForm({ ...form, motif: e.target.value })} />
-        <button type="submit">Ajouter</button>
+        <input
+          type="date"
+          value={form.date_debut}
+          onChange={e => setForm({ ...form, date_debut: e.target.value })}
+          required
+        />
+        <input
+          type="date"
+          value={form.date_fin}
+          onChange={e => setForm({ ...form, date_fin: e.target.value })}
+          required
+        />
+        <input
+          type="time"
+          value={form.heure_debut}
+          onChange={e => setForm({ ...form, heure_debut: e.target.value })}
+          required
+        />
+        <input
+          type="time"
+          value={form.heure_fin}
+          onChange={e => setForm({ ...form, heure_fin: e.target.value })}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Motif (facultatif)"
+          value={form.motif}
+          onChange={e => setForm({ ...form, motif: e.target.value })}
+        />
+        <button type="submit">➕ Ajouter</button>
       </form>
 
       <ul className="dispo-list">
-        {indispos.map(ind => (
-          <li key={ind.id}>
-            📅 {ind.date_debut} ➜ {ind.date_fin} ({ind.heure_debut} - {ind.heure_fin}) {ind.motif && `– ${ind.motif}`}
-            <button onClick={() => handleDelete(ind.id)}>🗑</button>
-          </li>
-        ))}
+        {indispos.length === 0 ? (
+          <li style={{ fontStyle: 'italic', color: '#777' }}>Aucune indisponibilité enregistrée.</li>
+        ) : (
+          indispos.map(ind => (
+            <li key={ind.id}>
+              📅 {ind.date_debut} ➜ {ind.date_fin} ({ind.heure_debut} - {ind.heure_fin})
+              {ind.motif && <> – <strong>{ind.motif}</strong></>}
+              <button onClick={() => handleDelete(ind.id)}>🗑</button>
+            </li>
+          ))
+        )}
       </ul>
     </div>
   );

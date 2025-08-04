@@ -1,0 +1,87 @@
+/* src/components/Messaging/EmojiPicker.css */
+
+.emoji-picker {
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+  min-width: 240px;
+  max-width: 300px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e1e8ed;
+}
+
+.emoji-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.emoji-picker-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.emoji-picker-close {
+  background: none;
+  border: none;
+  color: #657786;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.emoji-picker-close:hover {
+  background: #f1f3f4;
+  color: #1a1a1a;
+}
+
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 4px;
+}
+
+.emoji-button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.2s ease;
+}
+
+.emoji-button:hover {
+  background: #f1f3f4;
+  transform: scale(1.2);
+}
+
+.emoji-button:active {
+  transform: scale(0.95);
+}
+
+/* Animation d'apparition */
+@keyframes emojiPickerAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.emoji-picker {
+  animation: emojiPickerAppear 0.2s ease-out;
+}
