@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../contexts/AuthContext';
+import { FaCalendarAlt, FaPills, FaFileAlt, FaSyringe, FaLink, FaUserMd, FaExclamationTriangle } from 'react-icons/fa';
 import './PatientQuickActions.css';
 
 const PatientQuickActions = ({ className = '' }) => {
@@ -12,7 +13,7 @@ const PatientQuickActions = ({ className = '' }) => {
       id: 'new-appointment',
       title: 'Prendre RDV',
       description: 'Réserver une consultation',
-      icon: '📅',
+      icon: <FaCalendarAlt />,
       color: 'blue',
       action: () => navigate('/appointments')
     },
@@ -20,7 +21,7 @@ const PatientQuickActions = ({ className = '' }) => {
       id: 'medications',
       title: 'Mes Médicaments',
       description: 'Gérer mon traitement',
-      icon: '💊',
+      icon: <FaPills />,
       color: 'green',
       action: () => navigate('/medications')
     },
@@ -28,7 +29,7 @@ const PatientQuickActions = ({ className = '' }) => {
       id: 'documents',
       title: 'Mes Documents',
       description: 'Ordonnances et résultats',
-      icon: '📄',
+      icon: <FaFileAlt />,
       color: 'purple',
       action: () => navigate('/documents')
     },
@@ -36,7 +37,7 @@ const PatientQuickActions = ({ className = '' }) => {
       id: 'vaccinations',
       title: 'Vaccinations',
       description: 'Carnet de vaccination',
-      icon: '💉',
+      icon: <FaSyringe />,
       color: 'orange',
       action: () => navigate('/vaccinations')
     },
@@ -44,7 +45,7 @@ const PatientQuickActions = ({ className = '' }) => {
       id: 'sharing',
       title: 'Partage',
       description: 'Partager mes données',
-      icon: '🔗',
+      icon: <FaLink />,
       color: 'teal',
       action: () => navigate('/partage')
     },
@@ -52,7 +53,7 @@ const PatientQuickActions = ({ className = '' }) => {
       id: 'medecin-traitant',
       title: 'Médecins traitants',
       description: 'Gérer mes médecins traitants',
-      icon: '👨‍⚕️',
+      icon: <FaUserMd />,
       color: 'indigo',
       action: () => navigate('/traitants')
     },
@@ -60,7 +61,7 @@ const PatientQuickActions = ({ className = '' }) => {
       id: 'emergency',
       title: 'Urgence',
       description: 'Contacts d\'urgence',
-      icon: '🚨',
+      icon: <FaExclamationTriangle />,
       color: 'red',
       action: () => navigate('/emergency')
     }
@@ -68,7 +69,7 @@ const PatientQuickActions = ({ className = '' }) => {
 
   return (
     <div className={`patient-quick-actions ${className}`}>
-      <h3>⚡ Actions rapides</h3>
+      <h3>Actions rapides</h3>
       <div className="actions-grid">
         {quickActions.map(action => (
           <button

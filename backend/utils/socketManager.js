@@ -13,7 +13,7 @@ class SocketManager {
   initialize(server) {
     this.io = new socketIo(server, {
       cors: {
-        origin: process.env.FRONTEND_URL || "http://localhost:3000",
+        origin: ["http://localhost:3000", "http://localhost:5000", process.env.FRONTEND_URL].filter(Boolean),
         methods: ["GET", "POST"],
         credentials: true
       }
@@ -89,6 +89,11 @@ class SocketManager {
 
     // Notifier les autres utilisateurs de la connexion
     this.broadcastUserStatus(userId, 'online');
+
+    // Associer l'utilisateur à son ID
+    socket.on('join', (userId) => {
+      socket.join(`user_${userId}`);
+    });
   }
 
   async joinUserConversations(socket, userId) {

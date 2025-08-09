@@ -1,504 +1,369 @@
-// pages/Profile/MedecinProfilePublic.jsx
-import React, { useState, useEffect } from 'react';
+
+
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getMedecinPublicProfile } from '../../services/traitantService';
-import { requestTraitant } from '../../services/traitantService';
+import { getMedecinPublicProfile } from '../../services/profileService';
+import { getAvisMedecin } from '../../services/avisService';
 import './MedecinProfilePublic.css';
+import { 
+  FaMapMarkerAlt, FaGraduationCap, FaRegStickyNote, 
+  FaUserPlus, FaExclamationTriangle, FaClock, FaCalendarAlt,
+  FaStar, FaComment, FaArrowLeft, FaUserMd
+} from 'react-icons/fa';
+import AvisList from '../../components/avis/AvisList';
+import AvisForm from '../../components/avis/AvisForm';
+import { AuthContext } from '../../contexts/AuthContext';
 
-// Composants optimisés avec React.memo
-const InfoCard = React.memo(({ icon, title, content, onClick }) => (
-  <div className="info-card" onClick={onClick}>
-    <div className="info-header">
-      <span className="info-icon" aria-hidden="true">{icon}</span>
-      <strong>{title}</strong>
-    </div>
-    <div className="info-content">
-      {content}
-    </div>
-  </div>
-));
 
-const ServiceItem = React.memo(({ icon, name, available, status }) => (
-  <div 
-    className={`service-item ${available ? 'available' : 'unavailable'}`}
-    role="listitem"
-    aria-label={`Service ${name}: ${status}`}
-  >
-    <span className="service-icon" aria-hidden="true">{icon}</span>
-    <span className="service-name">{name}</span>
-    <span className="service-status">{status}</span>
-  </div>
-));
-
-const NotificationBanner = React.memo(({ message, onClose }) => (
-  <div 
-    className="notification-banner"
-    role="alert"
-    aria-live="polite"
-  >
-    <div className="notification-content">
-      <span className="notification-icon" aria-hidden="true">ℹ️</span>
-      <p>{message}</p>
-      <button
-        onClick={onClose}
-        className="notification-close"
-        aria-label="Fermer la notification"
-      >
-        <span aria-hidden="true">✕</span>
-      </button>
+const Card = ({ icon, title, children }) => (
+  <div className="card">
+    <div className="card-header">
+      <span className="card-icon">{icon}</span>
+      <span className="card-title">{title}</span>
     </div>
+    <div className="card-content">{children}</div>
   </div>
-));
+);
+
+const Tag = ({ value }) => {
+  // Validation pour s'assurer que la valeur est bien 'Oui' ou 'Non'
+  const safeValue = value === true || value === 'Oui' ? 'Oui' : 'Non';
+  return (
+    <span className={`tag ${safeValue === 'Oui' ? 'tag-yes' : 'tag-no'}`}>
+      {safeValue}
+    </span>
+  );
+};
 
 const MedecinProfilePublic = () => {
   const { medecinId } = useParams();
   const navigate = useNavigate();
-  
+  const { user } = useContext(AuthContext);
   const [medecin, setMedecin] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showRequestModal, setShowRequestModal] = useState(false);
-  const [requestMessage, setRequestMessage] = useState('');
-  const [sendingRequest, setSendingRequest] = useState(false);
-
-  const canViewField = (field) => {
-    if (!medecin?.visibilite) return true; // Par défaut public si pas de paramètres
-    const visibility = medecin.visibilite[field];
-    const isPatient = medecin.viewer_is_patient || false;
-    return !visibility || 
-           visibility === 'public' || 
-           (visibility === 'patients' && isPatient);
-  };
+  const [avis, setAvis] = useState([]);
+  const [avisLoading, setAvisLoading] = useState(true);
+  const [showAvisForm, setShowAvisForm] = useState(false);
 
   useEffect(() => {
-    const loadMedecinPublicProfile = async () => {
+    // Vérification de sécurité pour l'ID
+    if (!medecinId || !/^\d+$/.test(medecinId)) {
+      setError('Identifiant de médecin invalide');
+      setLoading(false);
+      return;
+    }
+
+    const fetchProfile = async () => {
       try {
         setLoading(true);
+        console.log('🔍 Récupération du profil médecin public, ID:', medecinId);
+        const res = await getMedecinPublicProfile(medecinId);
         
-        const response = await getMedecinPublicProfile(medecinId);
-        
-        if (response.success) {
-          setMedecin(response.data);
+        // Validation des données reçues
+        if (res.success && res.data) {
+          console.log('✅ Profil médecin récupéré avec succès');
+          // Le backend vérifie déjà si le profil est public
+          const sanitizedData = { ...res.data };
+          setMedecin(sanitizedData);
+          setError(null);
+          
+          // Une fois le profil chargé avec succès, charger les avis
+          fetchAvis();
         } else {
-          setError(response.message || 'Médecin non trouvé');
+          console.error('❌ Erreur de chargement du profil:', res.message);
+          setError(res.message || 'Erreur lors de la récupération du profil public du médecin');
         }
       } catch (err) {
-        console.error('Erreur lors du chargement du profil public:', err);
-        setError('Erreur de chargement du profil');
+        console.error('❌ Exception lors du chargement du profil:', err);
+        setError('Une erreur est survenue lors du chargement du profil médecin');
       } finally {
         setLoading(false);
       }
     };
-
-    if (medecinId) {
-      loadMedecinPublicProfile();
-    }
+    
+    const fetchAvis = async () => {
+      try {
+        setAvisLoading(true);
+        console.log('Récupération des avis pour le médecin ID:', medecinId);
+        const avisData = await getAvisMedecin(medecinId);
+        console.log('Données d\'avis reçues:', avisData);
+        
+        // S'assurer que avisData est un tableau
+        if (Array.isArray(avisData)) {
+          console.log('Nombre d\'avis trouvés:', avisData.length);
+          setAvis(avisData);
+        } else {
+          console.warn('Les données d\'avis reçues ne sont pas un tableau:', avisData);
+          setAvis([]);
+        }
+      } catch (err) {
+        console.error('Erreur lors du chargement des avis:', err);
+        // Ne pas bloquer l'affichage du profil si les avis ne se chargent pas
+        setAvis([]);
+      } finally {
+        setAvisLoading(false);
+      }
+    };
+    
+    fetchProfile();
   }, [medecinId]);
 
-  const handleSendRequest = async () => {
+  // Fonctions pour gérer les avis
+  const handleAddAvis = () => {
+    setShowAvisForm(true);
+  };
+
+  const handleAvisSubmitted = async () => {
+    setShowAvisForm(false);
+    // Recharger les avis après soumission
     try {
-      setSendingRequest(true);
+      setAvisLoading(true);
+      console.log('Rechargement des avis après soumission pour médecin ID:', medecinId);
+      const avisData = await getAvisMedecin(medecinId);
+      console.log('Données d\'avis reçues après soumission:', avisData);
       
-      const response = await requestTraitant({
-        medecin_id: medecinId,
-        message: requestMessage
-      });
-      
-      if (response.success) {
-        setShowRequestModal(false);
-        setRequestMessage('');
-        // Afficher un message de succès
-        alert('Demande envoyée avec succès !');
+      // S'assurer que avisData est un tableau
+      if (Array.isArray(avisData)) {
+        console.log('Nombre d\'avis après soumission:', avisData.length);
+        setAvis(avisData);
       } else {
-        alert('Erreur lors de l\'envoi de la demande');
+        console.warn('Les données d\'avis reçues après soumission ne sont pas un tableau:', avisData);
+        setAvis([]);
       }
-    } catch (error) {
-      console.error('Erreur lors de l\'envoi de la demande:', error);
-      alert('Erreur lors de l\'envoi de la demande');
+    } catch (err) {
+      console.error('Erreur lors du rechargement des avis:', err);
     } finally {
-      setSendingRequest(false);
+      setAvisLoading(false);
     }
   };
 
-  const handleScheduleAppointment = () => {
-    // Rediriger vers la page de prise de rendez-vous
-    navigate(`/appointment/book/${medecinId}`);
+  const handleCancelAvis = () => {
+    setShowAvisForm(false);
   };
-
-
 
   if (loading) {
     return (
       <div className="medecin-public-loading">
         <div className="loading-spinner"></div>
-        <p>Chargement du profil...</p>
+        <p>Chargement du profil médecin...</p>
       </div>
     );
   }
-
+  
   if (error || !medecin) {
     return (
       <div className="medecin-public-error">
-        <div className="error-container">
-          <span className="error-icon">❌</span>
-          <h2>Profil non accessible</h2>
-          <p>{error}</p>
-          <button
-            onClick={() => navigate('/doctors')}
-            className="btn-back"
-          >
-            ← Retour à la recherche
-          </button>
-        </div>
+        <div className="error-icon"><FaExclamationTriangle /></div>
+        <p>{error || 'Profil médecin non trouvé'}</p>
+        <p className="error-help">Veuillez vérifier l'identifiant du médecin ou réessayer plus tard.</p>
       </div>
     );
   }
 
+  // Fonction pour revenir à la page précédente
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
   return (
-    <div className="medecin-profile-public">
-      {/* Header du profil */}
-      <div className="profile-header">
-        <div className="header-background"></div>
-        <div className="header-content">
-          <div className="doctor-main-info">
-            <div className="doctor-avatar">
-              <span className="avatar-icon">👨‍⚕️</span>
-            </div>
-            <div className="doctor-details">
-              <h1>Dr. {medecin.prenom} {medecin.nom}</h1>
-              <div className="doctor-speciality">{medecin.specialite}</div>
-              {medecin.sous_specialites && (
-                <div className="doctor-subspecialty">{medecin.sous_specialites}</div>
-              )}
-              <div className="doctor-etablissement">
-                <span className="etablissement-icon">🏥</span>
-                {medecin.etablissement}
-              </div>
-            </div>
+    <main className="medecin-profile-public">
+      <button className="back-button" onClick={handleGoBack}>
+        <FaArrowLeft /> Retour
+      </button>
+      
+      <header className="profile-header">
+        <div className="avatar">{medecin.photo_profil ? <img src={medecin.photo_profil} alt="Avatar" /> : <FaUserMd />}</div>
+        <div>
+          <h1>Dr. {medecin.prenom} {medecin.nom}</h1>
+          <div className="specialite">{medecin.specialite}</div>
+        </div>
+      </header>
+
+      {/* Section Coordonnées */}
+      <section className="profile-section">
+        <h2 className="section-title">
+          <span className="section-icon"><FaMapMarkerAlt /></span>
+          Coordonnées
+        </h2>
+        <div className="section-content">
+          <div className="info-row">
+            <div className="info-label">Adresse du cabinet:</div>
+            <div className="info-value">{medecin.adresse_cabinet || <span className="empty">Non renseignée</span>}</div>
           </div>
-          
-          <div className="profile-actions">
-            {medecin.accepte_nouveaux_patients && medecin.visibilite?.accepte_nouveaux_patients !== 'private' && (
-              <button
-                onClick={() => setShowRequestModal(true)}
-                className="btn-request-traitant"
-              >
-                👨‍⚕️ Demande de médecin traitant
-              </button>
-            )}
-            <button
-              onClick={handleScheduleAppointment}
-              className="btn-schedule"
-            >
-              📅 Prendre rendez-vous
-            </button>
+          <div className="info-row">
+            <div className="info-label">Téléphone du cabinet:</div>
+            <div className="info-value">{medecin.telephone_cabinet || <span className="empty">Non renseigné</span>}</div>
+          </div>
+          <div className="info-row">
+            <div className="info-label">Email:</div>
+            <div className="info-value">{medecin.email ? 
+              medecin.email.replace(/(.{2})(.*)(?=@)/g, (_, a, b) => a + b.replace(/./g, '*')) : 
+              <span className="empty">Non renseigné</span>}</div>
+          </div>
+          <div className="info-row">
+            <div className="info-label">Téléphone personnel:</div>
+            <div className="info-value">{medecin.telephone ? 
+              medecin.telephone.replace(/(\d{2})(\d+)(\d{2})/g, '$1 ** ** ** $3') : 
+              <span className="empty">Non renseigné</span>}</div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Contenu principal */}
-      <div className="profile-content">
+      {/* Section Disponibilités en cartes */}
+      <section className="cards-section">
+        <h2 className="section-title">
+          <span className="section-icon"><FaClock /></span>
+          Disponibilités
+        </h2>
+        <div className="cards-grid">
+          <Card icon={<FaUserPlus />} title="Nouveaux patients">
+            <Tag value={medecin.accepte_nouveaux_patients ? 'Oui' : 'Non'} />
+          </Card>
+          <Card icon={<FaUserPlus />} title="Accepte non traitants">
+            <Tag value={medecin.accepte_non_traitants ? 'Oui' : 'Non'} />
+          </Card>
+          <Card icon={<FaExclamationTriangle />} title="Consultation urgence">
+            <Tag value={medecin.consultations_urgence ? 'Oui' : 'Non'} />
+          </Card>
+        </div>
+        <div className="schedule-info">
+          <div className="info-row">
+            <div className="info-label"><FaClock className="inline-icon" /> Horaires de travail:</div>
+            <div className="info-value">{medecin.horaires_travail || <span className="empty">Non renseigné</span>}</div>
+          </div>
+          <div className="info-row">
+            <div className="info-label"><FaCalendarAlt className="inline-icon" /> Jours disponibles:</div>
+            <div className="info-value">{medecin.jours_disponibles || <span className="empty">Non renseigné</span>}</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section Qualifications professionnelles */}
+      <section className="profile-section">
+        <h2 className="section-title">
+          <span className="section-icon"><FaGraduationCap /></span>
+          Qualifications professionnelles
+        </h2>
+        <div className="section-content">
+          <div className="info-row">
+            <div className="info-label">Spécialité:</div>
+            <div className="info-value">{medecin.specialite || <span className="empty">Non renseignée</span>}</div>
+          </div>
+          <div className="info-row">
+            <div className="info-label">Sous-spécialités:</div>
+            <div className="info-value">{medecin.sous_specialites || <span className="empty">Non renseignées</span>}</div>
+          </div>
+          <div className="info-row">
+            <div className="info-label">Diplôme:</div>
+            <div className="info-value">{medecin.diplome || <span className="empty">Non renseigné</span>}</div>
+          </div>
+          <div className="info-row">
+            <div className="info-label">Numéro d'ordre:</div>
+            <div className="info-value">{medecin.numero_ordre || <span className="empty">Non renseigné</span>}</div>
+          </div>
+          <div className="info-row">
+            <div className="info-label">Établissements:</div>
+            <div className="info-value">{medecin.etablissements || <span className="empty">Non renseigné</span>}</div>
+          </div>
+          <div className="info-row">
+            <div className="info-label">Parcours professionnel:</div>
+            <div className="info-value">{medecin.parcours_professionnel || <span className="empty">Non renseigné</span>}</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section Informations pratiques */}
+      <section className="profile-section">
+        <h2 className="section-title">
+          <span className="section-icon"><FaRegStickyNote /></span>
+          Informations pratiques
+        </h2>
+        <div className="section-content">
+          <div className="info-row">
+            <div className="info-label">Description:</div>
+            <div className="info-value">{medecin.description || <span className="empty">Non renseignée</span>}</div>
+          </div>
+          <div className="info-row">
+            <div className="info-label">Langues:</div>
+            <div className="info-value">{medecin.langues || <span className="empty">Non renseignées</span>}</div>
+          </div>
+          <div className="info-row">
+            <div className="info-label">Tarifs:</div>
+            <div className="info-value">{medecin.tarifs || <span className="empty">Non renseigné</span>}</div>
+          </div>
+          <div className="info-row">
+            <div className="info-label">Moyens de paiement:</div>
+            <div className="info-value">{medecin.moyens_paiement || <span className="empty">Non renseigné</span>}</div>
+          </div>
+          <div className="info-row">
+            <div className="info-label">Accessibilité:</div>
+            <div className="info-value">{medecin.accessibilite || <span className="empty">Non renseignée</span>}</div>
+          </div>
+          <div className="info-row">
+            <div className="info-label">FAQ:</div>
+            <div className="info-value">
+              {Array.isArray(medecin.faq) ? 
+                medecin.faq.join(', ') : 
+                (medecin.faq || <span className="empty">Non renseignée</span>)}
+            </div>
+          </div>
+          <div className="info-row">
+            <div className="info-label">Sexe:</div>
+            <div className="info-value">{medecin.sexe || <span className="empty">Non renseigné</span>}</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section Avis des patients */}
+      <section className="profile-section avis-section">
+        <h2 className="section-title">
+          <span className="section-icon"><FaComment /></span>
+          Avis des patients
+        </h2>
         
-        {/* À propos */}
-        {medecin.bio && (
-          <div className="section about-section">
-            <h2>
-              <span className="section-icon">📝</span>
-              À propos
-            </h2>
-            <div className="bio-content">
-              <p>{medecin.bio}</p>
+        <div className="avis-guide">
+          <p>Les avis ci-dessous sont des retours d'expérience de patients. Chaque patient peut laisser un seul avis qui peut être modifié par la suite.</p>
+        </div>
+        
+        <div className="avis-actions">
+          {user && user.role === 'patient' ? (
+            <button 
+              className="add-avis-btn" 
+              onClick={handleAddAvis}
+            >
+              <FaStar className="btn-icon" /> Laisser un avis
+            </button>
+          ) : (
+            <div className="avis-help-message">
+              {!user ? (
+                <p>Vous devez être <strong>connecté en tant que patient</strong> pour laisser un avis.</p>
+              ) : user.role !== 'patient' ? (
+                <p>Seuls les <strong>patients</strong> peuvent laisser des avis sur les médecins.</p>
+              ) : null}
             </div>
-          </div>
-        )}
-
-        {/* Informations pratiques */}
-        <div className="section practical-info">
-          <h2>
-            <span className="section-icon">ℹ️</span>
-            Informations pratiques
-          </h2>
-          
-          <div className="info-grid">
-            {canViewField('adresse_cabinet') && (
-              <div className="info-card">
-                <div className="info-header">
-                  <span className="info-icon">📍</span>
-                  <strong>Adresse</strong>
-                </div>
-                <div className="info-content">
-                  {medecin.adresse_cabinet || 'Non renseignée'}
-                </div>
-              </div>
-            )}
-            
-            {canViewField('telephone_cabinet') && (
-              <div className="info-card">
-                <div className="info-header">
-                  <span className="info-icon">📞</span>
-                  <strong>Téléphone</strong>
-                </div>
-                <div className="info-content">
-                  {medecin.telephone_cabinet ? (
-                    <a href={`tel:${medecin.telephone_cabinet}`}>
-                      {medecin.telephone_cabinet}
-                    </a>
-                  ) : (
-                    'Non renseigné'
-                  )}
-                </div>
-              </div>
-            )}
-            
-            {canViewField('duree_consultation') && (
-              <div className="info-card">
-                <div className="info-header">
-                  <span className="info-icon">⏰</span>
-                  <strong>Durée consultation</strong>
-                </div>
-                <div className="info-content">
-                  {medecin.duree_consultation} minutes
-                </div>
-              </div>
-            )}
-            
-            {canViewField('horaires_consultation') && (
-              <div className="info-card">
-                <div className="info-header">
-                  <span className="info-icon">🗓️</span>
-                  <strong>Horaires de consultation</strong>
-                </div>
-                <div className="info-content horaires-list">
-                  {medecin.horaires_consultation ? (
-                    typeof medecin.horaires_consultation === 'string' ? (
-                      <p>{medecin.horaires_consultation}</p>
-                    ) : (
-                      Object.entries(medecin.horaires_consultation).map(([jour, heures]) => (
-                        <div key={jour} className="horaire-item">
-                          <span className="jour">{jour}</span>
-                          <span className="heures">{heures}</span>
-                        </div>
-                      ))
-                    )
-                  ) : (
-                    <p className="no-horaires">Horaires non renseignés</p>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+          )}
         </div>
 
-        {/* Services */}
-        {canViewField('services') && (
-          <div className="section services-section">
-            <h2>
-              <span className="section-icon">🩺</span>
-              Services proposés
-            </h2>
-          
-          <div className="services-grid">
-            <div className={`service-item ${medecin.accepte_nouveaux_patients ? 'available' : 'unavailable'}`}>
-              <span className="service-icon">👥</span>
-              <span className="service-name">Nouveaux patients</span>
-              <span className="service-status">
-                {medecin.accepte_nouveaux_patients ? '✅ Acceptés' : '❌ Non acceptés'}
-              </span>
-            </div>
-            
-            <div className={`service-item ${medecin.consultations_urgence ? 'available' : 'unavailable'}`}>
-              <span className="service-icon">🚨</span>
-              <span className="service-name">Urgences</span>
-              <span className="service-status">
-                {medecin.consultations_urgence ? '✅ Disponible' : '❌ Non disponible'}
-              </span>
-            </div>
-            
-            <div className={`service-item ${medecin.teleconsultation ? 'available' : 'unavailable'}`}>
-              <span className="service-icon">💻</span>
-              <span className="service-name">Téléconsultation</span>
-              <span className="service-status">
-                {medecin.teleconsultation ? '✅ Proposée' : '❌ Non proposée'}
-              </span>
-            </div>
+        {avisLoading ? (
+          <div className="avis-loading">
+            <div className="loading-spinner small"></div>
+            <p>Chargement des avis...</p>
           </div>
-        </div>
+        ) : (
+          <AvisList avis={avis} />
         )}
-
-        {/* Formations et certifications */}
-        {(medecin.formations || medecin.certifications) && (
-          <div className="section qualifications-section">
-            <h2>
-              <span className="section-icon">🎓</span>
-              Formations et certifications
-            </h2>
-            
-            <div className="qualifications-content">
-              {medecin.formations && (
-                <div className="qualification-block">
-                  <h3>Formations</h3>
-                  <p>{medecin.formations}</p>
-                </div>
-              )}
-              
-              {medecin.certifications && (
-                <div className="qualification-block">
-                  <h3>Certifications</h3>
-                  <p>{medecin.certifications}</p>
-                </div>
-              )}
-            </div>
-          </div>
+        
+        {showAvisForm && (
+          <AvisForm 
+            medecinId={medecinId} 
+            medecinNom={`${medecin.prenom} ${medecin.nom}`}
+            onAvisSubmitted={handleAvisSubmitted}
+            onCancel={handleCancelAvis}
+          />
         )}
-
-        {/* Disponibilités */}
-        {canViewField('disponibilites') && medecin.disponibilites && (
-          <div className="section availability-section">
-            <h2>
-              <span className="section-icon">📅</span>
-              Disponibilités
-            </h2>
-            <div className="availability-grid">
-              {Object.entries(medecin.disponibilites).map(([jour, horaires]) => (
-                <div key={jour} className="day-card">
-                  <div className="day-header">{jour}</div>
-                  <div className="day-hours">
-                    {horaires.length > 0 ? (
-                      horaires.map((plage, index) => (
-                        <div key={index} className="time-slot">
-                          {plage.debut} - {plage.fin}
-                        </div>
-                      ))
-                    ) : (
-                      <div className="no-slots">Indisponible</div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Langues parlées */}
-        {medecin.langues_parlees && canViewField('langues_parlees') && (
-          <div className="section languages-section">
-            <h2>
-              <span className="section-icon">🌍</span>
-              Langues parlées
-            </h2>
-            <div className="languages-list">
-              {medecin.langues_parlees.split(',').map((langue, index) => (
-                <span key={index} className="language-tag">
-                  {langue.trim()}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Avis patients (si activés) */}
-        {medecin.afficher_avis && medecin.avis && medecin.avis.length > 0 && (
-          <div className="section reviews-section">
-            <h2>
-              <span className="section-icon">⭐</span>
-              Avis patients
-            </h2>
-            
-            <div className="reviews-summary">
-              <div className="average-rating">
-                <span className="rating-number">{medecin.note_moyenne.toFixed(1)}</span>
-                <div className="rating-stars">
-                  {[...Array(5)].map((_, i) => (
-                    <span
-                      key={i}
-                      className={`star ${i < Math.round(medecin.note_moyenne) ? 'filled' : ''}`}
-                    >
-                      ⭐
-                    </span>
-                  ))}
-                </div>
-                <span className="reviews-count">({medecin.avis.length} avis)</span>
-              </div>
-            </div>
-            
-            <div className="reviews-list">
-              {medecin.avis.slice(0, 3).map((avis, index) => (
-                <div key={index} className="review-item">
-                  <div className="review-header">
-                    <div className="review-rating">
-                      {[...Array(5)].map((_, i) => (
-                        <span
-                          key={i}
-                          className={`star ${i < avis.note ? 'filled' : ''}`}
-                        >
-                          ⭐
-                        </span>
-                      ))}
-                    </div>
-                    <span className="review-date">
-                      {new Date(avis.date_creation).toLocaleDateString('fr-FR')}
-                    </span>
-                  </div>
-                  <p className="review-comment">{avis.commentaire}</p>
-                  <div className="review-author">Patient anonyme</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Modal de demande de médecin traitant */}
-      {showRequestModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h3>Demande de médecin traitant</h3>
-              <button
-                onClick={() => setShowRequestModal(false)}
-                className="modal-close"
-              >
-                ✕
-              </button>
-            </div>
-            
-            <div className="modal-body">
-              <p>
-                Vous souhaitez faire une demande pour que Dr. {medecin.nom} 
-                devienne votre médecin traitant ?
-              </p>
-              
-              <div className="form-group">
-                <label htmlFor="request-message">Message (optionnel)</label>
-                <textarea
-                  id="request-message"
-                  value={requestMessage}
-                  onChange={(e) => setRequestMessage(e.target.value)}
-                  rows="4"
-                  placeholder="Expliquez brièvement pourquoi vous souhaitez ce médecin comme traitant..."
-                />
-              </div>
-            </div>
-            
-            <div className="modal-actions">
-              <button
-                onClick={() => setShowRequestModal(false)}
-                className="btn-cancel"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handleSendRequest}
-                disabled={sendingRequest}
-                className="btn-confirm"
-              >
-                {sendingRequest ? 'Envoi...' : 'Envoyer la demande'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      </section>
+    </main>
   );
 };
 

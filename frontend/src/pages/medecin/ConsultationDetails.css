@@ -1,0 +1,86 @@
+.consultation-details {
+  max-width: 600px;
+  margin: 36px auto;
+  padding: 32px 18px;
+  background: linear-gradient(120deg, #f8fbff 60%, #e3eafc 100%);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(30,60,120,0.10);
+  border: 1.5px solid #e3eafc;
+}
+
+.consultation-details h2 {
+  font-size: 1.7rem;
+  margin-bottom: 18px;
+  color: #1a3557;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 0 2px 8px #e3eafc;
+}
+
+.consultation-details label {
+  font-weight: 600;
+  color: #1a3557;
+  margin-top: 12px;
+  display: block;
+}
+
+.consultation-details input,
+.consultation-details textarea {
+  margin-top: 4px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  border: 1.2px solid #b6d0ff;
+  padding: 8px 10px;
+  font-size: 1rem;
+  width: 100%;
+  background: #f8fbff;
+  transition: border 0.18s;
+}
+.consultation-details input:focus,
+.consultation-details textarea:focus {
+  border: 1.5px solid #1a3557;
+  outline: none;
+}
+
+.consultation-details button {
+  margin-top: 12px;
+  padding: 8px 24px;
+  border: none;
+  border-radius: 22px;
+  background: linear-gradient(90deg, #e3eafc 60%, #b6d0ff 100%);
+  color: #1a3557;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  box-shadow: 0 1px 4px rgba(30,60,120,0.06);
+  outline: none;
+  display: inline-block;
+}
+.consultation-details button:hover {
+  background: linear-gradient(90deg, #b6d0ff 60%, #e3eafc 100%);
+  color: #0a1a2f;
+  box-shadow: 0 2px 8px #b6d0ff44;
+}
+
+.consultation-details ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.consultation-details li {
+  margin-bottom: 10px;
+  padding: 10px 8px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(30,60,120,0.07);
+  border: 1px solid #e3eafc;
+  font-size: 0.98rem;
+}
+
+@media (max-width: 600px) {
+  .consultation-details {
+    padding: 12px 2vw;
+  }
+}

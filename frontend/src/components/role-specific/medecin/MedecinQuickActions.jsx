@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../contexts/AuthContext';
 import './MedecinQuickActions.css';
+import { FaUsers, FaCalendarAlt, FaFileAlt, FaHandshake } from 'react-icons/fa';
 
 const MedecinQuickActions = ({ className = '' }) => {
   const { user } = useContext(AuthContext);
@@ -12,39 +13,23 @@ const MedecinQuickActions = ({ className = '' }) => {
       id: 'patients',
       title: 'Mes Patients',
       description: 'Gérer ma patientèle',
-      icon: '👥',
+      icon: <FaUsers />,
       color: 'blue',
-      action: () => navigate('/patients')
+      action: () => navigate('/my-patients')
     },
     {
       id: 'appointments',
       title: 'Planning',
       description: 'Mes rendez-vous',
-      icon: '📅',
+      icon: <FaCalendarAlt />,
       color: 'green',
-      action: () => navigate('/appointments')
-    },
-    {
-      id: 'disponibilites',
-      title: 'Disponibilités',
-      description: 'Gérer mes créneaux',
-      icon: '⏰',
-      color: 'purple',
-      action: () => navigate('/disponibilites')
-    },
-    {
-      id: 'prescriptions',
-      title: 'Prescriptions',
-      description: 'Rédiger ordonnances',
-      icon: '📝',
-      color: 'orange',
-      action: () => navigate('/prescriptions')
+      action: () => navigate('/medecin/planning')
     },
     {
       id: 'documents',
       title: 'Documents',
       description: 'Gérer les documents',
-      icon: '📄',
+      icon: <FaFileAlt />,
       color: 'teal',
       action: () => navigate('/documents')
     },
@@ -52,7 +37,7 @@ const MedecinQuickActions = ({ className = '' }) => {
       id: 'requests',
       title: 'Demandes reçues',
       description: 'Nouveaux patients traitants',
-      icon: '👋',
+      icon: <FaHandshake />,
       color: 'amber',
       action: () => navigate('/requests/received')
     }

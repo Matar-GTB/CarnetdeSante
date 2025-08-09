@@ -1,6 +1,6 @@
 // src/components/layout/Navbar.jsx
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation} from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import UserMenu from './UserMenu';
 import './Navbar.css';
@@ -9,35 +9,29 @@ import {
   AiFillHome,
   AiFillMedicineBox,
   AiFillSchedule,
-  AiFillMessage 
 } from 'react-icons/ai';
 import { 
   BsFillCalendarCheckFill, 
   BsFillPersonLinesFill,
-  BsFillClockFill,
   BsBellFill
 } from 'react-icons/bs';
 import { 
-  FaSyringe, 
-  FaUserMd,
-  FaStethoscope
+  FaSyringe,
+  FaStethoscope 
 } from 'react-icons/fa';
 import { BiMessageDetail } from 'react-icons/bi';
 
-const Navbar = () => {
+const Navbar = ({ navbarId = 'main-navbar' }) => {
   // States
   const [unreadCount, setUnreadCount] = useState(0);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+
 
   // Hooks
   const { user, isAuthenticated } = useContext(AuthContext);
   const location = useLocation();
-  const navigate = useNavigate();
 
   // User data
   const userRole = user?.role;
-  const userName = `${user?.prenom || ''} ${user?.nom || ''}`.trim();
 
   // Fetch notifications
   const fetchNotifications = useCallback(async () => {
@@ -62,42 +56,30 @@ const Navbar = () => {
     return () => clearInterval(interval);
   }, [fetchNotifications]);
 
-  // Handlers
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery('');
-    }
-  };
-
-  const toggleMobileMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
 
   const closeMobileMenu = () => {
-    setIsMenuOpen(false);
+    // Fonction gardée pour compatibilité
   };
 
   // Navigation links based on role
   const getNavigationLinks = () => {
     const commonLinks = [
-      { path: '/dashboard', label: 'Accueil', icon: <AiFillHome className="nav-icon" /> },
+      { path: '/dashboard', label: 'Accueil', icon: <AiFillHome /> },
     ];
 
     const roleSpecificLinks = userRole === 'patient' 
       ? [
-          { path: '/appointments', label: 'Mes RDV', icon: <BsFillCalendarCheckFill className="nav-icon" /> },
-          { path: '/medications', label: 'Médicaments', icon: <AiFillMedicineBox className="nav-icon" /> },
-          { path: '/vaccinations', label: 'Vaccinations', icon: <FaSyringe className="nav-icon" /> },
-          { path: '/messages', label: 'Messages', icon: <BiMessageDetail className="nav-icon" /> },
+          { path: '/appointments', label: 'Mes RDV', icon: <BsFillCalendarCheckFill /> },
+          { path: '/medications', label: 'Médicaments', icon: <AiFillMedicineBox /> },
+          { path: '/vaccinations', label: 'Vaccinations', icon: <FaSyringe /> },
+          { path: '/messages', label: 'Messages', icon: <BiMessageDetail /> },
         ]
       : [
-          // eslint-disable-next-line react/jsx-no-undef
-          { path: '/appointments', label: 'Consultations', icon: <RiStethoscopeFill className="nav-icon" /> },
-          { path: '/medecin/patients', label: 'Patients', icon: <BsFillPersonLinesFill className="nav-icon" /> },
-          { path: '/disponibilites', label: 'Planning', icon: <AiFillSchedule className="nav-icon" /> },
-          { path: '/messages', label: 'Messages', icon: <BiMessageDetail className="nav-icon" /> },
+          // Pour les médecins - utiliser /consultations
+          { path: '/consultations', label: 'Consultations', icon: <FaStethoscope /> },
+          { path: '/my-patients', label: 'Patients', icon: <BsFillPersonLinesFill /> },
+          { path: '/medecin/planning', label: 'Planning', icon: <AiFillSchedule /> },
+          { path: '/messages', label: 'Messages', icon: <BiMessageDetail /> },
         ];
 
     return [...commonLinks, ...roleSpecificLinks];
@@ -115,9 +97,9 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" id={navbarId} data-navbar-id={navbarId}>
       <div className="navbar-container">
-        {/* Logo et nom de l'application */}
+        {/* Logo et nom de l'application - complètement à gauche */}
         <div className="navbar-brand">
           <Link to="/dashboard" className="brand-link" onClick={closeMobileMenu}>
             <div className="brand-icon">🩺</div>
@@ -128,15 +110,15 @@ const Navbar = () => {
           </Link>
         </div>
 
-
-        {/* Navigation principale - Desktop */}
-        <div className="navbar-nav desktop-nav">
+        {/* Barre de navigation horizontale simplifiée */}
+        <div className="navbar-center">
           {navigationLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
               className={`nav-link ${isActiveLink(link.path) ? 'active' : ''}`}
               onClick={closeMobileMenu}
+              title={link.label}
             >
               <span className="nav-icon">{link.icon}</span>
               <span className="nav-label">{link.label}</span>
@@ -144,7 +126,7 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Actions navbar */}
+        {/* Actions navbar - complètement à droite */}
         <div className="navbar-actions">
           {/* Notifications */}
           <div className="notification-wrapper">
@@ -164,56 +146,13 @@ const Navbar = () => {
             <UserMenu />
           </div>
 
-          {/* Bouton menu mobile */}
-          <button 
-            className={`mobile-menu-button ${isMenuOpen ? 'active' : ''}`}
-            onClick={toggleMobileMenu}
-            aria-label="Menu"
-          >
-            <span className="hamburger-line"></span>
-            <span className="hamburger-line"></span>
-            <span className="hamburger-line"></span>
-          </button>
+          {/* Bouton menu mobile supprimé */}
         </div>
       </div>
 
-      {/* Menu mobile */}
-      <div className={`mobile-nav ${isMenuOpen ? 'open' : ''}`}>
-        <div className="mobile-nav-content">
-          <div className="mobile-nav-header">
-            <div className="mobile-user-info">
-              <div className="mobile-avatar">
-                {user?.prenom?.[0]}{user?.nom?.[0]}
-              </div>
-              <div className="mobile-user-details">
-                <span className="mobile-user-name">{userName}</span>
-                <span className="mobile-user-role">
-                  {userRole === 'medecin' ? 'Médecin' : 'Patient'}
-                </span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mobile-nav-links">
-            {navigationLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`mobile-nav-link ${isActiveLink(link.path) ? 'active' : ''}`}
-                onClick={closeMobileMenu}
-              >
-                <span className="mobile-nav-icon">{link.icon}</span>
-                <span className="mobile-nav-label">{link.label}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* Menu mobile supprimé car la navbar est toujours horizontale */}
 
-      {/* Overlay pour fermer le menu mobile */}
-      {isMenuOpen && (
-        <div className="mobile-nav-overlay" onClick={closeMobileMenu}></div>
-      )}
+      {/* Pas besoin d'overlay car pas de menu mobile */}
     </nav>
   );
 };

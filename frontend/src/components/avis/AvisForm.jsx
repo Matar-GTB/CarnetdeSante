@@ -97,10 +97,21 @@ const AvisForm = ({ medecinId, medecinNom, onAvisSubmitted, onCancel }) => {
           {avisExistant ? 'Modifier votre avis' : 'Laisser un avis'} sur Dr {medecinNom}
         </h3>
         
+        <div className="avis-instructions">
+          <p><strong>Comment ça marche ?</strong></p>
+          <ol>
+            <li>Donnez une note en cliquant sur les étoiles (de 1 à 5)</li>
+            <li>Écrivez un commentaire (facultatif)</li>
+            <li>Choisissez si vous souhaitez rester anonyme</li>
+            <li>Cliquez sur "{avisExistant ? 'Mettre à jour' : 'Publier l\'avis'}"</li>
+          </ol>
+        </div>
+        
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Note :</label>
+            <label>Note : <span className="required">*</span></label>
             {renderStars()}
+            <small className="form-help">Cliquez sur les étoiles pour attribuer une note</small>
           </div>
           
           <div className="form-group">
@@ -109,9 +120,10 @@ const AvisForm = ({ medecinId, medecinNom, onAvisSubmitted, onCancel }) => {
               id="commentaire"
               value={formData.commentaire}
               onChange={(e) => setFormData({...formData, commentaire: e.target.value})}
-              placeholder="Partagez votre expérience avec ce médecin..."
+              placeholder="Partagez votre expérience avec ce médecin (ponctualité, écoute, explications...)"
               rows={4}
             />
+            <small className="form-help">Votre commentaire aide les autres patients dans leur choix</small>
           </div>
           
           <div className="form-group checkbox-group">

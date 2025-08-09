@@ -9,39 +9,6 @@ import { getMedicationsApi } from './medicationService';
  * @param {Object} visibilitySettings - Paramètres de visibilité par champ
  * @returns {Promise<Object>} Résultat de la mise à jour
  */
-export const updateVisibilitySettings = async (visibilitySettings) => {
-  try {
-    const res = await API.put('/profile/visibility', { visibilitySettings });
-    return {
-      success: true,
-      data: res.data.data,
-      message: res.data.message || 'Paramètres de visibilité mis à jour avec succès'
-    };
-  } catch (error) {
-    console.error('Erreur lors de la mise à jour des paramètres de visibilité:', error);
-    return {
-      success: false,
-      message: error.response?.data?.message || 'Erreur lors de la mise à jour',
-      error: error.message
-    };
-  }
-};
-
-export const getVisibilityPresets = async () => {
-  try {
-    const res = await API.get('/users/profile/visibility/presets');
-    return {
-      success: true,
-      data: res.data
-    };
-  } catch (error) {
-    console.error('Erreur lors de la récupération des presets de visibilité:', error);
-    return {
-      success: false,
-      message: error.response?.data?.message || 'Erreur lors de la récupération'
-    };
-  }
-};;
 
 const API_URL = 'http://localhost:5000/api'; 
 
@@ -131,14 +98,6 @@ export const updateMyProfile = async (profileData) => {
 
 
 
-/**
- * Récupère les paramètres de visibilité actuels
- * @returns {Promise<Object>}
- */
-export const getVisibilitySettings = async () => {
-  const res = await API.get('/profile/visibility');
-  return res.data.data;
-};
 
 /**
  * Génère un lien d'urgence sécurisé
@@ -184,9 +143,26 @@ export const getProfileStats = async () => {
  * @param {number} medecinId - ID du médecin
  * @returns {Promise<Object>}
  */
+/**
+ * Récupère le profil public d'un médecin (nouvelle route harmonisée)
+ * @param {number} medecinId - ID du médecin
+ * @returns {Promise<Object>}
+ */
 export const getMedecinPublicProfile = async (medecinId) => {
-  const res = await API.get(`/users/medecin/${medecinId}/public`);
-  return res.data.data;
+  try {
+    // Utilisation de la route réellement implémentée et fonctionnelle
+    const res = await API.get(`/users/doctors/${medecinId}/public`);
+    return {
+      success: true,
+      data: res.data.data || res.data
+    };
+  } catch (error) {
+    console.error('Erreur lors du chargement du profil public médecin:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Erreur lors de la récupération du profil public du médecin'
+    };
+  }
 };
 
 /**
@@ -206,8 +182,8 @@ export const getPatientPublicProfile = async (patientId) => {
   }
 
   try {
-    console.log('📡 Appel API:', `/users/patient/${patientId}/public`);
-    const res = await API.get(`/users/patient/${patientId}/public`);
+    console.log('📡 Appel API:', `/profile/patient/${patientId}/public`);
+    const res = await API.get(`/profile/patient/${patientId}/public`);
     console.log('✅ Réponse API reçue:', res);
     
     if (!res.data || (!res.data.data && !res.data.success)) {
@@ -354,15 +330,6 @@ export const searchDoctors = async (searchParams) => {
 };
 
 /**
- * Applique un preset de visibilité
- * @param {string} presetType - 'private', 'medical', 'emergency'
- * @returns {Promise<Object>}
- */
-export const applyVisibilityPreset = async (presetType) => {
-  const res = await API.post('/users/profile/visibility/preset', { preset: presetType });
-  return res.data.data;
-};
-/**
  * Récupère les informations publiques d’un médecin par son ID (ex. médecin traitant)
  * @param {number} medecinId 
  * @returns {Promise<Object>}
@@ -394,8 +361,6 @@ export const getPatientMedications = async () => {
 const profileService = {
   getMyProfile,
   updateMyProfile,
-  updateVisibilitySettings,
-  getVisibilitySettings,
   generateEmergencyLink,
   getEmergencyProfile,
   revokeEmergencyLink,
@@ -411,7 +376,6 @@ const profileService = {
   removeTraitant,
   removePatient,
   searchDoctors,
-  applyVisibilityPreset,
   getPatientRendezVous,
   getPatientMedications,
   getMesTraitants,

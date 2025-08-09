@@ -149,6 +149,22 @@ CREATE TABLE IF NOT EXISTS rappels (
   updatedAt       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Table: Consultations
+CREATE TABLE consultations (
+    id SERIAL PRIMARY KEY,
+    rendezvous_id INT NOT NULL REFERENCES rendezvous(id) ON DELETE CASCADE,
+    patient_id INT NOT NULL REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    medecin_id INT NOT NULL REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    notes TEXT,
+    examens TEXT,
+    medicaments TEXT,
+    notes_retenir TEXT,
+    date_consultation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Index pour accélérer l'historique patient
+CREATE INDEX idx_consultations_patient ON consultations(patient_id);
+CREATE INDEX idx_consultations_medecin ON consultations(medecin_id);
 
 -- Création des index pour améliorer les performances
 CREATE INDEX idx_rendezvous_patient ON rendezvous(patient_id);

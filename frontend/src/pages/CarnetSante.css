@@ -1,0 +1,139 @@
+.carnet-sante-page {
+  max-width: 800px;
+  margin: 36px auto;
+  padding: 32px 18px;
+  background: linear-gradient(120deg, #f8fbff 60%, #e3eafc 100%);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(30,60,120,0.10);
+  border: 1.5px solid #e3eafc;
+  min-height: 60vh;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.back-button {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: linear-gradient(90deg, #e3eafc 20%, #d5e1fb 100%);
+  padding: 8px 16px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #1a3557;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(30, 60, 120, 0.1);
+}
+
+.back-button:hover {
+  background: linear-gradient(90deg, #d5e1fb 20%, #b6d0ff 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 60, 120, 0.15);
+}
+
+.carnet-sante-page h1 {
+  font-size: 2rem;
+  margin: 0 auto;
+  color: #1a3557;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: center;
+  text-shadow: 0 2px 8px #e3eafc;
+}
+
+.carnet-sante-page ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.carnet-sante-page li {
+  margin-bottom: 18px;
+  padding: 18px 14px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(30,60,120,0.07);
+  border: 1.5px solid #e3eafc;
+  transition: box-shadow 0.2s, border 0.2s;
+  position: relative;
+}
+.carnet-sante-page li:hover {
+  box-shadow: 0 6px 24px rgba(30,60,120,0.13);
+  border: 1.5px solid #b6d0ff;
+}
+.carnet-sante-page strong {
+  color: #1a3557;
+  font-size: 1.1rem;
+  margin-right: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.carnet-sante-page span {
+  font-size: 1.05rem;
+  color: #1a3557;
+  font-weight: 500;
+  margin-right: 10px;
+  vertical-align: middle;
+  white-space: pre-line;
+  word-break: break-word;
+  max-width: 320px;
+  display: inline-block;
+}
+.carnet-sante-page button {
+  margin-left: 10px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 22px;
+  background: linear-gradient(90deg, #e3eafc 60%, #b6d0ff 100%);
+  color: #1a3557;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  box-shadow: 0 1px 4px rgba(30,60,120,0.06);
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.carnet-sante-page button:hover {
+  background: linear-gradient(90deg, #b6d0ff 60%, #e3eafc 100%);
+  color: #0a1a2f;
+  box-shadow: 0 2px 8px #b6d0ff44;
+}
+.carnet-sante-page .notes-preview {
+  font-size: 13px;
+  color: #555;
+  margin-top: 4px;
+}
+@media (max-width: 600px) {
+  .carnet-sante-page {
+    padding: 12px 2vw;
+  }
+  .carnet-sante-page li {
+    padding: 12px 6px;
+  }
+  .page-header {
+    margin-top: 30px;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .back-button {
+    position: relative;
+    align-self: flex-start;
+    margin-bottom: 10px;
+  }
+}

@@ -196,7 +196,11 @@ const AppointmentBooking = ({ medecin, onSuccess, onCancel }) => {
                 )}
 
                 {!loading && creneaux[iso] && creneaux[iso].length === 0 && (
-                  <p className="no-slot">❌ Aucun créneau disponible ce jour</p>
+                  <p className="no-slot">
+                    {iso === new Date().toISOString().split('T')[0] 
+                      ? "❌ Aucun créneau disponible aujourd'hui à cette heure" 
+                      : "❌ Aucun créneau disponible ce jour"}
+                  </p>
                 )}
               </div>
             )}

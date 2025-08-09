@@ -2,14 +2,68 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPatientPublicProfile } from '../../services/profileService';
 import './PatientProfilePublic.css';
+import { 
+  FaArrowLeft, FaMapMarkerAlt, FaEnvelope, FaPhone, 
+  FaShieldAlt, FaInfoCircle, FaBirthdayCake, 
+  FaIdCard, FaHeartbeat, FaCheck, FaTimes,
+  FaShareAlt, FaCopy, FaLock, FaExclamationTriangle
+} from 'react-icons/fa';
 
+/**
+ * Composant de profil public d'un patient
+ * Affiche les informations publiques d'un patient selon ses paramètres de confidentialité
+ */
 const PatientProfilePublic = () => {
   const { patientId } = useParams();
   const navigate = useNavigate();
   
+  // États
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [shareTooltip, setShareTooltip] = useState(false);
+  
+  // Fonction pour formater une date
+  const formatDate = (dateString) => {
+    if (!dateString) return null;
+    
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('fr-FR', { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+      });
+    } catch (e) {
+      console.error('Erreur de formatage de date:', e);
+      return dateString;
+    }
+  };
+  
+  // Fonction pour calculer l'âge à partir de la date de naissance
+  const calculateAge = (dateString) => {
+    if (!dateString) return null;
+    
+    try {
+      const birthDate = new Date(dateString);
+      const today = new Date();
+      
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDifference = today.getMonth() - birthDate.getMonth();
+      
+      // Si l'anniversaire n'est pas encore passé cette année
+      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      
+      return age;
+    } catch (e) {
+      console.error('Erreur de calcul d\'âge:', e);
+      return null;
+    }
+  };
+
+  // Chargement du profil patient
   const loadPatientProfile = useCallback(async () => {
     try {
       setLoading(true);
@@ -39,10 +93,12 @@ const PatientProfilePublic = () => {
     }
   }, [patientId]);
 
+  // Charger le profil au montage du composant et à chaque changement d'ID
   useEffect(() => {
     loadPatientProfile();
   }, [patientId, loadPatientProfile]);
 
+  // Gestionnaires d'événements
   const handleRetry = () => {
     loadPatientProfile();
   };
@@ -50,22 +106,43 @@ const PatientProfilePublic = () => {
   const handleBack = () => {
     navigate(-1);
   };
+  
+  // Fonction pour partager le profil
+  const handleShare = () => {
+    try {
+      // Copier l'URL actuelle dans le presse-papiers
+      navigator.clipboard.writeText(window.location.href);
+      setShareTooltip(true);
+      
+      // Masquer le tooltip après 3 secondes
+      setTimeout(() => {
+        setShareTooltip(false);
+      }, 3000);
+    } catch (err) {
+      console.error('Erreur lors du partage:', err);
+    }
+  };
 
+  // Affichage de l'état de chargement
   if (loading) {
     return (
       <div className="patient-public-loading">
-        <div className="loading-spinner"></div>
-        <p>Chargement du profil...</p>
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <div className="loading-pulse"></div>
+          <p>Chargement du profil patient...</p>
+        </div>
       </div>
     );
   }
 
+  // Affichage des erreurs
   if (error) {
     return (
       <div className="patient-public-error">
         <div className="error-container">
           <span className="error-icon">
-            {error.type === 'error' ? '🔒' : '⚠️'}
+            {error.type === 'error' ? <FaLock /> : <FaExclamationTriangle />}
           </span>
           
           <h2>
@@ -93,10 +170,10 @@ const PatientProfilePublic = () => {
 
           <div className="error-actions">
             <button onClick={handleBack} className="btn-back">
-              Retour
+              <FaArrowLeft /> Retour
             </button>
             <button onClick={handleRetry} className="btn-retry">
-              Réessayer
+              <FaCheck /> Réessayer
             </button>
           </div>
         </div>
@@ -104,6 +181,7 @@ const PatientProfilePublic = () => {
     );
   }
 
+  // Vérification que le patient existe
   if (!patient) {
     return (
       <div className="patient-public-error">
@@ -112,15 +190,24 @@ const PatientProfilePublic = () => {
           <h2>Patient non trouvé</h2>
           <p>Impossible de trouver le profil demandé.</p>
           <button onClick={handleBack} className="btn-back">
-            Retour
+            <FaArrowLeft /> Retour
           </button>
         </div>
       </div>
     );
   }
 
+  // Affichage du profil
   return (
     <div className="patient-profile-public">
+      <button className="back-button" onClick={handleBack}>
+        <FaArrowLeft /> Retour
+      </button>
+      
+      <button className="share-button" onClick={handleShare}>
+        <FaShareAlt /> {shareTooltip ? "Lien copié!" : "Partager"}
+      </button>
+      
       <header className="profile-header">
         <div className="header-background"></div>
         <div className="header-content">
@@ -141,10 +228,22 @@ const PatientProfilePublic = () => {
             
             <div className="patient-details">
               <h1>{patient.prenom} {patient.nom}</h1>
-              {patient.ville && (
+              {patient.adresse && (
                 <div className="patient-location">
-                  <span className="location-icon">📍</span>
-                  {patient.ville}
+                  <FaMapMarkerAlt className="location-icon" />
+                  {patient.adresse}
+                </div>
+              )}
+              
+              {patient.date_naissance && (
+                <div className="patient-age">
+                  <FaBirthdayCake style={{marginRight: '5px'}} />
+                  {formatDate(patient.date_naissance)}
+                  {calculateAge(patient.date_naissance) && (
+                    <span className="age-indicator">
+                      {` (${calculateAge(patient.date_naissance)} ans)`}
+                    </span>
+                  )}
                 </div>
               )}
             </div>
@@ -153,34 +252,113 @@ const PatientProfilePublic = () => {
       </header>
 
       <main className="profile-content">
-        <section className="info-section">
-          <h2>Informations de base</h2>
-          <div className="info-grid">
-            {patient.email_public && (
+        {/* Section d'informations de contact */}
+        {(patient.email || patient.telephone || patient.adresse) && (
+          <section className="info-section">
+            <h2 className="section-title">
+              <FaInfoCircle className="section-icon" />
+              Informations de contact
+            </h2>
+            <div className="info-grid">
+              {patient.email && (
+                <div className="info-card">
+                  <div className="info-icon">
+                    <FaEnvelope />
+                  </div>
+                  <div className="info-details">
+                    <h3>Email</h3>
+                    <p>{patient.email}</p>
+                  </div>
+                </div>
+              )}
+              
+              {patient.telephone && (
+                <div className="info-card">
+                  <div className="info-icon">
+                    <FaPhone />
+                  </div>
+                  <div className="info-details">
+                    <h3>Téléphone</h3>
+                    <p>{patient.telephone}</p>
+                  </div>
+                </div>
+              )}
+              
+              {patient.adresse && (
+                <div className="info-card">
+                  <div className="info-icon">
+                    <FaMapMarkerAlt />
+                  </div>
+                  <div className="info-details">
+                    <h3>Adresse</h3>
+                    <p>{patient.adresse}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+        
+        {/* Section d'informations médicales publiques */}
+        {(patient.groupe_sanguin || patient.allergies) && (
+          <section className="info-section">
+            <h2 className="section-title">
+              <FaHeartbeat className="section-icon" />
+              Informations médicales publiques
+            </h2>
+            <div className="info-grid">
+              {patient.groupe_sanguin && (
+                <div className="info-card">
+                  <div className="info-icon">
+                    <FaHeartbeat />
+                  </div>
+                  <div className="info-details">
+                    <h3>Groupe sanguin</h3>
+                    <p>{patient.groupe_sanguin}</p>
+                  </div>
+                </div>
+              )}
+              
+              {patient.allergies && (
+                <div className="info-card">
+                  <div className="info-icon">
+                    <FaTimes />
+                  </div>
+                  <div className="info-details">
+                    <h3>Allergies</h3>
+                    <p>{patient.allergies || "Aucune allergie déclarée"}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+        
+        {/* Section de personne à contacter en cas d'urgence */}
+        {patient.personne_urgence && patient.contact_urgence && (
+          <section className="info-section">
+            <h2 className="section-title">
+              <FaIdCard className="section-icon" />
+              Contact d'urgence
+            </h2>
+            <div className="info-grid">
               <div className="info-card">
-                <span className="info-icon">📧</span>
+                <div className="info-icon">
+                  <FaPhone />
+                </div>
                 <div className="info-details">
-                  <h3>Email</h3>
-                  <p>{patient.email}</p>
+                  <h3>{patient.personne_urgence}</h3>
+                  <p>{patient.contact_urgence}</p>
                 </div>
               </div>
-            )}
-            
-            {patient.telephone_public && (
-              <div className="info-card">
-                <span className="info-icon">📱</span>
-                <div className="info-details">
-                  <h3>Téléphone</h3>
-                  <p>{patient.telephone}</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-
+            </div>
+          </section>
+        )}
+          
+        {/* Avis de confidentialité */}
         <section className="privacy-section">
           <div className="privacy-notice">
-            <span className="notice-icon">🔒</span>
+            <FaShieldAlt className="notice-icon" />
             <p>
               Les informations affichées sur cette page sont limitées pour protéger 
               la confidentialité du patient. Seules les informations explicitement 

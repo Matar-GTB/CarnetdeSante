@@ -26,6 +26,24 @@ export const register = async (formData) => {
   }
 };
 
+export const verifyEmailWithCode = async (email, code) => {
+  try {
+    const res = await API.post('/auth/verify-email-code', { email, code });
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: 'Erreur de vérification du code' };
+  }
+};
+
+export const resendVerificationCode = async (email) => {
+  try {
+    const res = await API.post('/auth/resend-verification-code', { email });
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: 'Erreur lors de l\'envoi du code' };
+  }
+};
+
 export const checkAuthStatus = async () => {
   try {
     const res = await API.get('/auth/status');
@@ -44,20 +62,14 @@ export const logout = async () => {
   }
 };
 
-// Intercepteur pour gérer les erreurs d'authentification
-API.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      console.error('🚫 Erreur 401: Session expirée ou non authentifié');
-      // Rediriger vers la page de connexion si nécessaire
-      if (window.location.pathname !== '/auth/login') {
-        console.log('🔄 Redirection vers la page de connexion...');
-        window.location.href = '/auth/login';
-      }
-    }
-    return Promise.reject(error);
+// Ajout d'une fonction pour rafraîchir explicitement le token
+export const refreshToken = async () => {
+  try {
+    const res = await API.post('/auth/refresh-token');
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: 'Erreur de rafraîchissement du token' };
   }
-);
+};
 
 export default API;

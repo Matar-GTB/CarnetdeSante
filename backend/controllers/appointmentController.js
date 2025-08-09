@@ -207,6 +207,22 @@ export const acceptAppointment = async (req, res) => {
     appt.statut = 'planifie';
     await appt.save();
 
+    // Création automatique de la consultation si elle n'existe pas déjà
+    try {
+      const Consultation = (await import('../models/Consultation.js')).default;
+      const existing = await Consultation.findOne({ where: { rendezvous_id: appt.id } });
+      if (!existing) {
+        await Consultation.create({
+          rendezvous_id: appt.id,
+          patient_id: appt.patient_id,
+          medecin_id: appt.medecin_id
+        });
+      }
+    } catch (e) {
+      console.error('Erreur création auto consultation:', e);
+      // On ne bloque pas la réponse si la consultation échoue
+    }
+
     // Notifier le patient
     await Notification.create({
       utilisateur_id: appt.patient_id,
@@ -275,6 +291,15 @@ export const getMedecinsDisponibles = async (req, res) => {
 export const getAppointmentsByUser = async (req, res) => {
   try {
     const { userId } = req.params;
+    
+    // Vérification que userId est bien défini et valide
+    if (!userId || userId === 'undefined') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'ID utilisateur invalide ou non spécifié' 
+      });
+    }
+    
     const appts = await Appointment.findAll({
       where: {
         [Op.or]: [{ patient_id: userId }, { medecin_id: userId }]
@@ -484,17 +509,31 @@ const computeEndTime = (start, duration) => {
     }
 
     // Supprimer les créneaux déjà pris ou bloqués
-    const availableSlots = allSlots.filter(
+    let availableSlots = allSlots.filter(
       s => !busyTimes.includes(s) && !blockedSlots.includes(s)
     );
 
+    // Si la date est aujourd'hui, filtrer les créneaux passés
+    const aujourdhui = dayjs().format('YYYY-MM-DD');
+    if (date === aujourdhui) {
+      const maintenant = dayjs();
+      const heureActuelle = maintenant.format('HH:mm');
+      
+      // Garde uniquement les créneaux futurs (avec une marge de 5 minutes)
+      availableSlots = availableSlots.filter(creneau => {
+        // Ajoute 5 minutes de marge pour ne pas proposer un créneau dans les 5 prochaines minutes
+        const creneauAvecMarge = dayjs(`${aujourdhui}T${creneau}`).add(5, 'minute');
+        return creneauAvecMarge.isAfter(maintenant);
+      });
+    }
+
     return res.json({
-  success: true,
-  data: {
-    creneaux: availableSlots,
-    duree: duree_creneau,
-    travail: true
-  }
+      success: true,
+      data: {
+        creneaux: availableSlots,
+        duree: duree_creneau,
+        travail: true
+      }
     });
   } catch (error) {
     console.error('Erreur créneaux dispo:', error);

@@ -203,7 +203,8 @@ export const getPublicMedecinProfile = async (req, res) => {
         'adresse', 'description', 'langues', 'diplome', 'parcours_professionnel',
         'horaires_travail', 'accessibilite', 'accepte_nouveaux_patients',
         'moyens_paiement', 'email', 'telephone', 'date_creation',
-        'accepte_non_traitants'
+        'accepte_non_traitants', 'visible_recherche', 'sous_specialites',
+        'adresse_cabinet', 'telephone_cabinet', 'tarifs', 'faq'
       ]
     });
     
@@ -215,52 +216,71 @@ export const getPublicMedecinProfile = async (req, res) => {
       });
     }
 
+    // Vérifier que le profil est bien public/visible
+    if (medecin.visible_recherche === false) {
+      console.log('❌ Le profil du médecin n\'est pas public (visible_recherche=false)');
+      return res.status(403).json({
+        success: false,
+        message: "Ce profil n'est pas public"
+      });
+    }
+
     console.log('✅ Médecin trouvé:', medecin.prenom, medecin.nom);
 
     // Vérifier si l'utilisateur connecté est déjà un patient de ce médecin
     let estDejaPatient = false;
     if (userId) {
-      // Chercher dans la table des demandes de médecin traitant acceptées
-      const { DemandeTraitant } = await import('../models/DemandeTraitant.js');
-      const demande = await DemandeTraitant.findOne({
-        where: {
-          patient_id: userId,
-          medecin_id: id,
-          statut: 'accepte'
-        }
-      });
-      estDejaPatient = !!demande;
-      console.log('🔗 Est déjà patient de ce médecin:', estDejaPatient);
+      try {
+        // Chercher dans la table des demandes de médecin traitant acceptées
+        const { DemandeTraitant } = await import('../models/DemandeTraitant.js');
+        const demande = await DemandeTraitant.findOne({
+          where: {
+            patient_id: userId,
+            medecin_id: id,
+            statut: 'accepte'
+          }
+        });
+        estDejaPatient = !!demande;
+        console.log('🔗 Est déjà patient de ce médecin:', estDejaPatient);
+      } catch (err) {
+        console.error('⚠️ Erreur lors de la vérification du statut patient:', err);
+        // Ne pas bloquer le reste de la fonction en cas d'erreur ici
+      }
     }
 
-    // Version simplifiée sans les avis pour le moment
+    // Ajouter le nom complet
+    const nom_complet = `${medecin.prenom} ${medecin.nom}`;
+
+    // Version améliorée du profil
     const profileData = {
       ...medecin.toJSON(),
+      // Ajout du nom complet
+      nom_complet,
       // Calcul de l'expérience (années depuis création du compte)
       experience_annees: new Date().getFullYear() - new Date(medecin.date_creation).getFullYear(),
       // Statut de disponibilité
       statut_disponibilite: medecin.accepte_nouveaux_patients ? 'Disponible' : 'Complet',
       // Avis par défaut (vides pour le moment)
       avis: [],
-      note_moyenne: null,
+      note_moyenne: 4.5, // Valeur par défaut temporaire
       nombre_avis: 0,
       // Informations de contact sécurisées (par défaut visibles)
       email_visible: true,
       telephone_visible: true,
-      // Champs manquants avec valeurs par défaut
-      tarifs: 'Non renseigné',
-      faq: [], // Tableau vide au lieu d'une chaîne
+      // S'assurer que les champs sont bien définis
+      tarifs: medecin.tarifs || 'Non renseigné',
+      faq: medecin.faq || [], 
       // Nouvelle info : est déjà patient
       est_deja_patient: estDejaPatient
     };
 
-    console.log('📤 Envoi des données du profil');
+    console.log('📤 Envoi des données du profil public médecin');
     res.json({ success: true, data: profileData });
   } catch (error) {
     console.error('❌ Erreur getPublicMedecinProfile:', error);
     res.status(500).json({ 
       success: false, 
-      message: "Erreur lors de la récupération du profil" 
+      message: "Erreur lors de la récupération du profil public du médecin" 
     });
   }
 };

@@ -1,5 +1,6 @@
 // src/pages/appointments/AppointmentsPage.jsx
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
+import { FaChevronLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import { 
@@ -46,8 +47,14 @@ const AppointmentsPage = () => {
   const loadAppointments = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await getAppointmentsByUser(userId);
-      setAppointments(data || []);
+      // Ne charge les rendez-vous que si userId est défini
+      if (userId) {
+        const data = await getAppointmentsByUser(userId);
+        setAppointments(data || []);
+      } else {
+        setAppointments([]);
+        setError('Utilisateur non connecté. Veuillez vous connecter pour voir vos rendez-vous.');
+      }
     } catch (error) {
       console.error('Erreur chargement RDV:', error);
       setError('Erreur lors du chargement des rendez-vous');
@@ -308,6 +315,10 @@ const AppointmentsPage = () => {
 
   return (
     <div className="appointments-page">
+      {/* Bouton retour */}
+      <button className="btn-retour" onClick={() => navigate('/dashboard')} style={{marginBottom:16}}>
+        <FaChevronLeft style={{marginRight:6}} /> Retour
+      </button>
       {/* En-tête */}
       <div className="page-header">
         <div className="header-content">
@@ -583,7 +594,11 @@ const AppointmentsPage = () => {
                   )}
 
                   {!loading && creneaux[iso] && creneaux[iso].length === 0 && (
-                    <p className="no-slot">❌ Aucun créneau disponible ce jour</p>
+                    <p className="no-slot">
+                      {iso === new Date().toISOString().split('T')[0] 
+                        ? "❌ Aucun créneau disponible aujourd'hui à cette heure" 
+                        : "❌ Aucun créneau disponible ce jour"}
+                    </p>
                   )}
                 </div>
               )}

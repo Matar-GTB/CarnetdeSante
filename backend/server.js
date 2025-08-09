@@ -6,7 +6,15 @@ import dotenv from 'dotenv';
 import { createServer } from 'http';
 import sequelize from './config/db.js';
 import { verifyToken } from './config/jwt.js';
-import './utils/rappels/rappelScheduler.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Configuration dotenv avec un chemin absolu pour s'assurer qu'il trouve le fichier .env
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+// Désactivation du scheduler redondant
+// import './utils/rappels/rappelScheduler.js';
 import socketManager from './utils/socketManager.js';
 
 // Import des routes
@@ -27,6 +35,8 @@ import medicationRoutes from './routes/medicationRoutes.js';
 import disponibiliteRoutes from './routes/disponibiliteRoutes.js';
 import avisRoutes from './routes/avisRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
+import consultationRoutes from './routes/consultationRoutes.js'; // Nouvelle importation
+import mailRoutes from './routes/mailRoutes.js'; // Import des routes d'email
 console.log('✅ Tous les imports de routes terminés');
 
 
@@ -46,8 +56,8 @@ import './models/Conversation.js';
 import './models/ConversationParticipant.js';
 import { setupAssociations } from './models/associations.js';
 
-
-dotenv.config();
+// dotenv déjà configuré au début du fichier
+// dotenv.config();
 
 const app = express();
 const server = createServer(app);
@@ -62,7 +72,7 @@ const allowedOrigins = [
    'http://localhost:3001',
    'http://127.0.0.1:3000',
    'http://127.0.0.1:3001'
- ];
+];
  app.use(cors({
    origin(origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -79,9 +89,19 @@ app.use(express.json());
 app.use(cookieParser()); // Support des cookies HttpOnly
 app.use('/uploads', express.static('uploads')); // Pour les fichiers uploadés
 
+// Import des nouveaux services de sécurité et de rappels
+import verificationRoutes from './routes/verificationRoutes.js';
+import passwordRoutes from './routes/passwordRoutes.js';
+import { initReminderService } from './services/reminderService.js';
+
+// Configuration des routes spéciales pour la vérification
+console.log('🔒 Configuration des routes de vérification...');
+
 // Routes
 console.log('🔧 Configuration des routes...');
 app.use('/api/auth', authRoutes);
+app.use('/api/verification', verificationRoutes);
+app.use('/api/password', passwordRoutes); // Ajout des routes pour la gestion des mots de passe
 app.use('/api/users', userRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/medical', medicalRoutes);
@@ -90,10 +110,16 @@ app.use('/api/sharing', sharingRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/rappels', rappelRoutes);
 app.use('/api/medications', medicationRoutes);
+
+// Nouvelles routes pour la vérification et les mots de passe
+app.use('/api/verifications', verificationRoutes);
+app.use('/api/password', passwordRoutes);
 app.use('/api', disponibiliteRoutes);
 app.use('/api/traitants', traitantRoutes);
 app.use('/api/avis', avisRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/consultations', consultationRoutes); // Nouvelle route ajoutée
+app.use('/api/mail', mailRoutes); // Routes pour l'envoi d'emails
 console.log('✅ Toutes les routes configurées');
 
 // Route de test
@@ -156,6 +182,10 @@ const startServer = async () => {
     // Configuration des associations entre modèles
     setupAssociations();
     console.log('✅ Associations de modèles configurées');
+    
+    // Initialiser le service de rappels
+    initReminderService();
+    console.log('✅ Services de sécurité et de rappels initialisés');
     
     // Synchronisation des modèles (en dev seulement)
     if (process.env.NODE_ENV !== 'production') {

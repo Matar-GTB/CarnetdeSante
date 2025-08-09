@@ -8,7 +8,12 @@ import Conversation from './Conversation.js';
 import ConversationParticipant from './ConversationParticipant.js';
 
 export const setupAssociations = () => {
-  PriseMedicament.belongsTo(User, { foreignKey: 'utilisateur_id', as: 'Utilisateur' });
+  // Associations pour les utilisateurs et les rappels
+  User.hasMany(Rappel, { foreignKey: 'utilisateur_id', as: 'Rappels' });
+  Rappel.belongsTo(User, { foreignKey: 'utilisateur_id', as: 'UtilisateurRappel' });
+  
+  // Autres associations
+  PriseMedicament.belongsTo(User, { foreignKey: 'utilisateur_id', as: 'UtilisateurMedicament' });
   PriseMedicament.hasMany(Rappel, { foreignKey: 'medicament_id', as: 'Rappels', onDelete: 'CASCADE' });
   Rappel.belongsTo(PriseMedicament, { foreignKey: 'medicament_id' });
   
@@ -35,9 +40,12 @@ export const setupAssociations = () => {
 
   // Participants
   ConversationParticipant.belongsTo(Conversation, { foreignKey: 'conversation_id', as: 'Conversation' });
-  ConversationParticipant.belongsTo(User, { foreignKey: 'utilisateur_id', as: 'Utilisateur' });
-  ConversationParticipant.belongsTo(User, { foreignKey: 'utilisateur_id', as: 'Patient' });
-  ConversationParticipant.belongsTo(User, { foreignKey: 'utilisateur_id', as: 'Medecin' });
+  ConversationParticipant.belongsTo(User, { foreignKey: 'utilisateur_id', as: 'UtilisateurParticipant' });
+  
+  // Note: Les associations ci-dessous ont été commentées car elles utilisent la même clé étrangère
+  // Ces associations peuvent être utilisées dans le code via des requêtes incluant le type de participant
+  // ConversationParticipant.belongsTo(User, { foreignKey: 'utilisateur_id', as: 'Patient' });
+  // ConversationParticipant.belongsTo(User, { foreignKey: 'utilisateur_id', as: 'Medecin' });
 
   // Relations utilisateur avec les messages
   User.hasMany(Message, { foreignKey: 'expediteur_id', as: 'MessagesEnvoyes' });

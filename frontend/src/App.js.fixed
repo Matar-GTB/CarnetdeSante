@@ -1,0 +1,144 @@
+// src/App.jsx
+import React, { useEffect, useContext } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { io } from 'socket.io-client';
+import { AuthContext } from './contexts/AuthContext';
+import ProtectedRoute              from './components/ProtectedRoute.jsx';
+import LoginPage                   from './pages/auth/LoginPage.jsx';
+import RegisterPage                from './pages/auth/RegisterPage.jsx';
+import VerificationPendingPage     from './pages/auth/VerificationPendingPage.jsx';
+import VerifyCodePage              from './pages/auth/VerifyCodePage.jsx';
+import VerifyEmailPage             from './pages/auth/VerifyEmailPage.jsx';
+import VerifySmsPage               from './pages/auth/VerifySmsPage.jsx';
+import ForgotPasswordPage          from './pages/ForgotPasswordPage.jsx';
+import Dashboard                   from './pages/dashboard/Dashboard.jsx';
+import NotFound                    from './pages/NotFound.jsx';
+import Logout                      from './components/auth/Logout.jsx';
+import DocumentsPage               from './pages/medical/DocumentsPage.jsx';
+import PartagePage                 from './pages/medical/PartagePage.jsx';
+import PartageLienPublic           from './pages/medical/PartageLienPublic.jsx';
+import VaccinationsPage            from './pages/medical/VaccinationsPage.jsx';
+import AccountSettings             from './pages/Settings/AccountSettings.jsx';
+import AppointmentsPage            from './pages/appointments/AppointmentsPage.jsx';
+import ConsultationsPage           from './pages/Consultations/ConsultationsPage.jsx';
+import RappelsPage                 from './pages/rappels/RappelsPage.jsx';
+import NotificationsPage           from './pages/notifications/NotificationsPage.jsx';
+import NotificationSettings        from './pages/Settings/NotificationSettings.jsx';
+import AppointmentWithMedecinPage  from './pages/appointments/AppointmentWithMedecinPage.jsx';
+import MedicationsPage             from './pages/medications/MedicationsPage.jsx';
+import MedicationForm              from './pages/medications/MedicationForm.jsx';
+import CarnetSante                 from './pages/CarnetSante.jsx';
+import ConsultationDetails         from './pages/medecin/ConsultationDetails.jsx';
+import PlanningPage                from './pages/medecin/PlanningPage.jsx';
+import PatientProfilePrive         from './pages/Profile/PatientProfilePrive.jsx';
+import MedecinProfilePrive         from './pages/Profile/MedecinProfilePrive.jsx';
+import EmergencyProfile            from './components/profile/EmergencyProfile.jsx';
+import MedecinProfilePublic        from './pages/Profile/MedecinProfilePublic.jsx';
+import PatientProfilePublic        from './pages/Profile/PatientProfilePublic.jsx';
+import MedecinRequestsPage         from './pages/medecin/MedecinRequestsPage.jsx';
+import MyPatientsPage              from './pages/medecin/MyPatientsPage.jsx';
+import TraitantManagementPage      from './pages/patient/TraitantManagementPage.jsx';
+import UserMenu                    from './components/layout/UserMenu.jsx';
+import MessagingInterface          from './components/Messaging/MessagingInterface.jsx';
+
+// Logs de débogage pour vérifier les imports
+console.log('Chargement de App.js - Tous les imports effectués');
+console.log('VerifyCodePage importé:', VerifyCodePage);
+console.log('Type de VerifyCodePage:', typeof VerifyCodePage);
+console.log('ProtectedRoute importé:', ProtectedRoute);
+console.log('LoginPage importé:', LoginPage);
+console.log('RegisterPage importé:', RegisterPage);
+console.log('Dashboard importé:', Dashboard);
+console.log('PatientProfilePrive importé:', PatientProfilePrive);
+console.log('AccountSettings importé:', AccountSettings);
+
+export default function App() {
+  const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (!user) return;
+    const socket = io('http://localhost:5000', { auth: { token: user.token } });
+    socket.emit('join', user.id);
+
+    // Nettoyage à la déconnexion
+    return () => socket.disconnect();
+  }, [user]);
+
+  return (
+    <Routes>
+      {/* Carnet de santé - accessible au patient et au médecin */}
+      <Route path="/carnet-sante/:id" element={<ProtectedRoute><CarnetSante /></ProtectedRoute>} />
+      <Route path="/carnet-sante" element={<ProtectedRoute><CarnetSante /></ProtectedRoute>} />
+      {/* Auth public */}
+      <Route path="/auth/login"    element={<LoginPage />} />
+      <Route path="/auth/register" element={<RegisterPage />} />
+      <Route path="/auth/verification-pending" element={<VerificationPendingPage />} />
+      <Route path="/auth/verify-code" element={<VerifyCodePage />} />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
+      <Route path="/verify-sms" element={<VerifySmsPage />} />
+      <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+      
+      {/* Dashboard - protégée */}
+      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      
+      {/* Profil médecin - public ou privé */}
+      <Route path="/medecin/profile/:id" element={<MedecinProfilePublic />} />
+      <Route path="/medecin/profile" element={<ProtectedRoute><MedecinProfilePrive /></ProtectedRoute>} />
+      <Route path="/patient/profile/:id" element={<PatientProfilePublic />} />
+      <Route path="/patient/profile" element={<ProtectedRoute><PatientProfilePrive /></ProtectedRoute>} />
+      <Route path="/profile/emergency/:patientId/:emergencyToken" element={<EmergencyProfile />} />
+      
+      {/* Consultations */}
+      <Route path="/consultations" element={<ProtectedRoute><ConsultationsPage /></ProtectedRoute>} />
+      <Route path="/consultations/:id" element={<ProtectedRoute><ConsultationDetails /></ProtectedRoute>} />
+      
+      {/* Notifications */}
+      <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+      <Route path="/settings/notifications" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
+      
+      {/* Rendez-vous */}
+      <Route path="/appointments" element={<ProtectedRoute><AppointmentsPage /></ProtectedRoute>} />
+      <Route path="/appointments/medecin/:medecinId" element={<ProtectedRoute><AppointmentWithMedecinPage /></ProtectedRoute>} />
+      
+      {/* Paramètres du compte */}
+      <Route path="/settings/account" element={<ProtectedRoute><AccountSettings /></ProtectedRoute>} />
+      
+      {/* Documents médicaux */}
+      <Route path="/documents" element={<ProtectedRoute><DocumentsPage /></ProtectedRoute>} />
+      <Route path="/partage" element={<ProtectedRoute><PartagePage /></ProtectedRoute>} />
+      <Route path="/partage/public/:shareToken" element={<PartageLienPublic />} />
+      
+      {/* Vaccinations */}
+      <Route path="/vaccinations" element={<ProtectedRoute><VaccinationsPage /></ProtectedRoute>} />
+      
+      {/* Médicaments */}
+      <Route path="/medications" element={<ProtectedRoute><MedicationsPage /></ProtectedRoute>} />
+      <Route path="/medications/add" element={<ProtectedRoute><MedicationForm /></ProtectedRoute>} />
+      <Route path="/medications/edit/:id" element={<ProtectedRoute><MedicationForm /></ProtectedRoute>} />
+      
+      {/* Rappels */}
+      <Route path="/rappels" element={<ProtectedRoute><RappelsPage /></ProtectedRoute>} />
+      
+      {/* Médecin - Fonctionnalités spécifiques */}
+      <Route path="/medecin/planning" element={<ProtectedRoute><PlanningPage /></ProtectedRoute>} />
+      <Route path="/medecin/demandes" element={<ProtectedRoute><MedecinRequestsPage /></ProtectedRoute>} />
+      <Route path="/medecin/patients" element={<ProtectedRoute><MyPatientsPage /></ProtectedRoute>} />
+      
+      {/* Patient - Gestion des médecins traitants */}
+      <Route path="/patient/traitants" element={<ProtectedRoute><TraitantManagementPage /></ProtectedRoute>} />
+      
+      {/* Messagerie */}
+      <Route path="/messages" element={<ProtectedRoute><MessagingInterface /></ProtectedRoute>} />
+      <Route path="/messages/:conversationId" element={<ProtectedRoute><MessagingInterface /></ProtectedRoute>} />
+      
+      {/* Logout */}
+      <Route path="/logout" element={<Logout />} />
+      
+      {/* Page d'accueil */}
+      <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Navigate to="/auth/login" />} />
+      
+      {/* 404 */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}

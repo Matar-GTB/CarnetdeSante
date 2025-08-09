@@ -83,8 +83,42 @@
   border-radius: 4px;
 }
 
+.password-input-container {
+  position: relative;
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.password-input-container input {
+  width: 100%;
+  margin: 0;
+  padding-right: 40px; /* Espace pour le bouton */
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6a11cb;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.password-toggle-btn:hover {
+  opacity: 1;
+}
+
 .options {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   font-size: 0.9rem;
@@ -185,4 +219,10 @@
   cursor: pointer;
   font-size: 1em;
   padding: 0;
+}
+
+.forgot-link.link-button {
+  font-size: 0.9rem;
+  color: #6a11cb;
+  margin-left: auto;
 }

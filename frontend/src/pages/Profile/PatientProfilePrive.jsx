@@ -1,17 +1,18 @@
 // pages/Profile/PatientProfilePrive.jsx
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft, FaClipboardList, FaHospital, FaExclamationTriangle } from 'react-icons/fa';
 import { AuthContext } from '../../contexts/AuthContext';
 import profileService from '../../services/profileService';
 import UserProfile from '../../components/profile/UserProfile';
-import VisibilityControls from '../../components/profile/shared/VisibilityControls';
 import PersonalSection from '../../components/profile/sections/PersonalSection';
 import MedicalSection from '../../components/profile/sections/MedicalSection';
 import EmergencySection from '../../components/profile/sections/EmergencySection';
-import MessagingInterface from '../../components/Messaging/MessagingInterface';
 import './PatientProfilePrive.css';
 
 const PatientProfilePrive = () => {
   const { user, updateUser } = useContext(AuthContext);
+  const navigate = useNavigate();
   
   const [profileData, setProfileData] = useState({
     // Informations personnelles
@@ -372,6 +373,11 @@ const PatientProfilePrive = () => {
 
   return (
     <div className="patient-profile-prive">
+      {/* Bouton Retour */}
+      <button className="back-button" onClick={() => navigate(-1)}>
+        <FaArrowLeft /> Retour
+      </button>
+
       {/* Header avec composant UserProfile unifié */}
       <UserProfile
         user={{
@@ -415,27 +421,21 @@ const PatientProfilePrive = () => {
           className={`tab-button ${activeTab === 'informations' ? 'active' : ''}`}
           onClick={() => setActiveTab('informations')}
         >
-          📋 Informations & Préférences
+          <FaClipboardList /> Informations & Préférences
         </button>
         <button
           className={`tab-button ${activeTab === 'medical' ? 'active' : ''}`}
           onClick={() => setActiveTab('medical')}
         >
-          🏥 Médical
+          <FaHospital /> Médical
         </button>
         <button
           className={`tab-button ${activeTab === 'urgence' ? 'active' : ''}`}
           onClick={() => setActiveTab('urgence')}
         >
-          🚨 Urgence
+          <FaExclamationTriangle /> Urgence
         </button>
-        <button
-          className={`tab-button ${activeTab === 'visibilite' ? 'active' : ''}`}
-          onClick={() => setActiveTab('visibilite')}
-        >
-          🔐 Visibilité
-        </button>
-      </div>
+      </div> {/* <-- This closes the .tabs-navigation div */}
 
       {/* Contenu des onglets */}
       <div className="tab-content">
@@ -777,55 +777,6 @@ const PatientProfilePrive = () => {
                   </p>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
-        {/* Onglet Visibilité */}
-        {activeTab === 'visibilite' && (
-          <div className="tab-panel active">
-            <div className="section-with-edit">
-              <div className="section-header">
-                <h2>
-                  <span className="section-icon">🔐</span>
-                  Contrôle de la visibilité
-                </h2>
-                <div className="section-actions">
-                  {!editModes.visibilite ? (
-                    <button 
-                      className="btn-edit"
-                      onClick={() => toggleEditMode('visibilite')}
-                      disabled={saving}
-                    >
-                      <span>✏️</span> Modifier
-                    </button>
-                  ) : (
-                    <div className="edit-actions">
-                      <button 
-                        className="btn-save"
-                        onClick={() => handleSaveAndExit('visibilite')}
-                        disabled={saving}
-                      >
-                        <span>💾</span> {saving ? 'Sauvegarde...' : 'Sauvegarder'}
-                      </button>
-                      <button 
-                        className="btn-cancel"
-                        onClick={() => toggleEditMode('visibilite')}
-                        disabled={saving}
-                      >
-                        <span>❌</span> Annuler
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              <VisibilityControls
-                fieldsVisibility={fieldsVisibility}
-                onVisibilityChange={handleVisibilityChange}
-                globalSettings={globalSettings}
-                onGlobalChange={handleGlobalChange}
-                disabled={!editModes.visibilite}
-              />
             </div>
           </div>
         )}

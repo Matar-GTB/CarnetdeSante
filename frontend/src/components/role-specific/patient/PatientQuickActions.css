@@ -67,6 +67,11 @@
   min-height: 60px;
 }
 
+.action-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
 .action-content {
   flex: 1;
 }
@@ -186,6 +191,11 @@
     padding: 0.75rem;
   }
   
+  .action-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+  
   .action-title {
     font-size: 1rem;
   }
@@ -208,5 +218,10 @@
   
   .action-icon {
     align-self: center;
+  }
+  
+  .action-icon svg {
+    width: 22px;
+    height: 22px;
   }
 }

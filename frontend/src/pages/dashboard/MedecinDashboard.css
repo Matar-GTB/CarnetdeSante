@@ -6,7 +6,9 @@
   padding: 2rem;
   font-family: 'Segoe UI', sans-serif;
   background-color: #f8fafc;
-  min-height: 100vh;
+  min-height: calc(100vh - 80px); /* Hauteur moins la hauteur de la navbar */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* En-tête */

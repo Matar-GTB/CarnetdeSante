@@ -5,13 +5,12 @@ import { checkRole } from '../middlewares/roleMiddleware.js';
 import {
   getMyProfile,
   updateMyProfile,
-  updateVisibilitySettings,
-  getVisibilitySettings,
   generateEmergencyLink,
   getEmergencyProfile,
   revokeEmergencyLink,
   getProfileStats,
-  getPublicPatientProfile
+  getPublicPatientProfile,
+  getPublicMedecinProfile
 } from '../controllers/profileController.js';
 
 const router = express.Router();
@@ -25,14 +24,7 @@ router.get('/me', authMiddleware, getMyProfile);
 // PUT /api/profile/me - Mettre à jour mon profil  
 router.put('/me', authMiddleware, updateMyProfile);
 
-/**
- * Paramètres de visibilité
- */
-// GET /api/profile/visibility - Récupérer mes paramètres de visibilité
-router.get('/visibility', authMiddleware, getVisibilitySettings);
 
-// PUT /api/profile/visibility - Mettre à jour mes paramètres de visibilité
-router.put('/visibility', authMiddleware, updateVisibilitySettings);
 
 /**
  * Liens d'urgence (patients uniquement)
@@ -59,6 +51,9 @@ publicRouter.get('/emergency/:patientId/:token', getEmergencyProfile);
 
 // GET /api/profile/patient/:id/public - Profil public d'un patient
 publicRouter.get('/patient/:id/public', optionalAuthMiddleware, getPublicPatientProfile);
+
+// GET /api/profile/doctors/:id/public - Profil public d'un médecin
+publicRouter.get('/doctors/:id/public', optionalAuthMiddleware, getPublicMedecinProfile);
 
 // Combiner les routes
 const combinedRouter = express.Router();

@@ -1,7 +1,10 @@
 // pages/medecin/MyPatientsPage.jsx
 import React, { useState, useEffect } from 'react';
+import { FaEnvelope, FaPhone, FaCheckCircle, FaExclamationTriangle, FaEye, FaBookMedical, FaTrashAlt, FaNotesMedical, FaUsers, FaSearch, FaTimes, FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import traitantService from '../../services/traitantService';
+// import { getConsultationsByPatient } from '../../services/consultationService';
+import { getAppointmentsByUser } from '../../services/appointmentService';
 import './MyPatientsPage.css';
 
 const MyPatientsPage = () => {
@@ -15,9 +18,45 @@ const MyPatientsPage = () => {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [patientToRemove, setPatientToRemove] = useState(null);
 
+
   useEffect(() => {
     fetchMyPatients();
   }, []);
+
+  // (consultStats supprimé)
+  // Pour stocker les infos rendez-vous planifiés par patient
+  const [rdvStats, setRdvStats] = useState({});
+
+  // Récupérer les stats rendez-vous planifiés pour chaque patient
+  useEffect(() => {
+    if (!patients.length) return;
+    const fetchStats = async () => {
+      const rdvStatsTemp = {};
+      for (const patient of patients) {
+        try {
+          // Vérifier que l'ID du patient est valide
+          if (!patient.id) {
+            console.warn('ID patient manquant', patient);
+            continue; // Passer au patient suivant
+          }
+          
+          const rdvs = await getAppointmentsByUser(patient.id);
+          const now = new Date();
+          // On ne garde que les rendez-vous planifiés et à venir
+          const rdvsFuturs = rdvs.filter(rdv => rdv.statut === 'planifie' && new Date(rdv.date_rendezvous + 'T' + rdv.heure_debut) > now);
+          const nextRdv = rdvsFuturs.length > 0 ? rdvsFuturs.reduce((a, b) => new Date(a.date_rendezvous + 'T' + a.heure_debut) < new Date(b.date_rendezvous + 'T' + b.heure_debut) ? a : b) : null;
+          rdvStatsTemp[patient.id] = {
+            count: rdvsFuturs.length,
+            next: nextRdv ? (nextRdv.date_rendezvous + 'T' + nextRdv.heure_debut) : null
+          };
+        } catch (e) {
+          rdvStatsTemp[patient.id] = { count: 0, next: null };
+        }
+      }
+      setRdvStats(rdvStatsTemp);
+    };
+    fetchStats();
+  }, [patients]);
 
   const fetchMyPatients = async () => {
     try {
@@ -118,19 +157,13 @@ const confirmRemovePatient = async () => {
       <div className="page-header">
         <div className="header-content">
           <div className="header-title">
-            <span className="header-icon">👥</span>
+            <span className="header-icon"><FaUsers size={22} /></span>
             <h1>Mes Patients</h1>
           </div>
           <div className="header-stats">
             <div className="stat-item">
               <span className="stat-number">{patients.length}</span>
               <span className="stat-label">Patients Total</span>
-            </div>
-            <div className="stat-item consultations">
-              <span className="stat-number">
-                {patients.reduce((sum, p) => sum + p.consultations_total, 0)}
-              </span>
-              <span className="stat-label">Consultations</span>
             </div>
             <div className="stat-item recent">
               <span className="stat-number">
@@ -152,7 +185,7 @@ const confirmRemovePatient = async () => {
         {/* Barre de recherche */}
         <div className="search-section">
           <div className="search-bar">
-            <span className="search-icon">🔍</span>
+            <span className="search-icon"><FaSearch size={16} /></span>
             <input
               type="text"
               placeholder="Rechercher un patient (nom, prénom, email)..."
@@ -164,8 +197,9 @@ const confirmRemovePatient = async () => {
               <button 
                 onClick={() => setSearchTerm('')}
                 className="search-clear"
+                aria-label="Effacer la recherche"
               >
-                ✕
+                <FaTimes size={14} />
               </button>
             )}
           </div>
@@ -174,7 +208,8 @@ const confirmRemovePatient = async () => {
         {/* Liste des patients */}
         {filteredPatients.length === 0 ? (
           <div className="empty-state">
-            <span className="empty-icon">👤</span>
+            <span className="empty-icon"><FaUser size={32} /></span>
+          <span className="error-icon"><FaExclamationTriangle color="#e67e22" size={20} /></span>
             <h3>
               {searchTerm ? 'Aucun patient trouvé' : 'Aucun patient'}
             </h3>
@@ -192,26 +227,29 @@ const confirmRemovePatient = async () => {
                 <div className="patient-header">
                   <div className="patient-identity">
                     <div className="patient-avatar">
-                      {(patient.prenom || 'P').charAt(0)}{(patient.nom || 'N').charAt(0)}
+                      {patient.photo_profil ? (
+                        <img src={patient.photo_profil} alt="Profil" className="avatar-img" />
+                      ) : (
+                        <span>{(patient.prenom || 'P').charAt(0)}{(patient.nom || 'N').charAt(0)}</span>
+                      )}
                     </div>
                     <div className="patient-info">
                       <h3>{patient.prenom || 'Prénom'} {patient.nom || 'Nom'}</h3>
                       <div className="patient-meta">
                         <span>{calculateAge(patient.date_naissance)} ans</span>
-                        <span>•</span>
-                        <span>{patient.consultations_total || 0} consultations</span>
+                        <span>•</span><span>{patient.sexe === 'M' ? 'Homme' : 'Femme'}</span>
                       </div>
                     </div>
                   </div>
                   <div className="patient-status">
                     {patient.profil_complet && (
                       <span className="status-badge complete" title="Profil complet">
-                        ✓
+                        <FaCheckCircle color="#2ecc40" />
                       </span>
                     )}
                     {patient.urgence_accessible && (
                       <span className="status-badge emergency" title="Accès urgence">
-                        🚨
+                        <FaExclamationTriangle color="#e67e22" />
                       </span>
                     )}
                   </div>
@@ -220,22 +258,15 @@ const confirmRemovePatient = async () => {
                 <div className="patient-body">
                   <div className="patient-contact">
                     <div className="contact-item">
-                      <span className="contact-icon">📧</span>
+                      <span className="contact-icon"><FaEnvelope size={15} /></span>
                       <span className="contact-value">{patient.email || 'Email non renseigné'}</span>
                     </div>
                     <div className="contact-item">
-                      <span className="contact-icon">📱</span>
+                      <span className="contact-icon"><FaPhone size={15} /></span>
                       <span className="contact-value">{patient.telephone || 'Téléphone non renseigné'}</span>
                     </div>
                   </div>
-
                   <div className="patient-medical">
-                    <div className="medical-item">
-                      <span className="medical-label">Dernière consultation :</span>
-                      <span className="medical-value">
-                        {patient.derniere_consultation ? formatDate(patient.derniere_consultation) : 'Non renseigné'}
-                      </span>
-                    </div>
                     {patient.pathologies && patient.pathologies.length > 0 && (
                       <div className="medical-item">
                         <span className="medical-label">Pathologies :</span>
@@ -252,7 +283,7 @@ const confirmRemovePatient = async () => {
 
                   {patient.notes_medecin && (
                     <div className="patient-notes">
-                      <span className="notes-icon">📝</span>
+                      <span className="notes-icon"><FaNotesMedical size={15} /></span>
                       <p>{patient.notes_medecin}</p>
                     </div>
                   )}
@@ -263,21 +294,21 @@ const confirmRemovePatient = async () => {
                     onClick={() => handleViewPatient(patient)}
                     className="btn-view-patient"
                   >
-                    <span>👁️</span>
-                    Voir le profil
+                    <FaEye style={{marginRight:4}} />
+                    Profil
                   </button>
                   <button
-                    onClick={() => navigate(`/appointments/new?patientId=${patient.id}`)}
-                    className="btn-new-appointment"
+                    onClick={() => navigate(`/carnet-sante/${patient.id}`)}
+                    className="btn-carnet-sante"
                   >
-                    <span>📅</span>
-                    Rendez-vous
+                    <FaBookMedical style={{marginRight:4}} />
+                    Carnet de santé
                   </button>
                   <button
                     onClick={() => handleRemovePatient(patient)}
                     className="btn-remove-patient"
                   >
-                    <span>🗑️</span>
+                    <FaTrashAlt style={{marginRight:4}} />
                     Retirer
                   </button>
                 </div>
@@ -305,7 +336,11 @@ const confirmRemovePatient = async () => {
             <div className="modal-body">
               <div className="patient-detail-header">
                 <div className="detail-avatar">
-                  {selectedPatient.prenom.charAt(0)}{selectedPatient.nom.charAt(0)}
+                  {selectedPatient.photo_profil ? (
+                    <img src={selectedPatient.photo_profil} alt="Profil" className="avatar-img" />
+                  ) : (
+                    <span>{selectedPatient.prenom.charAt(0)}{selectedPatient.nom.charAt(0)}</span>
+                  )}
                 </div>
                 <div className="detail-info">
                   <h2>{selectedPatient.prenom} {selectedPatient.nom}</h2>
@@ -342,14 +377,12 @@ const confirmRemovePatient = async () => {
                   <h4>Suivi médical</h4>
                   <div className="detail-grid">
                     <div className="detail-item">
-                      <span className="detail-label">Consultations totales :</span>
-                      <span className="detail-value">{selectedPatient.consultations_total || 0}</span>
+                      <span className="detail-label">Rendez-vous planifiés :</span>
+                      <span className="detail-value">{rdvStats[selectedPatient.id]?.count ?? 0}</span>
                     </div>
                     <div className="detail-item">
-                      <span className="detail-label">Dernière consultation :</span>
-                      <span className="detail-value">
-                        {selectedPatient.derniere_consultation ? formatDate(selectedPatient.derniere_consultation) : 'Aucune consultation'}
-                      </span>
+                      <span className="detail-label">Prochain rendez-vous :</span>
+                      <span className="detail-value">{rdvStats[selectedPatient.id]?.next ? formatDate(rdvStats[selectedPatient.id].next) : 'Aucun'}</span>
                     </div>
                   </div>
                 </div>
@@ -411,6 +444,8 @@ const confirmRemovePatient = async () => {
             <div className="modal-body">
               <div className="remove-confirmation">
                 <div className="warning-icon">⚠️</div>
+                    <div className="warning-icon"><FaExclamationTriangle color="#e67e22" size={24} /></div>
+                    <FaTimes size={16} />
                 <p>
                   Êtes-vous sûr de vouloir retirer{' '}
                   <strong>{patientToRemove?.prenom || ''} {patientToRemove?.nom || ''}</strong>{' '}
@@ -433,7 +468,7 @@ const confirmRemovePatient = async () => {
                 onClick={confirmRemovePatient}
                 className="btn-confirm-remove"
               >
-                Retirer le patient
+                Retirer 
               </button>
             </div>
           </div>

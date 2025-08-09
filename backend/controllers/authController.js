@@ -5,10 +5,11 @@ import crypto from 'crypto';
 import { Op } from 'sequelize';
 import User from '../models/User.js';
 import HorairesTravail from '../models/HorairesTravail.js';
+import { sendVerificationEmail, sendVerificationCode } from '../services/emailService.js';
+import { generateOTP, sendOTPBySMS } from '../services/smsService.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret_dev';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
-const RESET_TOKEN_EXPIRATION = 60 * 60 * 1000; // 1h
 const SALT_ROUNDS = 12;
 
 // 🔐 Génération du token d'accès
@@ -21,20 +22,54 @@ function handleError(res, err, context = 'Erreur') {
   res.status(500).json({ message: `${context}: ${err.message}` });
 }
 
-function sendPasswordResetEmail(email, token) {
-  const resetURL = `${process.env.CLIENT_URL || 'http://localhost:3000'}/reset-password/${token}`;
-  console.log(`[Reset] Mail à ${email}: ${resetURL}`);
-}
+// Cette fonction est maintenant dans le service emailService.js
 
 export const login = async (req, res) => {
   try {
     const { email, mot_de_passe } = req.body;
+    
     if (!email || !mot_de_passe)
       return res.status(400).json({ message: 'Email et mot de passe requis' });
 
     const user = await User.findOne({ where: { email } });
-    if (!user || !(await user.verifyPassword(mot_de_passe)))
+    
+    if (!user) {
       return res.status(401).json({ message: 'Identifiants invalides' });
+    }
+    
+    const isPasswordValid = await user.verifyPassword(mot_de_passe);
+    
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Identifiants invalides' });
+    }
+      
+    // Vérifier si l'email est vérifié - BLOCAGE STRICT
+    if (!user.email_verified) {
+      // Générer un nouveau code de vérification pour faciliter le processus
+      const newCode = generateOTP();
+      user.otp = newCode;
+      user.otp_expiration = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
+      await user.save();
+      
+      // Tenter d'envoyer un nouveau code
+      try {
+        await sendVerificationCode(user.email, user.prenom || 'Utilisateur', newCode);
+        console.log(`✅ Nouveau code de vérification envoyé à ${user.email} lors de la tentative de connexion`);
+      } catch (emailError) {
+        console.error('❌ Erreur lors de l\'envoi du code de vérification:', emailError);
+      }
+      
+      return res.status(403).json({
+        success: false,
+        message: 'Votre compte n\'est pas activé. Un nouveau code de vérification a été envoyé à votre adresse email.',
+        code: 'EMAIL_VERIFICATION_REQUIRED',
+        redirectUrl: '/auth/verification-pending',
+        user: {
+          id: user.id,
+          email: user.email
+        }
+      });
+    }
 
     // Token d'accès court (15 minutes)
     const accessToken = generateToken({
@@ -88,16 +123,68 @@ export const login = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    const { email, mot_de_passe, role = 'patient', ...data } = req.body;
+    const { email, mot_de_passe, role = 'patient', telephone, ...data } = req.body;
 
     if (!email || !mot_de_passe)
       return res.status(400).json({ message: 'Email et mot de passe requis' });
+
+    // Vérifier la complexité du mot de passe
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(mot_de_passe)) {
+      return res.status(400).json({
+        message: 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial'
+      });
+    }
 
     const exists = await User.findOne({ where: { email } });
     if (exists)
       return res.status(409).json({ message: 'Email déjà utilisé' });
 
-    const user = await User.create({ email, mot_de_passe, role, ...data });
+    // Configuration des préférences de notification
+    const prefs_notification = {
+      email: true,
+      sms: telephone ? true : false
+    };
+
+    const user = await User.create({ 
+      email, 
+      mot_de_passe, 
+      role, 
+      telephone,
+      email_verified: false,
+      telephone_verified: false,
+      prefs_notification,
+      ...data 
+    });
+    
+    // Génération d'un code de vérification numérique (6 chiffres)
+    const emailCode = generateOTP();
+    user.otp = emailCode;
+    user.otp_expiration = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
+    await user.save();
+
+    // Envoyer email avec le code de vérification
+    try {
+      await sendVerificationCode(user.email, user.prenom || 'Utilisateur', emailCode);
+      console.log(`✅ Email avec code de vérification envoyé à ${user.email}`);
+    } catch (emailError) {
+      console.error('❌ Erreur lors de l\'envoi du code de vérification par email:', emailError);
+    }
+
+    // Envoyer SMS de vérification si numéro fourni
+    if (telephone) {
+      const otp = generateOTP();
+      user.otp = otp;
+      user.otp_expiration = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+      await user.save();
+      
+      try {
+        await sendOTPBySMS(telephone, otp);
+        console.log(`✅ SMS de vérification envoyé à ${telephone}`);
+      } catch (smsError) {
+        console.error('❌ Erreur lors de l\'envoi du SMS de vérification:', smsError);
+      }
+    }
 
     if (role === 'medecin') {
       const jours = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
@@ -154,7 +241,9 @@ export const register = async (req, res) => {
     res.status(201).json({ 
       success: true,
       user: userResponse,
-      message: 'Inscription réussie'
+      requireVerification: true,
+      message: 'Pré-inscription réussie. Veuillez vérifier votre email pour activer votre compte.',
+      redirectUrl: '/auth/verification-pending'
     });
   } catch (err) {
     handleError(res, err, 'Erreur lors de l’inscription');
@@ -297,7 +386,9 @@ export const resetPassword = async (req, res) => {
       return res.status(400).json({ message: 'Lien de réinitialisation invalide ou expiré' });
     }
 
-    user.mot_de_passe = await bcrypt.hash(nouveau_mot_de_passe, SALT_ROUNDS);
+    // Laisser le hook beforeSave du modèle User hasher le mot de passe
+    // Ne pas hasher ici pour éviter le double hachage
+    user.mot_de_passe = nouveau_mot_de_passe;
     user.token_reinitialisation = null;
     user.expiration_token_reinitialisation = null;
     await user.save();
@@ -325,5 +416,109 @@ export const validateResetToken = async (req, res) => {
     res.json({ message: 'Token valide' });
   } catch (err) {
     handleError(res, err, 'Erreur lors de la validation du token');
+  }
+};
+
+/**
+ * Vérifie l'email de l'utilisateur avec un code numérique
+ */
+export const verifyEmailWithCode = async (req, res) => {
+  try {
+    const { email, code } = req.body;
+    
+    if (!email || !code) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Email et code de vérification requis' 
+      });
+    }
+
+    const user = await User.findOne({ 
+      where: { 
+        email,
+        otp: code,
+        otp_expiration: { [Op.gt]: new Date() }
+      } 
+    });
+
+    if (!user) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Code invalide ou expiré' 
+      });
+    }
+
+    // Marquer l'email comme vérifié
+    user.email_verified = true;
+    user.otp = null;
+    user.otp_expiration = null;
+    await user.save();
+
+    res.json({ 
+      success: true, 
+      message: 'Email vérifié avec succès',
+      user: {
+        id: user.id,
+        email: user.email,
+        email_verified: user.email_verified
+      }
+    });
+  } catch (err) {
+    handleError(res, err, 'Erreur lors de la vérification du code');
+  }
+};
+
+/**
+ * Renvoie un nouveau code de vérification par email
+ */
+export const resendVerificationCode = async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Email requis' 
+      });
+    }
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Utilisateur non trouvé' 
+      });
+    }
+
+    if (user.email_verified) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Email déjà vérifié' 
+      });
+    }
+
+    // Génération d'un nouveau code de vérification
+    const newCode = generateOTP();
+    user.otp = newCode;
+    user.otp_expiration = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
+    await user.save();
+
+    // Envoi du nouveau code par email
+    try {
+      await sendVerificationCode(user.email, user.prenom || 'Utilisateur', newCode);
+      
+      res.json({ 
+        success: true, 
+        message: 'Nouveau code de vérification envoyé' 
+      });
+    } catch (emailError) {
+      console.error('❌ Erreur lors de l\'envoi du nouveau code de vérification:', emailError);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Erreur lors de l\'envoi du code de vérification' 
+      });
+    }
+  } catch (err) {
+    handleError(res, err, 'Erreur lors du renvoi du code de vérification');
   }
 };

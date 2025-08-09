@@ -44,17 +44,22 @@ export const updateMedicament = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Non trouvé' });
     }
 
-    await med.update({
+    // Préparer les données pour la mise à jour
+    // Si date_fin est une chaîne vide, mettre à null pour éviter l'erreur "Invalid date"
+    const updateData = {
       ...req.body,
+      date_fin: date_fin === "" ? null : date_fin,
       frequence: JSON.stringify(frequence)
-    });
+    };
+
+    await med.update(updateData);
 
     await Rappel.destroy({ where: { medicament_id: med.id } });
 
     if (rappel_actif && frequence) {
       const rappels = [];
       const start = dayjs(date_debut);
-      const end = date_fin ? dayjs(date_fin) : start;
+      const end = date_fin && date_fin !== "" ? dayjs(date_fin) : start;
       let currentDate = start;
 
       while (currentDate.isSameOrBefore(end)) {
@@ -132,16 +137,21 @@ export const addMedicament = async (req, res) => {
 
     console.log('Ajout médicament appelé', req.body); // Ajout d'un log ici
 
-    const newMedicament = await PriseMedicament.create({
+    // Préparer les données pour la base de données
+    // Si date_fin est une chaîne vide, mettre à null pour éviter l'erreur "Invalid date"
+    const medicamentData = {
       utilisateur_id: req.user.userId,
       ...req.body,
+      date_fin: date_fin === "" ? null : date_fin,
       frequence: JSON.stringify(frequence)
-    });
+    };
+
+    const newMedicament = await PriseMedicament.create(medicamentData);
 
     if (rappel_actif && frequence) {
       const rappels = [];
       const start = dayjs(date_debut);
-      const end = date_fin ? dayjs(date_fin) : start;
+      const end = date_fin && date_fin !== "" ? dayjs(date_fin) : start;
       let currentDate = start;
 
       while (currentDate.isSameOrBefore(end)) {

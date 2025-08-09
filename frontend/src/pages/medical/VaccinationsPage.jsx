@@ -12,7 +12,7 @@ import {
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
 import StatistiquesVaccination from '../../components/vaccinations/StatistiquesVaccination';
 
-const VaccinationPage = () => {
+const VaccinationsPage = () => {
   const navigate = useNavigate();
   const { patientId } = useParams();
   const { role } = useContext(AuthContext);
@@ -750,4 +750,4 @@ const VaccinationPage = () => {
   );
 };
 
-export default VaccinationPage;
+export default VaccinationsPage;

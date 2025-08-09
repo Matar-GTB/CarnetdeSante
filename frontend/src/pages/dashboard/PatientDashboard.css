@@ -1,16 +1,23 @@
 /* src/pages/dashboard/PatientDashboard.css */
 
+/* Règle pour masquer la navbar dupliquée dans le dashboard */
+.patient-dashboard .navbar:nth-of-type(2) {
+  display: none !important;
+}
+
 .patient-dashboard {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
   font-family: 'Segoe UI', sans-serif;
   background-color: #f8fafc;
-  min-height: 100vh;
+  min-height: calc(100vh - 80px); /* Hauteur moins la hauteur de la navbar */
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* En-tête */
-.dashboard-header {
+/* En-tête - spécifique au patient pour éviter les conflits */
+.patient-dashboard .dashboard-header {
   text-align: center;
   margin-bottom: 2rem;
   background: linear-gradient(135deg, #4a148c, #6a1b9a);
@@ -18,6 +25,7 @@
   padding: 2rem;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(74, 20, 140, 0.3);
+  width: 100%;
 }
 
 .dashboard-header h1 {

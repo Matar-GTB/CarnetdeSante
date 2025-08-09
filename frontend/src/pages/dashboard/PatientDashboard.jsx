@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import PatientQuickActions from '../../components/role-specific/patient/PatientQuickActions';
 import DashboardCard from './DashboardCard';
 import Loader from '../../components/ui/Loader';
+// Suppression de l'import Layout pour éviter la duplication
 import './PatientDashboard.css';
 import {
   FaFileMedical,
@@ -43,18 +44,64 @@ const PatientDashboard = () => {
       setLoading(true);
       setError('');
       
-      // Simuler le chargement des données
-      setTimeout(() => {
-        setStats({
-          medicationsCount: 3,
-          documentsCount: 8,
-          appointmentsCount: 2,
-          unreadNotifications: 1,
-          traitantsCount: 2
-        });
-        setLoading(false);
-      }, 1000);
-
+      // Import dynamique des services nécessaires
+      const medicationService = await import('../../services/medicationService');
+      const documentService = await import('../../services/documentService');
+      const appointmentService = await import('../../services/appointmentService');
+      const notificationService = await import('../../services/notificationService');
+      const profileService = await import('../../services/profileService');
+      
+      // Récupération des vraies données en parallèle pour optimiser le chargement
+      const [medications, documents, notifications, traitants] = await Promise.all([
+        medicationService.getMedicationsApi().catch(err => {
+          console.error('Erreur lors du chargement des médicaments:', err);
+          return [];
+        }),
+        documentService.getUserDocuments().catch(err => {
+          console.error('Erreur lors du chargement des documents:', err);
+          return { data: [] };
+        }),
+        notificationService.getNotificationsApi().catch(err => {
+          console.error('Erreur lors du chargement des notifications:', err);
+          return [];
+        }),
+        profileService.getMesTraitants().catch(err => {
+          console.error('Erreur lors du chargement des médecins traitants:', err);
+          return { data: [] };
+        })
+      ]);
+      
+      // Récupération des rendez-vous à venir (uniquement)
+      const allAppointments = await appointmentService.getAppointmentsByUser(user?.id).catch(err => {
+        console.error('Erreur lors du chargement des rendez-vous:', err);
+        return [];
+      });
+      
+      // Filtrer uniquement les rendez-vous à venir
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const upcomingAppointments = Array.isArray(allAppointments) 
+        ? allAppointments.filter(rdv => {
+            const rdvDate = new Date(rdv.date_rendezvous || rdv.date);
+            return rdvDate >= today && rdv.statut !== 'annule' && rdv.statut !== 'termine';
+          })
+        : [];
+      
+      // Filtrer les notifications non lues
+      const unreadNotifications = Array.isArray(notifications) 
+        ? notifications.filter(notif => !notif.est_lu) 
+        : [];
+      
+      // Mise à jour des statistiques avec les vraies données
+      setStats({
+        medicationsCount: Array.isArray(medications) ? medications.length : 0,
+        documentsCount: documents.data?.length || 0,
+        appointmentsCount: upcomingAppointments.length,
+        unreadNotifications: unreadNotifications.length,
+        traitantsCount: traitants.data?.length || 0
+      });
+      
+      setLoading(false);
     } catch (error) {
       console.error('Erreur lors du chargement du dashboard:', error);
       setError('Erreur lors du chargement des données');

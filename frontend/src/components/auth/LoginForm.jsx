@@ -4,8 +4,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import './Login.css';
 import { login } from '../../services/authService';
 import { AuthContext } from '../../contexts/AuthContext';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const LoginForm = () => {
+  console.log("📝 Formulaire de connexion chargé");
+  
   const navigate = useNavigate();
   const location = useLocation();
   const [email, setEmail] = useState('');
@@ -13,6 +16,8 @@ const LoginForm = () => {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { loginContext } = useContext(AuthContext); // Fonction loginContext du contexte
+  
+  console.log("📋 LoginForm - état initial:", { email, motDePasse, error, showPassword });
 
   // Récupérer la page de destination sauvegardée
   const from = location.state?.from?.pathname || '/dashboard';
@@ -26,6 +31,13 @@ const handleConnexion = async (e) => {
     
     console.log('🍪 Données de connexion reçues:', data);
     
+    // Vérifier si le compte n'est pas vérifié
+    if (data.requireVerification) {
+      // Rediriger vers la page de saisie du code
+      navigate('/auth/verify-code', { state: { email } });
+      return;
+    }
+    
     // Avec les cookies, pas besoin de stocker le token
     // Le serveur définit automatiquement le cookie
     if (data.success && data.user) {
@@ -36,6 +48,11 @@ const handleConnexion = async (e) => {
     }
   } catch (err) {
     console.error('Erreur de connexion:', err);
+    // Vérifier si l'erreur est liée à une vérification manquante
+    if (err.verification === false) {
+      navigate('/auth/verify-code', { state: { email } });
+      return;
+    }
     setError(err.message || 'Échec de la connexion');
   }
 };
@@ -54,25 +71,35 @@ const handleConnexion = async (e) => {
       />
 
       <label>Mot de passe</label>
-      <input
-        type={showPassword ? 'text' : 'password'} //  affichage conditionnel
-        placeholder="••••••••"
-        value={motDePasse}
-        onChange={(e) => setMotDepasse(e.target.value)}
-        required
-      />
+      <div className="password-input-container">
+        <input
+          type={showPassword ? 'text' : 'password'}
+          placeholder="••••••••"
+          value={motDePasse}
+          onChange={(e) => setMotDepasse(e.target.value)}
+          required
+        />
+        <button
+          type="button"
+          className="password-toggle-btn"
+          onClick={() => setShowPassword((prev) => !prev)}
+          aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+        >
+          {showPassword ? <FaEyeSlash /> : <FaEye />}
+        </button>
+      </div>
 
       <div className="options">
         <label>
           <input type="checkbox" /> Se souvenir de moi
         </label>
-        <label>
-          <input
-            type="checkbox"
-            onChange={() => setShowPassword((prev) => !prev)}
-          /> Afficher le mot de passe
-        </label>
-        <a href="/reset-password" className="forgot-link">Mot de passe oublié ?</a>
+        <button 
+          type="button" 
+          className="link-button forgot-link" 
+          onClick={() => navigate('/auth/forgot-password')}
+        >
+          Mot de passe oublié ?
+        </button>
       </div>
 
       <button type="submit" className="login-button">Se connecter</button>

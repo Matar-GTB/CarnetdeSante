@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import PatientDashboard from './PatientDashboard';
 import MedecinDashboard from './MedecinDashboard';
 import AdminDashboard from './AdminDashboard';
+import Navbar from '../../components/layout/Navbar';
 import Loader from '../../components/ui/Loader';
 import './Dashboard.css';
 
@@ -34,18 +35,28 @@ const Dashboard = () => {
     );
   }
 
-  // Routage basé sur le rôle
-  switch (user.role) {
-    case 'patient':
-      return <PatientDashboard />;
-    case 'medecin':
-      return <MedecinDashboard />;
-    case 'admin':
-      return <AdminDashboard />;
-    default:
-      navigate('/unauthorized');
-      return null;
-  }
+  // Rendre le dashboard avec la navbar incluse
+  return (
+    <div className="dashboard-wrapper">
+      <Navbar navbarId="dashboard-navbar" /> 
+      
+      <div className="dashboard-content">
+        {(() => {
+          switch (user.role) {
+            case 'patient':
+              return <PatientDashboard />;
+            case 'medecin':
+              return <MedecinDashboard />;
+            case 'admin':
+              return <AdminDashboard />;
+            default:
+              navigate('/unauthorized');
+              return null;
+          }
+        })()}
+      </div>
+    </div>
+  );
 };
 
 export default Dashboard;

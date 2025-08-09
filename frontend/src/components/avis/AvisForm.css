@@ -28,12 +28,49 @@
   color: #2d3748;
   font-size: 1.3rem;
   font-weight: 700;
-  margin: 0 0 2rem 0;
+  margin: 0 0 1.5rem 0;
   text-align: center;
+}
+
+.avis-instructions {
+  background-color: #f8f9ff;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-left: 3px solid #6c63ff;
+}
+
+.avis-instructions p {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.avis-instructions ol {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #4a5568;
+}
+
+.avis-instructions li {
+  margin-bottom: 0.3rem;
 }
 
 .form-group {
   margin-bottom: 1.5rem;
+}
+
+.form-help {
+  display: block;
+  margin-top: 0.25rem;
+  color: #718096;
+  font-size: 0.85rem;
+}
+
+span.required {
+  color: #e53e3e;
+  margin-left: 2px;
 }
 
 .form-group label {

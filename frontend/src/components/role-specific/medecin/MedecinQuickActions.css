@@ -35,9 +35,19 @@
   transform: translateY(0);
 }
 
-.quick-action-icon {
+.quick-action-icon,
+.action-icon {
   font-size: 1.5rem;
   margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-action-icon svg,
+.action-icon svg {
+  width: 24px;
+  height: 24px;
 }
 
 .quick-action-title {
@@ -99,15 +109,24 @@
     font-size: 0.85rem;
   }
   
-  .quick-action-icon {
+  .quick-action-icon,
+  .action-icon {
     font-size: 1.25rem;
   }
   
-  .quick-action-title {
+  .action-icon svg,
+  .quick-action-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .quick-action-title,
+  .action-title {
     font-size: 0.9rem;
   }
   
-  .quick-action-desc {
+  .quick-action-desc,
+  .action-description {
     font-size: 0.75rem;
   }
 }

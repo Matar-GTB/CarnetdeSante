@@ -46,6 +46,25 @@ const User = sequelize.define('User', {
       }
     }
   },
+  email_verified: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  telephone_verified: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  prefs_notification: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    get() {
+      const rawValue = this.getDataValue('prefs_notification');
+      return rawValue ? JSON.parse(rawValue) : { email: true, sms: false };
+    },
+    set(value) {
+      this.setDataValue('prefs_notification', JSON.stringify(value));
+    }
+  },
   mot_de_passe: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -87,16 +106,8 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     defaultValue: 'default-avatar.jpg'
   },
-  preferences_notifications: {
-  type: DataTypes.JSONB,
-  allowNull: true,
-  defaultValue: {
-    email: true,
-    sms: false,
-    push: true
-  }
-},
-
+  // Le champ preferences_notifications est obsolète, prefs_notification est utilisé à la place
+  // Ce champ est maintenu temporairement pour la compatibilité avec le code existant
 
 
   // Champs patients
@@ -214,10 +225,6 @@ const User = sequelize.define('User', {
       max: 120
     }
   },
-  profil_public: { // Ajout du champ profil public
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  },
   visible_recherche: { // Ajout du champ visible dans recherche
     type: DataTypes.BOOLEAN,
     defaultValue: true
@@ -244,15 +251,15 @@ faq: {
   token_reinitialisation: DataTypes.STRING,
   expiration_token_reinitialisation: DataTypes.DATE,
   
+  // Vérification email et téléphone
+  token_verification_email: DataTypes.STRING,
+  expiration_token_verification_email: DataTypes.DATE,
+  otp: DataTypes.STRING(6),
+  otp_expiration: DataTypes.DATE,
+  
   // Tokens d'urgence
   emergency_token: DataTypes.STRING,
-  emergency_token_expires: DataTypes.DATE,
-  
-  // Paramètres de visibilité
-  visibility_settings: {
-    type: DataTypes.JSONB,
-    defaultValue: {}
-  },
+  emergency_token_expires: DataTypes.DATE, 
   
   est_verifie: {
     type: DataTypes.BOOLEAN,
@@ -275,8 +282,10 @@ faq: {
   timestamps: false,
   hooks: {
     beforeValidate: (user) => {
-      // Convertit les chaînes vides en null
+      // Convertit les chaînes vides en null pour tous les champs téléphoniques
       if (user.telephone === '') user.telephone = null;
+      if (user.telephone_cabinet === '') user.telephone_cabinet = null;
+      if (user.contact_urgence === '') user.contact_urgence = null;
     },
     beforeSave: async (user) => {
       if (user.changed('mot_de_passe')) {

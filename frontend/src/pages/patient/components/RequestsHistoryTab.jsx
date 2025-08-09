@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { 
+  FaClipboardList, 
+  FaSearch, 
+  FaCalendarAlt, 
+  FaTimes, 
+  FaCheckCircle, 
+  FaTimesCircle,
+  FaExclamationTriangle,
+  FaFileAlt,
+  FaSync,
+  FaClock
+} from 'react-icons/fa';
 import traitantService from '../../../services/traitantService';
 
 const RequestsHistoryTab = ({ 
@@ -160,7 +172,7 @@ const RequestsHistoryTab = ({
   return (
     <div className="requests-history-tab">
       <div className="tab-header">
-        <h2>📋 Mes Demandes de Médecin Traitant</h2>
+        <h2><FaClipboardList /> Mes Demandes de Médecin Traitant</h2>
         <p>Suivez l'état de toutes vos demandes de médecin traitant</p>
       </div>
 

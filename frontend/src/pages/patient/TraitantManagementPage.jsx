@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './TraitantManagementPage.css';
+import { 
+  FaArrowLeft, 
+  FaHospital, 
+  FaCrown, 
+  FaSearch, 
+  FaClipboardList, 
+  FaTimes, 
+  FaCheckCircle, 
+  FaExclamationTriangle 
+} from 'react-icons/fa';
 
 // Import des composants onglets
 import MyTraitantsTab from './components/MyTraitantsTab';
@@ -226,7 +236,7 @@ const TraitantManagementPage = () => {
     return (
       <div className="traitant-management-page">
         <button className="btn-back" onClick={() => navigate('/dashboard')}>
-          ← Retour au tableau de bord
+          <FaArrowLeft /> Retour au tableau de bord
         </button>
         <div className="loading-state">
           <div className="loading-spinner"></div>
@@ -242,10 +252,10 @@ const TraitantManagementPage = () => {
       {/* En-tête principal */}
       <header className="page-header">
         <button className="btn-back" onClick={() => navigate('/dashboard')}>
-          ← Retour au tableau de bord
+          <FaArrowLeft /> Retour au tableau de bord
         </button>
         <div className="page-title">
-          <h1>🏥 Gestion des Médecins Traitants</h1>
+          <h1><FaHospital /> Gestion des Médecins Traitants</h1>
           <p>Trouvez, gérez et suivez vos relations avec vos médecins traitants</p>
         </div>
       </header>
@@ -253,25 +263,25 @@ const TraitantManagementPage = () => {
       {/* Messages de notification globaux */}
       {messages.success && (
         <div className="notification notification--success">
-          <span className="notification__icon">✅</span>
+          <span className="notification__icon"><FaCheckCircle /></span>
           {messages.success}
           <button 
             className="notification__close"
             onClick={() => setMessages(prev => ({ ...prev, success: '' }))}
           >
-            ✕
+            <FaTimes />
           </button>
         </div>
       )}
       {messages.error && (
         <div className="notification notification--error">
-          <span className="notification__icon">❌</span>
+          <span className="notification__icon"><FaExclamationTriangle /></span>
           {messages.error}
           <button 
             className="notification__close"
             onClick={() => setMessages(prev => ({ ...prev, error: '' }))}
           >
-            ✕
+            <FaTimes />
           </button>
         </div>
       )}
@@ -282,7 +292,7 @@ const TraitantManagementPage = () => {
           className={`tab-button ${activeTab === 0 ? 'tab-button--active' : ''}`}
           onClick={() => setActiveTab(0)}
         >
-          <span className="tab-button__icon">👑</span>
+          <span className="tab-button__icon"><FaCrown /></span>
           <span className="tab-button__label">Mes Médecins Traitants</span>
           {traitantsCount > 0 && <span className="tab-button__badge">{traitantsCount}</span>}
         </button>
@@ -291,7 +301,7 @@ const TraitantManagementPage = () => {
           className={`tab-button ${activeTab === 1 ? 'tab-button--active' : ''}`}
           onClick={() => setActiveTab(1)}
         >
-          <span className="tab-button__icon">🔍</span>
+          <span className="tab-button__icon"><FaSearch /></span>
           <span className="tab-button__label">Rechercher un Médecin</span>
           <span className="tab-button__badge">{medecinsCount}</span>
         </button>
@@ -300,7 +310,7 @@ const TraitantManagementPage = () => {
           className={`tab-button ${activeTab === 2 ? 'tab-button--active' : ''}`}
           onClick={() => setActiveTab(2)}
         >
-          <span className="tab-button__icon">📋</span>
+          <span className="tab-button__icon"><FaClipboardList /></span>
           <span className="tab-button__label">Mes Demandes</span>
           {pendingRequestsCount > 0 && (
             <span className="tab-button__badge tab-button__badge--urgent">{pendingRequestsCount}</span>

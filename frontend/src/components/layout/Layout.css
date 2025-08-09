@@ -8,6 +8,16 @@
   flex: 1;
   padding-top: 1rem;
   min-height: calc(100vh - 80px); /* Ajustez selon la hauteur de votre navbar */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Règle pour masquer les doublons de navbar */
+.layout:has(.navbar) + .layout .navbar {
+  display: none !important;
 }
 
 /* Pour s'assurer que le contenu principal prend toute la largeur */

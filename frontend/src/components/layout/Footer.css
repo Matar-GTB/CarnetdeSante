@@ -7,6 +7,9 @@
   padding: 1.5rem 2rem;
   margin-top: 2rem;
   font-size: 0.95rem;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .footer a {

@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { 
+  FaCrown, 
+  FaUserMd, 
+  FaSearch, 
+  FaTimes, 
+  FaEye, 
+  FaCalendarAlt, 
+  FaTrashAlt, 
+  FaSync, 
+  FaExclamationTriangle 
+} from 'react-icons/fa';
 
 const MyTraitantsTab = ({ 
   traitants, 
@@ -79,7 +90,7 @@ const MyTraitantsTab = ({
   return (
     <div className="my-traitants-tab">
       <div className="tab-header">
-        <h2>👑 Mes Médecins Traitants</h2>
+        <h2><FaCrown /> Mes Médecins Traitants</h2>
         <p>Gérez vos relations avec vos médecins traitants actuels</p>
       </div>
 
@@ -87,7 +98,7 @@ const MyTraitantsTab = ({
       {traitants.length > 0 && (
         <div className="search-section">
           <div className="search-input-wrapper">
-            <span className="search-icon">🔍</span>
+            <span className="search-icon"><FaSearch /></span>
             <input
               type="text"
               placeholder="Rechercher parmi vos médecins traitants..."
@@ -100,7 +111,7 @@ const MyTraitantsTab = ({
                 className="search-clear"
                 onClick={() => setSearchTerm('')}
               >
-                ✕
+                <FaTimes />
               </button>
             )}
           </div>
@@ -110,7 +121,7 @@ const MyTraitantsTab = ({
       {/* Contenu principal */}
       {traitants.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state__icon">👨‍⚕️</div>
+          <div className="empty-state__icon"><FaUserMd /></div>
           <h3>Aucun médecin traitant</h3>
           <p>Vous n'avez pas encore de médecin traitant déclaré.</p>
           <div className="empty-state__actions">
@@ -118,20 +129,20 @@ const MyTraitantsTab = ({
               className="btn btn--primary"
               onClick={onSwitchToSearch}
             >
-              🔍 Rechercher un médecin traitant
+              <FaSearch /> Rechercher un médecin traitant
             </button>
           </div>
         </div>
       ) : filteredTraitants.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state__icon">🔍</div>
+          <div className="empty-state__icon"><FaSearch /></div>
           <h3>Aucun résultat trouvé</h3>
           <p>Aucun médecin traitant ne correspond à votre recherche.</p>
           <button 
             className="btn btn--secondary"
             onClick={() => setSearchTerm('')}
           >
-            🔄 Effacer la recherche
+            <FaSync /> Effacer la recherche
           </button>
         </div>
       ) : (
@@ -140,7 +151,7 @@ const MyTraitantsTab = ({
           {traitantPrincipal && (
             <section className="principal-section">
               <h3 className="section-title">
-                <span className="section-icon">👑</span>
+                <span className="section-icon"><FaCrown /></span>
                 Médecin Traitant Principal
               </h3>
               
@@ -165,19 +176,19 @@ const MyTraitantsTab = ({
                     onClick={() => handleViewTraitant(traitantPrincipal)}
                     className="btn btn--secondary"
                   >
-                    👁️ Voir détails
+                    <FaEye /> Voir détails
                   </button>
                   <button
                     onClick={() => navigate(`/appointments/new?doctorId=${traitantPrincipal.id}`)}
                     className="btn btn--primary"
                   >
-                    📅 Prendre RDV
+                    <FaCalendarAlt /> Prendre RDV
                   </button>
                   <button
                     onClick={() => handleRemoveTraitant(traitantPrincipal)}
                     className="btn btn--danger"
                   >
-                    🗑️ Supprimer
+                    <FaTrashAlt /> Supprimer
                   </button>
                 </div>
               </div>
@@ -188,7 +199,7 @@ const MyTraitantsTab = ({
           {autresTraitants.length > 0 && (
             <section className="autres-section">
               <h3 className="section-title">
-                <span className="section-icon">👨‍⚕️</span>
+                <span className="section-icon"><FaUserMd /></span>
                 Autres Médecins Traitants ({autresTraitants.length})
               </h3>
               
@@ -215,26 +226,26 @@ const MyTraitantsTab = ({
                         onClick={() => handleViewTraitant(traitant)}
                         className="btn btn--secondary btn--small"
                       >
-                        👁️ Détails
+                        <FaEye /> Détails
                       </button>
                       <button
                         onClick={() => navigate(`/appointments/new?doctorId=${traitant.id}`)}
                         className="btn btn--primary btn--small"
                       >
-                        📅 RDV
+                        <FaCalendarAlt /> RDV
                       </button>
                       <button
                         onClick={() => handleSetPrincipal(traitant.id)}
                         className="btn btn--outline btn--small"
                         title="Définir comme médecin traitant principal"
                       >
-                        👑 Principal
+                        <FaCrown /> Principal
                       </button>
                       <button
                         onClick={() => handleRemoveTraitant(traitant)}
                         className="btn btn--danger btn--small"
                       >
-                        🗑️
+                        <FaTrashAlt />
                       </button>
                     </div>
                   </div>
@@ -255,7 +266,7 @@ const MyTraitantsTab = ({
                 onClick={() => setShowTraitantModal(false)}
                 className="modal-close"
               >
-                ✕
+                <FaTimes />
               </button>
             </div>
             
@@ -278,7 +289,7 @@ const MyTraitantsTab = ({
                   <p><strong>Adresse :</strong> {selectedTraitant.adresse || 'Non renseignée'}</p>
                   <p><strong>Relation établie le :</strong> {formatDate(selectedTraitant.date_creation)}</p>
                   {selectedTraitant.is_traitant_principal && (
-                    <p><strong>Statut :</strong> <span className="badge badge--principal">👑 Médecin traitant principal</span></p>
+                    <p><strong>Statut :</strong> <span className="badge badge--principal"><FaCrown /> Médecin traitant principal</span></p>
                   )}
                 </div>
               </div>
@@ -295,7 +306,7 @@ const MyTraitantsTab = ({
                 onClick={() => navigate(`/doctors/${selectedTraitant.id}/public`)}
                 className="btn btn--primary"
               >
-                👁️ Voir profil public
+                <FaEye /> Voir profil public
               </button>
             </div>
           </div>
@@ -312,7 +323,7 @@ const MyTraitantsTab = ({
                 onClick={() => setShowRemoveModal(false)}
                 className="modal-close"
               >
-                ✕
+                <FaTimes />
               </button>
             </div>
             
@@ -322,7 +333,7 @@ const MyTraitantsTab = ({
                 de votre liste de médecins traitants ?
               </p>
               <p className="warning-text">
-                ⚠️ Cette action est irréversible. Vous devrez renvoyer une demande pour rétablir cette relation.
+                <FaExclamationTriangle /> Cette action est irréversible. Vous devrez renvoyer une demande pour rétablir cette relation.
               </p>
             </div>
             
@@ -337,7 +348,7 @@ const MyTraitantsTab = ({
                 onClick={confirmRemoveTraitant}
                 className="btn btn--danger"
               >
-                🗑️ Supprimer définitivement
+                <FaTrashAlt /> Supprimer définitivement
               </button>
             </div>
           </div>

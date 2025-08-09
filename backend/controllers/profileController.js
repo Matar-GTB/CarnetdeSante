@@ -69,12 +69,10 @@ export const getMyProfile = async (req, res) => {
       accepte_non_traitants: user.accepte_non_traitants,
       horaires_travail: user.horaires_travail,
       jours_disponibles: user.jours_disponibles,
-      duree_consultation: user.duree_consultation,
       teleconsultation: user.teleconsultation,
       accessibilite: user.accessibilite,
       tarifs: user.tarifs,
       faq: user.faq,
-      profil_public: user.profil_public,
       visible_recherche: user.visible_recherche,
       afficher_avis: user.afficher_avis,
 
@@ -83,7 +81,6 @@ export const getMyProfile = async (req, res) => {
       preferences_notifications: user.preferences_notifications,
 
       // Visibilité et création
-      visibility_settings: user.visibility_settings || {},
       date_creation: user.date_creation,
       est_verifie: user.est_verifie
     };
@@ -176,85 +173,7 @@ export const updateMyProfile = async (req, res) => {
 };
 ;
 
-/**
- * 🔒 Mettre à jour les paramètres de visibilité du profil
- */
-export const updateVisibilitySettings = async (req, res) => {
-  try {
-    const userId = req.user.userId;
-    const { visibilitySettings } = req.body;
-    
-    console.log(`👁️ Mise à jour des paramètres de visibilité pour l'utilisateur ${userId}`);
 
-    const user = await User.findByPk(userId);
-    if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Utilisateur non trouvé' 
-      });
-    }
-
-    // Mise à jour des paramètres de visibilité
-    await user.update({
-      visibility_settings: visibilitySettings
-    });
-
-    // Log de la modification
-    await AccessLog.create({
-      utilisateur_id: userId,
-      type_action: 'modification',
-      type_cible: 'visibilite',
-      id_cible: userId,
-      adresse_ip: req.ip
-    });
-
-    res.json({
-      success: true,
-      message: 'Paramètres de visibilité mis à jour avec succès'
-    });
-
-  } catch (error) {
-    console.error('❌ Erreur lors de la mise à jour des paramètres de visibilité:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la mise à jour des paramètres de visibilité',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
-  }
-};
-
-/**
- * 👁️ Récupérer les paramètres de visibilité actuels
- */
-export const getVisibilitySettings = async (req, res) => {
-  try {
-    const userId = req.user.userId;
-    
-    const user = await User.findByPk(userId, {
-      attributes: ['id', 'visibility_settings']
-    });
-
-    if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Utilisateur non trouvé' 
-      });
-    }
-
-    res.json({
-      success: true,
-      data: user.visibility_settings || {}
-    });
-
-  } catch (error) {
-    console.error('❌ Erreur lors de la récupération des paramètres de visibilité:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la récupération des paramètres de visibilité',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
-  }
-};
 
 /**
  * 🚨 Générer un lien d'urgence sécurisé
@@ -514,10 +433,10 @@ export const getPublicPatientProfile = async (req, res) => {
         role: 'patient'
       },
       attributes: [
-        'id', 'nom', 'prenom', 'email', 'photo_profil',
-        'date_naissance', 'ville', 'langue_preferee', 'date_creation',
-        'visibility_settings', 'email_public', 'telephone_public',
-        'groupe_sanguin', 'allergies', 'medecin_traitant_id'
+        'id', 'nom', 'prenom', 'email', 'photo_profil', 'telephone',
+        'date_naissance', 'adresse', 'langue_preferee', 'date_creation',
+        'groupe_sanguin', 'allergies',
+        'contact_urgence', 'personne_urgence'
       ]
     });
     
@@ -538,57 +457,67 @@ export const getPublicPatientProfile = async (req, res) => {
       }
     });
     
-    // Données de base toujours publiques
-    const publicData = {
-      id: patient.id,
-      nom: patient.nom,
-      prenom: patient.prenom,
-      photo_profil: patient.photo_profil,
-      langue_preferee: patient.langue_preferee,
-      date_creation: patient.date_creation,
-      date_naissance: patient.date_naissance,
-      ville: patient.ville,
-      visibilite: patient.visibility_settings || {},
-      is_my_patient: !!isTreatingDoctor
-    };
-    
-    // Informations conditionnelles selon les paramètres de visibilité
-    if (patient.email_public) {
-      publicData.email = patient.email;
-    }
-    
-    if (patient.telephone_public) {
-      publicData.telephone = patient.telephone;
-    }
-    
-    // Si c'est un médecin traitant du patient, ajouter plus d'informations
-    if (isTreatingDoctor) {
-      publicData.groupe_sanguin = patient.groupe_sanguin;
-      publicData.allergies = patient.allergies;
-    }
-    
-    // Si le patient a un médecin traitant et que celui-ci est visible publiquement
-    if (patient.medecin_traitant_id) {
-      const medecinTraitant = await User.findOne({
-        where: { id: patient.medecin_traitant_id },
-        attributes: ['id', 'nom', 'prenom', 'specialite', 'etablissement']
-      });
-      
-      if (medecinTraitant) {
-        publicData.medecin_traitant = {
-          ...medecinTraitant.toJSON(),
-          visible_public: true // À ajuster selon les paramètres du médecin
-        };
-      }
-    }
-    
+    // Exposer tous les champs du patient (lecture seule, plus de filtrage visibilité)
     console.log('📤 Envoi des données publiques du patient');
-    res.json({ success: true, data: publicData });
+    res.json({ success: true, data: patient });
   } catch (error) {
     console.error('❌ Erreur getPublicPatientProfile:', error);
     res.status(500).json({ 
       success: false, 
       message: "Erreur lors de la récupération du profil public" 
+    });
+  }
+};
+
+/**
+ * 🌐 Obtenir le profil public d'un médecin
+ */
+export const getPublicMedecinProfile = async (req, res) => {
+  try {
+    const medecinId = req.params.id;
+    const requesterId = req.user?.id; // ID de l'utilisateur qui fait la demande (optionnel)
+
+    if (!medecinId) {
+      return res.status(400).json({
+        success: false,
+        message: 'ID médecin manquant'
+      });
+    }
+
+    const medecin = await User.findOne({
+      where: {
+        id: medecinId,
+        role: 'medecin'
+      },
+      attributes: [
+        'id', 'nom', 'prenom', 'email', 'telephone', 'role', 'date_naissance', 'sexe', 'adresse', 'photo_profil',
+        'numero_ordre', 'specialite', 'sous_specialites', 'etablissements', 'adresse_cabinet', 'telephone_cabinet',
+        'diplome', 'parcours_professionnel', 'langues', 'moyens_paiement', 'description',
+        'accepte_nouveaux_patients', 'accepte_non_traitants', 'horaires_travail', 'jours_disponibles',
+        'teleconsultation', 'accessibilite', 'tarifs', 'faq', 'visible_recherche', 'afficher_avis',
+        'langue_preferee', 'preferences_notifications',  'date_creation', 'est_verifie',
+        'tokenVersion', 'token_reinitialisation', 'expiration_token_reinitialisation',
+        'emergency_token', 'emergency_token_expires',
+        'nom_complet'
+      ]
+    });
+
+    if (!medecin) {
+      return res.status(404).json({
+        success: false,
+        message: 'Médecin non trouvé'
+      });
+    }
+
+
+
+    // Exposer tous les champs du médecin (lecture seule, plus de filtrage visibilité)
+    res.json({ success: true, data: medecin });
+  } catch (error) {
+    console.error('❌ Erreur getPublicMedecinProfile:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération du profil public du médecin'
     });
   }
 };

@@ -4,16 +4,19 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border-radius: 16px;
-  padding: 2rem;
+  padding: 2.5rem;
   margin: 0 2rem 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .profile-header {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .avatar-section {
@@ -24,16 +27,22 @@
 }
 
 .avatar {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   overflow: hidden;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.1);
+  border: 5px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease;
+}
+
+.avatar:hover {
+  transform: scale(1.05);
 }
 
 .avatar img {
@@ -159,25 +168,42 @@
 
 .profile-info h1 {
   margin: 0 0 0.5rem 0;
-  font-size: 2.2rem;
-  font-weight: 700;
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
+  color: #ffffff;
 }
 
 .role-badge {
   display: inline-block;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 0.25rem 0.75rem;
-  border-radius: 15px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  text-transform: capitalize;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
 }
 
 .email {
-  opacity: 0.9;
-  font-size: 1.1rem;
-  margin: 0;
+  opacity: 1;
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+  color: #ffffff;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.email:before {
+  content: "✉️";
+  font-size: 1rem;
 }
 
 /* Informations spécifiques aux rôles */
@@ -208,16 +234,28 @@
   .profile-header {
     flex-direction: column;
     text-align: center;
-    gap: 1.5rem;
+    gap: 2rem;
   }
 
   .avatar {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
   }
 
   .profile-info h1 {
-    font-size: 1.8rem;
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .email {
+    justify-content: center;
+  }
+
+  .role-badge {
+    display: inline-block;
+    padding: 0.3rem 1rem;
+    margin: 0.5rem auto;
   }
 
   .edit-actions {
@@ -228,5 +266,12 @@
   .save-btn,
   .cancel-btn {
     width: 100%;
+  }
+
+  .specialty,
+  .etablissement,
+  .birth-date {
+    text-align: center;
+    margin: 0.4rem 0;
   }
 }

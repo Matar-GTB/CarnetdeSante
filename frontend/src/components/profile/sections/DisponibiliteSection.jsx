@@ -4,6 +4,7 @@ import disponibiliteService from '../../../services/disponibiliteService';
 import './DisponibiliteSection.css';
 
 const DisponibiliteSection = ({ editMode }) => {
+  const [editHoraires, setEditHoraires] = useState(false);
   const [horaires, setHoraires] = useState([]);
   const [indisponibilites, setIndisponibilites] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -88,8 +89,28 @@ const DisponibiliteSection = ({ editMode }) => {
   const handleAddIndisponibilite = async () => {
     if (!editMode) return;
 
+    // Validation : date et heure cohérentes
+    if (!newIndispo.date_debut || !newIndispo.date_fin) {
+      alert('Veuillez renseigner les dates de début et de fin.');
+      return;
+    }
+    if (
+      newIndispo.date_debut === newIndispo.date_fin &&
+      newIndispo.heure_debut >= newIndispo.heure_fin
+    ) {
+      alert('L\'heure de début doit être avant l\'heure de fin pour un créneau.');
+      return;
+    }
+
     try {
-      const newIndispoData = await disponibiliteService.createIndisponibilite(newIndispo);
+      // Si l'utilisateur veut bloquer toute la journée, on laisse 00:00-23:59
+      // Sinon, on bloque le créneau indiqué
+      const indispoPayload = {
+        ...newIndispo,
+        heure_debut: newIndispo.heure_debut || '00:00',
+        heure_fin: newIndispo.heure_fin || '23:59',
+      };
+      const newIndispoData = await disponibiliteService.createIndisponibilite(indispoPayload);
       setIndisponibilites(prev => [...prev, newIndispoData]);
       setNewIndispo({
         date_debut: '',
@@ -131,17 +152,25 @@ const DisponibiliteSection = ({ editMode }) => {
           <span className="section-icon">📅</span>
           Horaires de travail hebdomadaires
         </h3>
-        
+        {editMode && (
+          <button
+            type="button"
+            className={editHoraires ? "btn-cancel" : "btn-edit"}
+            style={{marginBottom:8}}
+            onClick={() => setEditHoraires(e => !e)}
+          >
+            {editHoraires ? "Terminer l'édition" : "Modifier les horaires"}
+          </button>
+        )}
         <div className="horaires-grid">
           {joursSemai.map(jour => {
             const horaire = getHoraireForJour(jour);
             const isActive = !!horaire;
-            
             return (
               <div key={jour} className={`jour-card ${isActive ? 'active' : 'inactive'}`}>
                 <div className="jour-header">
                   <span className="jour-name">{jour.charAt(0).toUpperCase() + jour.slice(1)}</span>
-                  {editMode && (
+                  {editMode && editHoraires && (
                     <button
                       type="button"
                       className={`btn-toggle ${isActive ? 'active' : ''}`}
@@ -157,7 +186,6 @@ const DisponibiliteSection = ({ editMode }) => {
                     </button>
                   )}
                 </div>
-                
                 {isActive && (
                   <div className="horaire-inputs">
                     <div className="time-input-group">
@@ -166,7 +194,7 @@ const DisponibiliteSection = ({ editMode }) => {
                         type="time"
                         value={horaire.heure_debut || '08:00'}
                         onChange={(e) => handleHoraireChange(jour, 'heure_debut', e.target.value)}
-                        disabled={!editMode}
+                        disabled={!(editMode && editHoraires)}
                       />
                     </div>
                     <div className="time-input-group">
@@ -175,7 +203,7 @@ const DisponibiliteSection = ({ editMode }) => {
                         type="time"
                         value={horaire.heure_fin || '18:00'}
                         onChange={(e) => handleHoraireChange(jour, 'heure_fin', e.target.value)}
-                        disabled={!editMode}
+                        disabled={!(editMode && editHoraires)}
                       />
                     </div>
                     <div className="duration-input-group">
@@ -183,7 +211,7 @@ const DisponibiliteSection = ({ editMode }) => {
                       <select
                         value={horaire.duree_creneau || 30}
                         onChange={(e) => handleHoraireChange(jour, 'duree_creneau', parseInt(e.target.value))}
-                        disabled={!editMode}
+                        disabled={!(editMode && editHoraires)}
                       >
                         <option value={15}>15 min</option>
                         <option value={20}>20 min</option>
@@ -194,7 +222,6 @@ const DisponibiliteSection = ({ editMode }) => {
                     </div>
                   </div>
                 )}
-                
                 {!isActive && (
                   <div className="jour-inactive">
                     <span>Jour de repos</span>
@@ -227,6 +254,14 @@ const DisponibiliteSection = ({ editMode }) => {
         {/* Formulaire d'ajout d'indisponibilité */}
         {showAddIndispo && editMode && (
           <div className="add-indispo-form">
+            <div className="form-help">
+              <strong>Exemple :</strong> Pour bloquer le créneau du <u>6 août 2025 de 14h30 à 15h00</u> :<br/>
+              <span>- Date de début : <b>2025-08-06</b></span><br/>
+              <span>- Date de fin : <b>2025-08-06</b></span><br/>
+              <span>- Heure de début : <b>14:30</b></span><br/>
+              <span>- Heure de fin : <b>15:00</b></span><br/>
+              <span>- Ne cochez pas "Bloquer toute la journée"</span>
+            </div>
             <div className="form-grid">
               <div className="form-group">
                 <label>Date de début *</label>
@@ -252,6 +287,9 @@ const DisponibiliteSection = ({ editMode }) => {
                   type="time"
                   value={newIndispo.heure_debut}
                   onChange={(e) => setNewIndispo(prev => ({ ...prev, heure_debut: e.target.value }))}
+                  min="00:00"
+                  max="23:59"
+                  step="900"
                 />
               </div>
               <div className="form-group">
@@ -260,7 +298,24 @@ const DisponibiliteSection = ({ editMode }) => {
                   type="time"
                   value={newIndispo.heure_fin}
                   onChange={(e) => setNewIndispo(prev => ({ ...prev, heure_fin: e.target.value }))}
+                  min="00:00"
+                  max="23:59"
+                  step="900"
                 />
+              </div>
+              <div className="form-group">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={newIndispo.heure_debut === '00:00' && newIndispo.heure_fin === '23:59'}
+                    onChange={e => {
+                      if (e.target.checked) {
+                        setNewIndispo(prev => ({ ...prev, heure_debut: '00:00', heure_fin: '23:59' }));
+                      }
+                    }}
+                  />
+                  Bloquer toute la journée
+                </label>
               </div>
             </div>
             <div className="form-group">

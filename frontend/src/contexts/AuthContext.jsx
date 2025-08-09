@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect, useCallback, useContext } from 'react';
-import { checkAuthStatus, logout as logoutService } from '../services/authService';
+import React, { createContext, useState, useEffect, useCallback, useContext, useRef } from 'react';
+import { checkAuthStatus, logout as logoutService, API } from '../services/authService';
 
 export const AuthContext = createContext({
   user: null,
@@ -16,6 +16,25 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const refreshTimerRef = useRef(null);
+  const refreshingRef = useRef(false);
+
+  // Fonction pour rafraîchir silencieusement le token
+  const silentRefresh = useCallback(async () => {
+    // Éviter les appels parallèles de refresh
+    if (refreshingRef.current) return;
+    
+    try {
+      refreshingRef.current = true;
+      console.log('🔄 Rafraîchissement silencieux du token...');
+      await API.post('/auth/refresh-token');
+      console.log('✅ Token rafraîchi avec succès');
+    } catch (error) {
+      console.error('❌ Échec du rafraîchissement silencieux:', error);
+    } finally {
+      refreshingRef.current = false;
+    }
+  }, []);
 
   // Vérifier l'authentification au chargement
   useEffect(() => {
@@ -64,6 +83,48 @@ export function AuthProvider({ children }) {
 
     checkAuth();
   }, []);
+
+  // Effet pour le rafraîchissement périodique du token (toutes les 10 minutes)
+  useEffect(() => {
+    const startRefreshTimer = () => {
+      if (refreshTimerRef.current) {
+        clearInterval(refreshTimerRef.current);
+      }
+
+      // Ping toutes les 10 minutes pour garder la session active
+      refreshTimerRef.current = setInterval(() => {
+        if (isAuthenticated) {
+          silentRefresh();
+        }
+      }, 10 * 60 * 1000); // 10 minutes
+    };
+
+    if (isAuthenticated) {
+      startRefreshTimer();
+    }
+
+    return () => {
+      if (refreshTimerRef.current) {
+        clearInterval(refreshTimerRef.current);
+      }
+    };
+  }, [isAuthenticated, silentRefresh]);
+
+  // Effet pour le rafraîchissement au retour de focus sur la fenêtre
+  useEffect(() => {
+    const handleFocus = () => {
+      if (isAuthenticated) {
+        console.log('🔍 Fenêtre récupère le focus, vérification du token...');
+        silentRefresh();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [isAuthenticated, silentRefresh]);
 
   // Fonction pour connecter l'utilisateur (après succès login)
   const loginContext = useCallback((userData) => {
@@ -114,6 +175,95 @@ export function AuthProvider({ children }) {
   const updateUser = useCallback((updatedData) => {
     setUser(prev => ({ ...prev, ...updatedData }));
   }, []);
+
+  // Configuration de l'intercepteur Axios pour le refresh automatique
+  useEffect(() => {
+    // Mémoriser les requêtes en échec pour les rejouer après refresh
+    let isRefreshing = false;
+    let failedQueue = [];
+
+    const processQueue = (error, token = null) => {
+      failedQueue.forEach(prom => {
+        if (error) {
+          prom.reject(error);
+        } else {
+          prom.resolve(token);
+        }
+      });
+      
+      failedQueue = [];
+    };
+
+    // Intercepteur de requête
+    const requestInterceptor = API.interceptors.request.use(
+      config => {
+        // Ajout d'une méthode pour indiquer si cette requête est un retry
+        if (!config._retry) {
+          config._retry = false;
+        }
+        return config;
+      },
+      error => Promise.reject(error)
+    );
+
+    // Intercepteur de réponse
+    const responseInterceptor = API.interceptors.response.use(
+      response => response,
+      async error => {
+        const originalRequest = error.config;
+        
+        // Si c'est déjà un retry ou pas une erreur d'auth, on propage l'erreur
+        if (originalRequest._retry || ![401, 403].includes(error.response?.status)) {
+          return Promise.reject(error);
+        }
+        
+        // Si on est déjà en train de rafraîchir, on met en file d'attente
+        if (isRefreshing) {
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+          }).then(() => {
+            return API(originalRequest);
+          }).catch(err => {
+            return Promise.reject(err);
+          });
+        }
+
+        originalRequest._retry = true;
+        isRefreshing = true;
+
+        // Tentative de refresh
+        try {
+          await silentRefresh();
+          
+          // Succès : on traite la file d'attente
+          processQueue(null);
+          isRefreshing = false;
+          
+          // Rejouer la requête originale
+          return API(originalRequest);
+        } catch (refreshError) {
+          // Échec : on traite la file d'attente avec l'erreur
+          processQueue(refreshError);
+          isRefreshing = false;
+          
+          // Si on n'est pas déjà sur la page de login, on y va
+          if (window.location.pathname !== '/auth/login') {
+            console.log('❌ Session expirée, redirection vers login');
+            logout();
+            window.location.href = '/auth/login';
+          }
+          
+          return Promise.reject(refreshError);
+        }
+      }
+    );
+
+    // Nettoyage à la démontage
+    return () => {
+      API.interceptors.request.eject(requestInterceptor);
+      API.interceptors.response.eject(responseInterceptor);
+    };
+  }, [silentRefresh, logout]);
 
   return (
     <AuthContext.Provider value={{ user, token, isAuthenticated, isLoading, loginContext, logout, updateUser }}>

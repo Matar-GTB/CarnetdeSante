@@ -26,6 +26,13 @@ router.patch('/:id/accept', acceptAppointment);
 // Refuser une demande (médecin)
 router.patch('/:id/refuse', refuseAppointment);
 
+
+// Mettre à jour une consultation (notes, examens, médicaments, etc.)
+router.patch('/:id/update', async (req, res, next) => {
+  const ctrl = await import('../controllers/appointmentController.js');
+  return ctrl.updateConsultation(req, res, next);
+});
+
 // Annuler un RDV (patient ou médecin)
 router.patch('/:id/cancel', cancelAppointment);
 

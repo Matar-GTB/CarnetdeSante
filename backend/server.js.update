@@ -1,0 +1,16 @@
+// backend/server.js - modifications pour intégrer les nouveaux services
+
+// Imports pour les nouveaux services
+import verificationRoutes from './routes/verificationRoutes.js';
+import passwordRoutes from './routes/passwordRoutes.js';
+import { initReminderService } from './services/reminderService.js';
+
+// Dans la section de configuration des routes
+app.use('/api/verifications', verificationRoutes);
+app.use('/api/password', passwordRoutes);
+
+// Initialiser le service de rappels après la connexion à la base de données
+initReminderService();
+
+// Mettre à jour le message de démarrage
+console.log('✅ Services de sécurité et de rappels initialisés.');

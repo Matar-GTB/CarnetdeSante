@@ -89,14 +89,14 @@ export const updateNotificationSettings = async (req, res) => {
   try {
     const { preferences } = req.body;
 
-    // Exemple : sauvegarde dans une colonne JSON dans la table utilisateurs
+    // Utilisation du champ prefs_notification standardisé
     const user = await User.findByPk(req.user.userId);
     if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
 
-    user.preferences_notifications = preferences; // Il faut que ce champ existe dans le modèle
+    user.prefs_notification = preferences; // Utilisation du champ correct
     await user.save();
 
-    res.json({ success: true, message: 'Préférences mises à jour', data: user.preferences_notifications });
+    res.json({ success: true, message: 'Préférences mises à jour', data: user.prefs_notification });
   } catch (error) {
     handleServerError(res, error, "Erreur mise à jour préférences");
   }
@@ -107,7 +107,7 @@ export const getNotificationSettings = async (req, res) => {
     const user = await User.findByPk(req.user.userId);
     if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
 
-    res.json({ success: true, data: user.preferences_notifications || {} });
+    res.json({ success: true, data: user.prefs_notification || { email: true, sms: false } });
   } catch (error) {
     handleServerError(res, error, "Erreur récupération préférences");
   }

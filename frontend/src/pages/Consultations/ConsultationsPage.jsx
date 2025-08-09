@@ -6,14 +6,15 @@ import {
   deleteAppointment,
   createAppointment,
   refuseAppointment,
-  cancelAppointment 
+  cancelAppointment
 } from '../../services/appointmentService';
 import { getTokenPayload } from '../../utils/tokenUtils';
 import './ConsultationsPage.css';
-import { FaCheckCircle, FaTimesCircle, FaLock } from 'react-icons/fa';
+import { FaCalendarAlt, FaCheckCircle, FaTimesCircle, FaLock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
+import DisponibiliteSection from '../../components/profile/sections/DisponibiliteSection';
 
 export default function ConsultationsPage() {
   const [appointments, setAppointments] = useState([]);
@@ -51,17 +52,59 @@ useEffect(() => {
 
   useEffect(() => {
   if (!userId) return;
-
-  (async () => {
+  
+  const loadConsultations = async () => {
     try {
+      setLoading(true);
+      setError(null);
+      
+      // Vérifier que l'ID utilisateur est défini
+      if (!userId) {
+        setError('Utilisateur non connecté. Veuillez vous connecter pour voir vos consultations.');
+        setAppointments([]);
+        return;
+      }
+      
+      // Utiliser le bon service selon le rôle
       const data = await getAppointmentsByUser(userId);
-      setAppointments(data);
-    } catch {
-      setError('Impossible de charger vos consultations.');
+      
+      setAppointments(data || []);
+    } catch (err) {
+      console.error('Erreur chargement:', err);
+      setError('Impossible de charger les données');
     } finally {
       setLoading(false);
     }
-  })();
+  };
+
+  loadConsultations();
+}, [userId, user.role]);
+
+useEffect(() => {
+  const loadData = async () => {
+    try {
+      // Vérifier que l'ID utilisateur est défini
+      if (!userId) {
+        setError('Utilisateur non connecté. Veuillez vous connecter pour voir vos consultations.');
+        setAppointments([]);
+        return;
+      }
+      
+      const data = await getAppointmentsByUser(userId);
+      
+      // Filtrer pour ne garder que les consultations (où l'utilisateur est médecin)
+      const consultations = data.filter(apt => 
+        apt.medecin_id === userId && 
+        apt.type_rendezvous !== 'indisponibilite'
+      );
+      
+      setAppointments(consultations);
+    } catch (error) {
+      console.error('Erreur:', error);
+    }
+  };
+  
+  loadData();
 }, [userId]);
 
 function filterWithSearch(list) {
@@ -137,15 +180,57 @@ function filterWithSearch(list) {
     setAppointments(a => a.filter(x => x.id !== id));
   };
 
-  if (loading) return <div className="loader">Chargement…</div>;
+  if (loading) {
+    return (
+      <div className="consultations-page">
+        {/* Garde le header même pendant le chargement */}
+        <div className="consultation-header">
+          <button className="back-button" onClick={() => navigate('/dashboard')}>
+            <span>←</span>
+            <span>Retour</span>
+          </button>
+
+          <div className="header-content">
+            <div className="header-icon">
+              <FaCalendarAlt />
+            </div>
+            <div className="header-text">
+              <h1>Mes consultations</h1>
+              <p>Gérez vos rendez-vous médicaux</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="loader">
+          <div className="loader-spinner"></div>
+          <p className="loader-text">Chargement de vos consultations...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (error)   return <div className="error">{error}</div>;
 
   return (
     <div className="consultations-page">
-      <button className="btn-retour" onClick={() => navigate('/dashboard')}>
-        ← Retour
-      </button>
-      <h1>Mes consultations</h1>
+      {/* Nouveau header moderne */}
+      <div className="consultation-header">
+        <button className="back-button" onClick={() => navigate('/dashboard')}>
+          <span>←</span>
+          <span>Retour</span>
+        </button>
+
+        <div className="header-content">
+          <div className="header-icon">
+            <FaCalendarAlt />
+          </div>
+          <div className="header-text">
+            <h1>Mes consultations</h1>
+            <p>Gérez vos rendez-vous médicaux</p>
+          </div>
+        </div>
+      </div>
+
       {/* Barre de recherche */}
       <div className="consult-search-bar">
       <input
@@ -178,10 +263,10 @@ function filterWithSearch(list) {
           Historique ({history.length})
         </button>
         <button
-          className={tab==='blocked'   ? 'active' : ''}
-          onClick={()=>setTab('blocked')}
+          className={tab==='disponib'   ? 'active' : ''}
+          onClick={()=>setTab('disponib')}
         >
-          Indispos ({blocked.length})
+          Disponib
         </button>
       </div>
 
@@ -279,24 +364,9 @@ function filterWithSearch(list) {
               {!history.length && <p>Aucune consultation passée.</p>}
             </div>
           )}
-      {tab === 'blocked' && (
-        <div className="blocked-section">
-          <form className="block-form" onSubmit={handleBlock}>
-            <input type="date" value={blockDate} onChange={e=>setBlockDate(e.target.value)} required/>
-            <input type="time" value={blockStart} onChange={e=>setBlockStart(e.target.value)} required/>
-            <input type="time" value={blockEnd} onChange={e=>setBlockEnd(e.target.value)} required/>
-            <button type="submit">Bloquer</button>
-          </form>
-          <ul className="blocked-list">
-            {blocked.map(b => (
-              <li key={b.id}>
-                <FaLock className="icon block"/>
-                <span>{b.date_rendezvous} • {b.heure_debut}-{b.heure_fin}</span>
-                <button onClick={()=>handleUnblock(b.id)}>Annuler</button>
-              </li>
-            ))}
-            {!blocked.length && <p>Aucune indisponibilité programmée.</p>}
-          </ul>
+      {tab === 'disponib' && (
+        <div className="disponib-section">
+          <DisponibiliteSection editMode={true} />
         </div>
       )}
     </div>

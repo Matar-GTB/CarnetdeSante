@@ -4,10 +4,8 @@ import { AuthContext } from '../../contexts/AuthContext';
 import traitantService from '../../services/traitantService';
 import profileService from '../../services/profileService';
 import UserProfile from '../../components/profile/UserProfile';
-import MedecinVisibilityControls from '../../components/profile/shared/MedecinVisibilityControls';
 import MedecinPersonalSection from '../../components/profile/sections/MedecinPersonalSection';
 import DisponibiliteSection from '../../components/profile/sections/DisponibiliteSection';
-import MessagingInterface from '../../components/Messaging/MessagingInterface';
 import './MedecinProfilePrive.css';
 
 const MedecinProfilePrive = () => {
@@ -444,12 +442,6 @@ const MedecinProfilePrive = () => {
         >
           👥 Mes Patients
         </button>
-        <button
-          className={`tab-button ${activeTab === 'messagerie' ? 'active' : ''}`}
-          onClick={() => setActiveTab('messagerie')}
-        >
-          🔐 Visibilité
-        </button>
       </div>
 
       {/* Contenu des onglets */}
@@ -758,33 +750,7 @@ const MedecinProfilePrive = () => {
             </div>
           </div>
         )}
-        {/* Onglet Visibilité */}
-        {activeTab === 'visibilite' && (
-          <div className="tab-panel active">
-            <div className="section">
-              <div className="section-header">
-                <h2>
-                  <span className="section-icon">🔐</span>
-                  Paramètres de Visibilité
-                </h2>
-                <button
-                  className={`btn-edit ${editModes.visibilite ? 'editing' : ''}`}
-                  onClick={() => editModes.visibilite ? handleSaveAndExit('visibilite') : toggleEditMode('visibilite')}
-                >
-                  {editModes.visibilite ? '💾 Sauvegarder' : '✏️ Modifier'}
-                </button>
-              </div>
-              
-              <MedecinVisibilityControls
-                fieldsVisibility={fieldsVisibility}
-                onVisibilityChange={handleVisibilityChange}
-                globalSettings={globalSettings}
-                onGlobalChange={handleGlobalChange}
-                editMode={editModes.visibilite}
-              />
-            </div>
-          </div>
-        )}
+      
       </div>
     </div>
   );

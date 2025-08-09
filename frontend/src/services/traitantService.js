@@ -1,26 +1,8 @@
 // src/services/traitantService.js
 import { API } from './authService';
 
-/**
- * Récupère les informations publiques d'un médecin
- * @param {string} medecinId - L'ID du médecin
- * @returns {Promise<Object>}
- */
-export const getMedecinPublicProfile = async (medecinId) => {
-  try {
-    const res = await API.get(`/doctors/${medecinId}/public`);
-    return {
-      success: true,
-      data: res.data.data
-    };
-  } catch (error) {
-    console.error('Erreur lors de la récupération du profil public:', error);
-    return {
-      success: false,
-      message: error.response?.data?.message || 'Erreur lors de la récupération du profil'
-    };
-  }
-};
+
+
 
 /**
  * Récupérer la liste complète des médecins (pour la recherche de traitant)
@@ -176,6 +158,7 @@ export const setTraitantPrincipal = async (medecinId) => {
 };
 
 // Export par défaut pour compatibilité
+
 const traitantService = {
   getAllMedecins,
   requestTraitant,
@@ -190,7 +173,7 @@ const traitantService = {
   getPatientProfile,
   removeTraitant,
   setTraitantPrincipal,
-  removePatientRelation 
+  removePatientRelation
 };
 
 export default traitantService;

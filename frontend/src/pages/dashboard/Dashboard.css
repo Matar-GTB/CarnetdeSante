@@ -1,7 +1,9 @@
 .dashboard-container {
   padding: 2rem;
-  max-width: 1100px;
-  margin: auto;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .dashboard-header {
@@ -13,6 +15,8 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .welcome-message {
@@ -23,9 +27,11 @@
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
   margin-top: 2rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .dashboard-card {
@@ -37,6 +43,12 @@
   cursor: pointer;
   text-align: center;
   border-left: 4px solid #6c63ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .dashboard-card:hover {
@@ -88,12 +100,29 @@
   font-size: 0.95rem;
 }
 
+/* Structure du wrapper du dashboard avec navbar */
+.dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.dashboard-content {
+  flex: 1;
+}
+
+/* Règles pour éviter les navbars dupliquées */
+body .navbar:not(#dashboard-navbar) {
+  display: none !important;
+}
+
 .dashboard {
   padding: 2rem;
   font-family: 'Segoe UI', sans-serif;
   background: linear-gradient(to bottom, #f5f5fa, #fdfdff);
-  min-height: 100vh;
+  min-height: calc(100vh - 80px); /* Hauteur moins la hauteur de la navbar */
   box-sizing: border-box;
+  margin-top: 0;
 }
 
 /* Contenu centré */
